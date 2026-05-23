@@ -1,0 +1,53 @@
+name: invoice_flow_pro
+description: "A production-grade, offline-first invoicing application."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # State Management & DI
+  flutter_bloc: ^8.1.5
+  get_it: ^7.6.7
+  equatable: ^2.0.5
+  
+  # Functional Programming (Error Handling)
+  dartz: ^0.10.1
+  
+  # Routing
+  go_router: ^13.2.0
+  
+  # Local Database (Offline-First)
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
+  path_provider: ^2.1.2
+  
+  # Utilities
+  logger: ^2.0.2+1
+
+  # Image selection and path resolution
+  image_picker: ^1.1.2
+  path: ^1.9.0
+  intl: ^0.20.2
+
+  # PDF Generation and Printing/Sharing
+  pdf: ^3.11.0
+  printing: ^5.12.0
+
+  # File System & Sharing
+  share_plus: ^7.2.2
+  file_picker: ^10.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+  build_runner: ^2.4.8
+  isar_generator: ^3.1.0+1
+
+flutter:
+  uses-material-design: true

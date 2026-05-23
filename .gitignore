@@ -1,0 +1,25 @@
+# Flutter/Dart
+.dart_tool/
+.packages
+.pub/
+build/
+
+# IDE
+.idea/
+.vscode/
+
+# macOS
+.DS_Store
+
+# Android
+android/.gradle/
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+
+# Logs
+*.log
+
+# Firebase / Secrets
+.env

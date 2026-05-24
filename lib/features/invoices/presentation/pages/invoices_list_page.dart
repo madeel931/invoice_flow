@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../../config/routes/route_constants.dart';
+import '../../../customers/domain/entities/customer.dart';
+import '../../domain/entities/invoice.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -19,16 +21,19 @@ import '../cubit/invoice_list_cubit.dart';
 import '../cubit/invoice_list_state.dart';
 
 class InvoicesListPage extends StatelessWidget {
-  const InvoicesListPage({super.key});
+  final Customer? filterCustomer;
+
+  const InvoicesListPage({super.key, this.filterCustomer});
 
   @override
   Widget build(BuildContext context) {
-    return const _InvoicesListView();
+    return _InvoicesListView(filterCustomer: filterCustomer);
   }
 }
 
 class _InvoicesListView extends StatefulWidget {
-  const _InvoicesListView();
+  final Customer? filterCustomer;
+  const _InvoicesListView({this.filterCustomer});
 
   @override
   State<_InvoicesListView> createState() => _InvoicesListViewState();
@@ -67,7 +72,9 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Invoices'),
+            title: Text(widget.filterCustomer != null
+                ? 'Invoices - ${widget.filterCustomer!.name}'
+                : 'Invoices'),
             bottom: PreferredSize(
               preferredSize:
                   const Size.fromHeight(120), // Expanded to fit search + chips
@@ -123,23 +130,42 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
           ),
           body: BlocBuilder<InvoiceListCubit, InvoiceListState>(
             builder: (context, state) {
+              // Apply UI-level customer filtering
+              List<Invoice> displayInvoices = state.filteredInvoices;
+              if (widget.filterCustomer != null) {
+                displayInvoices = displayInvoices
+                    .where((inv) =>
+                        inv.customerId == widget.filterCustomer!.id)
+                    .toList();
+              }
+
               if (state.status == InvoiceListStatus.loading) {
                 return const LoadingWidget();
               }
 
-              if (state.filteredInvoices.isEmpty) {
-                return const EmptyStateWidget(
-                  message: 'No invoices found.',
-                  icon: Icons.receipt_long,
+              if (state.status == InvoiceListStatus.error) {
+                return EmptyStateWidget(
+                  icon: Icons.error_outline,
+                  message: state.errorMessage ?? 'Failed to load invoices',
+                );
+              }
+
+              if (displayInvoices.isEmpty) {
+                return EmptyStateWidget(
+                  icon: Icons.receipt_long_outlined,
+                  message: widget.filterCustomer != null
+                      ? 'No invoices for this customer yet.'
+                      : 'You haven\'t created any invoices yet.',
                 );
               }
 
               return ListView.separated(
                 padding: const EdgeInsets.all(AppSpacing.md),
-                itemCount: state.filteredInvoices.length,
-                separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
+                itemCount: displayInvoices.length,
+                separatorBuilder: (_, __) =>
+                    const SizedBox(height: AppSpacing.sm),
                 itemBuilder: (context, index) {
-                  final inv = state.filteredInvoices[index];
+                  final inv = displayInvoices[index];
                   final statusColor = _getStatusColor(context, inv.status);
 
                   return GlobalCard(

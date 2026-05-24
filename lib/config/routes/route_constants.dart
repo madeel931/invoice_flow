@@ -11,4 +11,5 @@ class AppRoutes {
   static const String invoicesList = '/invoices-list';
   static const String invoiceDetail = '/invoice-detail';
   static const String invoicePreview = '/invoice-preview';
+  static const String customerInvoices = '/customer-invoices';
 }

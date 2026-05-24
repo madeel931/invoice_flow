@@ -120,6 +120,15 @@ class AppRouter {
           return InvoiceDetailPage(invoice: invoice);
         },
       ),
+      GoRoute(
+        path: AppRoutes.customerInvoices,
+        name: 'customer-invoices',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final customer = state.extra as Customer;
+          return InvoicesListPage(filterCustomer: customer);
+        },
+      ),
 
       // --- SHELL ROUTE (Bottom Nav + Drawer Pages) ---
       StatefulShellRoute.indexedStack(

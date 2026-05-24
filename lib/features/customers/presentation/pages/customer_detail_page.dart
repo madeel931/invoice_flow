@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-
+import '../../../../config/routes/route_constants.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../../../../core/widgets/global_card.dart';
@@ -123,26 +123,35 @@ class CustomerDetailPage extends StatelessWidget {
                     snapshot.connectionState == ConnectionState.waiting;
 
                 return GlobalCard(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.receipt_long_rounded,
-                            color: colorScheme.primary),
-                        const SizedBox(width: 12),
-                        isLoading
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child:
-                                    CircularProgressIndicator(strokeWidth: 2))
-                            : Text(
-                                '$count Total Invoices',
-                                style: theme.textTheme.titleMedium
-                                    ?.copyWith(fontWeight: FontWeight.w600),
-                              ),
-                      ],
+                  padding: EdgeInsets.zero,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(16.0),
+                    onTap: () {
+                      context.push(AppRoutes.customerInvoices, extra: customer);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md, horizontal: AppSpacing.md),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.receipt_long_rounded,
+                              color: colorScheme.primary),
+                          const SizedBox(width: 12),
+                          isLoading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2))
+                              : Text(
+                                  '$count Total Invoices',
+                                  style: theme.textTheme.titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.w600),
+                                ),
+                          const Spacer(),
+                          Icon(Icons.chevron_right, color: theme.disabledColor),
+                        ],
+                      ),
                     ),
                   ),
                 );

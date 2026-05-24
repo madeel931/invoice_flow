@@ -3,6 +3,8 @@ import 'package:get_it/get_it.dart';
 import 'package:printing/printing.dart';
 
 import '../../../../core/usecases/usecase.dart';
+import '../../../../core/widgets/empty_state_widget.dart';
+import '../../../../core/widgets/loading_widget.dart';
 import '../../../settings/domain/usecases/get_business_profile_usecase.dart';
 import '../../domain/entities/invoice.dart';
 import '../../utils/invoice_pdf_generator.dart';
@@ -23,20 +25,25 @@ class InvoicePreviewPage extends StatelessWidget {
         future: GetIt.instance<GetBusinessProfileUseCase>().call(NoParams()),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const LoadingWidget();
           }
 
           if (snapshot.hasError ||
               !snapshot.hasData ||
               snapshot.data!.isLeft()) {
-            return const Center(
-                child: Text('Failed to load business profile.'));
+            return const EmptyStateWidget(
+              message: 'Failed to load business profile.',
+              icon: Icons.error_outline,
+            );
           }
 
           final profile = snapshot.data!.fold((l) => null, (r) => r);
 
           if (profile == null) {
-            return const Center(child: Text('Profile not configured.'));
+            return const EmptyStateWidget(
+              message: 'Profile not configured.',
+              icon: Icons.domain_disabled,
+            );
           }
 
           return PdfPreview(

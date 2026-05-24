@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../../config/routes/route_constants.dart';
+import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/widgets/global_card.dart';
 import '../../domain/entities/customer.dart';
 import '../cubit/customer_list_cubit.dart';
 import '../cubit/customer_list_state.dart';
@@ -58,7 +59,7 @@ class _CustomersListViewState extends State<_CustomersListView> {
           preferredSize: const Size.fromHeight(60),
           child: Padding(
             padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
             child: TextField(
               controller: _searchController,
               onChanged: (val) => context.read<CustomerListCubit>().search(val),
@@ -95,8 +96,8 @@ class _CustomersListViewState extends State<_CustomersListView> {
                       color: Theme.of(context)
                           .colorScheme
                           .primary
-                          .withOpacity(0.5)),
-                  const SizedBox(height: 16),
+                          .withValues(alpha: 0.5)),
+                  const SizedBox(height: AppSpacing.md),
                   const Text('No customers found.'),
                 ],
               ),
@@ -104,18 +105,14 @@ class _CustomersListViewState extends State<_CustomersListView> {
           }
 
           return ListView.separated(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AppSpacing.md),
             itemCount: state.filteredCustomers.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
+            separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
             itemBuilder: (context, index) {
               final customer = state.filteredCustomers[index];
 
-              return Card(
-                elevation: 0,
-                color: Theme.of(context)
-                    .colorScheme
-                    .surfaceVariant
-                    .withOpacity(0.3),
+              return GlobalCard(
+                padding: EdgeInsets.zero,
                 child: ListTile(
                   leading: CircleAvatar(
                     backgroundColor:
@@ -164,6 +161,7 @@ class _CustomersListViewState extends State<_CustomersListView> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'customer_add_fab',
         onPressed: () => _openCustomerForm(context),
         child: const Icon(Icons.add),
       ),

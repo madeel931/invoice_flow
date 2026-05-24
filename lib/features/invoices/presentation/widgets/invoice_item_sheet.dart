@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../../core/presentation/widgets/primary_button.dart';
+
+import '../../../../core/constants/app_sizes.dart';
+import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/widgets/global_button.dart';
+import '../../../../core/widgets/global_text_field.dart';
 import '../../../products/domain/entities/product.dart';
 import '../../domain/entities/invoice_item.dart';
 
@@ -22,7 +26,7 @@ class InvoiceItemSheet extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppSizes.radiusXl)),
       ),
       builder: (_) => InvoiceItemSheet(existingItem: item, catalog: catalog),
     );
@@ -40,7 +44,6 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
   late TextEditingController _priceController;
   late TextEditingController _taxController;
 
-  Product? _selectedCatalogItem;
 
   @override
   void initState() {
@@ -81,7 +84,6 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
   void _onCatalogItemSelected(Product? product) {
     if (product == null) return;
     setState(() {
-      _selectedCatalogItem = product;
       _descController.text = product.name;
       _priceController.text = product.price.toStringAsFixed(2);
       _taxController.text =
@@ -111,7 +113,7 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
 
     return Padding(
       padding: EdgeInsets.only(
-          left: 24, right: 24, top: 24, bottom: bottomInset + 24),
+          left: AppSpacing.lg, right: AppSpacing.lg, top: AppSpacing.lg, bottom: bottomInset + AppSpacing.lg),
       child: Form(
         key: _formKey,
         child: Column(
@@ -125,7 +127,7 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
                   .titleLarge
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
 
             // Quick Catalog Selector
             if (widget.catalog.isNotEmpty) ...[
@@ -147,65 +149,62 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
                 },
                 fieldViewBuilder:
                     (context, controller, focusNode, onFieldSubmitted) {
-                  return TextFormField(
+                  return GlobalTextField(
                     controller: controller,
                     focusNode: focusNode,
-                    decoration: const InputDecoration(
-                      labelText: 'Search Catalog for Item',
-                      prefixIcon: Icon(Icons.search_rounded),
-                      hintText: 'Type product name...',
-                    ),
+                    label: 'Search Catalog for Item',
+                    prefixIcon: const Icon(Icons.search_rounded),
+                    hint: 'Type product name...',
                   );
                 },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               const Divider(),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
             ],
 
-            TextFormField(
+            GlobalTextField(
               controller: _descController,
-              decoration: const InputDecoration(labelText: 'Description *'),
+              label: 'Description *',
               validator: (val) =>
                   val == null || val.trim().isEmpty ? 'Required' : null,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             Row(
               children: [
                 Expanded(
-                  child: TextFormField(
+                  child: GlobalTextField(
                     controller: _qtyController,
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
-                    decoration: const InputDecoration(labelText: 'Quantity *'),
+                    label: 'Quantity *',
                     validator: (val) =>
                         val == null || val.trim().isEmpty ? 'Required' : null,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: AppSpacing.md),
                 Expanded(
                   flex: 2,
-                  child: TextFormField(
+                  child: GlobalTextField(
                     controller: _priceController,
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
-                    decoration:
-                        const InputDecoration(labelText: 'Unit Price *'),
+                    label: 'Unit Price *',
                     validator: (val) =>
                         val == null || val.trim().isEmpty ? 'Required' : null,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            TextFormField(
+            const SizedBox(height: AppSpacing.md),
+            GlobalTextField(
               controller: _taxController,
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(labelText: 'Tax Rate (%)'),
+              label: 'Tax Rate (%)',
             ),
-            const SizedBox(height: 32),
-            PrimaryButton(text: 'Save Item', onPressed: _submit),
+            const SizedBox(height: AppSpacing.xl),
+            GlobalButton(text: 'Save Item', onPressed: _submit),
           ],
         ),
       ),

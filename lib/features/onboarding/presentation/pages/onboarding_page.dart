@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../../config/routes/route_constants.dart';
-import '../../../../core/presentation/widgets/primary_button.dart';
+import '../../../../core/widgets/global_button.dart';
 import '../cubit/onboarding_cubit.dart';
 import '../cubit/onboarding_state.dart';
 
@@ -107,7 +107,7 @@ class _OnboardingViewState extends State<_OnboardingView> {
                               color: Theme.of(context)
                                   .colorScheme
                                   .onSurface
-                                  .withOpacity(0.7),
+                                  .withValues(alpha: 0.7),
                             ),
                         textAlign: TextAlign.center,
                       ),
@@ -128,7 +128,7 @@ class _OnboardingViewState extends State<_OnboardingView> {
                       ),
                       const SizedBox(height: 20),
                       DropdownButtonFormField<String>(
-                        value: _selectedCurrency,
+                        initialValue: _selectedCurrency,
                         decoration: const InputDecoration(
                           labelText: 'Base Currency',
                           prefixIcon: Icon(Icons.payments_rounded),
@@ -146,7 +146,7 @@ class _OnboardingViewState extends State<_OnboardingView> {
                         },
                       ),
                       const SizedBox(height: 40),
-                      PrimaryButton(
+                      GlobalButton(
                         text: 'Complete Setup',
                         isLoading: state is OnboardingLoading,
                         onPressed: _submit,

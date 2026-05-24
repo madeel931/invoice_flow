@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/presentation/widgets/surface_card.dart';
+import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/usecases/usecase.dart';
+import '../../../../core/widgets/global_card.dart';
 import '../../../invoices/domain/usecases/get_invoices_usecase.dart';
 import '../../domain/entities/customer.dart';
 
@@ -80,7 +81,7 @@ class CustomerDetailPage extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -96,14 +97,14 @@ class CustomerDetailPage extends StatelessWidget {
                     color: colorScheme.onPrimaryContainer),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             Text(
               customer.name,
               style: theme.textTheme.headlineSmall
                   ?.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.lg),
 
             // --- INVOICE COUNT METRIC ---
             FutureBuilder<int>(
@@ -113,9 +114,9 @@ class CustomerDetailPage extends StatelessWidget {
                 final isLoading =
                     snapshot.connectionState == ConnectionState.waiting;
 
-                return SurfaceCard(
+                return GlobalCard(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -139,10 +140,10 @@ class CustomerDetailPage extends StatelessWidget {
                 );
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
 
             // --- CONTACT DETAILS ---
-            SurfaceCard(
+            GlobalCard(
               padding: EdgeInsets.zero,
               child: Column(
                 children: [
@@ -181,9 +182,9 @@ class CustomerDetailPage extends StatelessWidget {
                       (customer.phone == null || customer.phone!.isEmpty) &&
                       (customer.billingAddress == null ||
                           customer.billingAddress!.isEmpty))
-                    const ListTile(
-                      leading: Icon(Icons.info_outline, color: Colors.grey),
-                      title: Text('No contact information provided.'),
+                    ListTile(
+                      leading: Icon(Icons.info_outline, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      title: const Text('No contact information provided.'),
                     ),
                 ],
               ),

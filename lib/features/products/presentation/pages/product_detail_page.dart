@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/presentation/widgets/surface_card.dart';
+import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/utils/formatters.dart';
+import '../../../../core/widgets/global_card.dart';
+import '../../../settings/presentation/cubit/settings_cubit.dart';
+import '../../../settings/presentation/cubit/settings_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import '../../domain/entities/product.dart';
 
 class ProductDetailPage extends StatelessWidget {
@@ -59,99 +65,106 @@ class ProductDetailPage extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // --- HEADER ---
-            CircleAvatar(
-              radius: 48,
-              backgroundColor: colorScheme.secondaryContainer,
-              child: Icon(Icons.inventory_2_rounded,
-                  size: 48, color: colorScheme.onSecondaryContainer),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              product.name,
-              style: theme.textTheme.headlineSmall
-                  ?.copyWith(fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
+      body: BlocBuilder<SettingsCubit, SettingsState>(
+        bloc: GetIt.instance<SettingsCubit>(),
+        builder: (context, settingsState) {
+          final currencyCode = settingsState.profile?.currencyCode ?? 'AED';
 
-            // --- PRICING CARD ---
-            SurfaceCard(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Base Price',
-                          style: theme.textTheme.titleMedium
-                              ?.copyWith(color: Colors.grey[600])),
-                      Text(
-                        '\$${product.price.toStringAsFixed(2)}',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: colorScheme.primary),
-                      ),
-                    ],
-                  ),
-                  const Divider(height: 32),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Billing Unit'),
-                      Chip(
-                          label: Text(product.unitType),
-                          visualDensity: VisualDensity.compact),
-                    ],
-                  ),
-                  if (product.defaultTaxRate != null &&
-                      product.defaultTaxRate! > 0) ...[
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text('Default Tax Rate'),
-                        Text('${product.defaultTaxRate!.toStringAsFixed(1)}%',
-                            style:
-                                const TextStyle(fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // --- DESCRIPTION CARD ---
-            if (product.description != null && product.description!.isNotEmpty)
-              SurfaceCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.notes,
-                            size: 20, color: colorScheme.secondary),
-                        const SizedBox(width: 8),
-                        Text('Description',
-                            style: theme.textTheme.titleMedium
-                                ?.copyWith(fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Text(product.description!,
-                        style:
-                            theme.textTheme.bodyMedium?.copyWith(height: 1.5)),
-                  ],
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // --- HEADER ---
+                CircleAvatar(
+                  radius: 48,
+                  backgroundColor: colorScheme.secondaryContainer,
+                  child: Icon(Icons.inventory_2_rounded,
+                      size: 48, color: colorScheme.onSecondaryContainer),
                 ),
-              ),
-          ],
-        ),
+                const SizedBox(height: AppSpacing.md),
+                Text(
+                  product.name,
+                  style: theme.textTheme.headlineSmall
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+
+                // --- PRICING CARD ---
+                GlobalCard(
+                  padding: const EdgeInsets.all(AppSpacing.lg),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Base Price',
+                              style: theme.textTheme.titleMedium
+                                  ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+                          Text(
+                            AppFormatters.formatCurrency(product.price, currencyCode),
+                            style: theme.textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: colorScheme.primary),
+                          ),
+                        ],
+                      ),
+                      const Divider(height: AppSpacing.xl),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Billing Unit'),
+                          Chip(
+                              label: Text(product.unitType),
+                              visualDensity: VisualDensity.compact),
+                        ],
+                      ),
+                      if (product.defaultTaxRate != null &&
+                          product.defaultTaxRate! > 0) ...[
+                        const SizedBox(height: AppSpacing.md),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Default Tax Rate'),
+                            Text('${product.defaultTaxRate!.toStringAsFixed(1)}%',
+                                style:
+                                    const TextStyle(fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.md),
+
+                // --- DESCRIPTION CARD ---
+                if (product.description != null && product.description!.isNotEmpty)
+                  GlobalCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.notes,
+                                size: 20, color: colorScheme.secondary),
+                            const SizedBox(width: AppSpacing.sm),
+                            Text('Description',
+                                style: theme.textTheme.titleMedium
+                                    ?.copyWith(fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        Text(product.description!,
+                            style:
+                                theme.textTheme.bodyMedium?.copyWith(height: 1.5)),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

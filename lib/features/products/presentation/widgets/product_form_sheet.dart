@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../core/presentation/widgets/primary_button.dart';
+import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/widgets/global_button.dart';
+import '../../../../core/widgets/global_text_field.dart';
 import '../../domain/entities/product.dart';
 
 class ProductFormSheet extends StatefulWidget {
@@ -121,10 +123,10 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
 
     return Padding(
       padding: EdgeInsets.only(
-        left: 24,
-        right: 24,
-        top: 24,
-        bottom: bottomInset + 24,
+        left: AppSpacing.lg,
+        right: AppSpacing.lg,
+        top: AppSpacing.lg,
+        bottom: bottomInset + AppSpacing.lg,
       ),
       child: Form(
         key: _formKey,
@@ -141,41 +143,39 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
                   .titleLarge
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 24),
-            TextFormField(
+            const SizedBox(height: AppSpacing.lg),
+            GlobalTextField(
               controller: _nameController,
               textInputAction: TextInputAction.next,
-              decoration: const InputDecoration(
-                  labelText: 'Item Name *',
-                  prefixIcon: Icon(Icons.inventory_2_outlined)),
+              label: 'Item Name *',
+              prefixIcon: const Icon(Icons.inventory_2_outlined),
               validator: (val) =>
                   val == null || val.trim().isEmpty ? 'Required' : null,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             Row(
               children: [
                 Expanded(
                   flex: 2,
-                  child: TextFormField(
+                  child: GlobalTextField(
                     controller: _priceController,
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
                     textInputAction: TextInputAction.next,
-                    decoration: const InputDecoration(
-                        labelText: 'Base Price *',
-                        prefixIcon: Icon(Icons.attach_money)),
+                    label: 'Base Price *',
+                    prefixIcon: const Icon(Icons.attach_money),
                     validator: (val) =>
                         val == null || val.trim().isEmpty ? 'Required' : null,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: AppSpacing.md),
                 Expanded(
                   flex:
                       1, // Or flex: 2 if you want to give it slightly more room
                   child: DropdownButtonFormField<String>(
                     isExpanded:
                         true, // <--- THE FIX: Prevents RenderFlex overflow
-                    value: _selectedUnit,
+                    initialValue: _selectedUnit,
                     decoration: const InputDecoration(labelText: 'Unit'),
                     items: _unitTypes
                         .map((u) => DropdownMenuItem(
@@ -189,26 +189,24 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            TextFormField(
+            const SizedBox(height: AppSpacing.md),
+            GlobalTextField(
               controller: _taxRateController,
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
               textInputAction: TextInputAction.next,
-              decoration: const InputDecoration(
-                  labelText: 'Default Tax Rate (%)',
-                  prefixIcon: Icon(Icons.percent)),
+              label: 'Default Tax Rate (%)',
+              prefixIcon: const Icon(Icons.percent),
             ),
-            const SizedBox(height: 16),
-            TextFormField(
+            const SizedBox(height: AppSpacing.md),
+            GlobalTextField(
               controller: _descriptionController,
               textInputAction: TextInputAction.done,
               maxLines: 2,
-              decoration:
-                  const InputDecoration(labelText: 'Description (Optional)'),
+              label: 'Description (Optional)',
             ),
-            const SizedBox(height: 32),
-            PrimaryButton(
+            const SizedBox(height: AppSpacing.xl),
+            GlobalButton(
               text: 'Save Item',
               onPressed: _submit,
             ),

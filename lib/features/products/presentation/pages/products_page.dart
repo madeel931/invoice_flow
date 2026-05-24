@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../../config/routes/route_constants.dart';
+import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/utils/formatters.dart';
+import '../../../../core/widgets/global_card.dart';
+import '../../../settings/presentation/cubit/settings_cubit.dart';
 import '../../domain/entities/product.dart';
 import '../cubit/product_list_cubit.dart';
 import '../cubit/product_list_state.dart';
@@ -14,8 +17,15 @@ class ProductsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => GetIt.instance<ProductListCubit>()..loadProducts(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => GetIt.instance<ProductListCubit>()..loadProducts(),
+        ),
+        BlocProvider.value(
+          value: GetIt.instance<SettingsCubit>(),
+        ),
+      ],
       child: const _ProductsListView(),
     );
   }
@@ -49,6 +59,8 @@ class _ProductsListViewState extends State<_ProductsListView> {
 
   @override
   Widget build(BuildContext context) {
+    final currencyCode = context.watch<SettingsCubit>().state.profile?.currencyCode;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Items & Services'),
@@ -56,7 +68,7 @@ class _ProductsListViewState extends State<_ProductsListView> {
           preferredSize: const Size.fromHeight(60),
           child: Padding(
             padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
             child: TextField(
               controller: _searchController,
               onChanged: (val) => context.read<ProductListCubit>().search(val),
@@ -93,8 +105,8 @@ class _ProductsListViewState extends State<_ProductsListView> {
                       color: Theme.of(context)
                           .colorScheme
                           .primary
-                          .withOpacity(0.5)),
-                  const SizedBox(height: 16),
+                          .withValues(alpha: 0.5)),
+                  const SizedBox(height: AppSpacing.md),
                   const Text('No items found.'),
                 ],
               ),
@@ -102,18 +114,14 @@ class _ProductsListViewState extends State<_ProductsListView> {
           }
 
           return ListView.separated(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AppSpacing.md),
             itemCount: state.filteredProducts.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
+            separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
             itemBuilder: (context, index) {
               final product = state.filteredProducts[index];
 
-              return Card(
-                elevation: 0,
-                color: Theme.of(context)
-                    .colorScheme
-                    .surfaceVariant
-                    .withOpacity(0.3),
+              return GlobalCard(
+                padding: EdgeInsets.zero,
                 child: ListTile(
                   leading: CircleAvatar(
                     backgroundColor:
@@ -126,7 +134,7 @@ class _ProductsListViewState extends State<_ProductsListView> {
                   title: Text(product.name,
                       style: const TextStyle(fontWeight: FontWeight.bold)),
                   subtitle: Text(
-                      '\$${product.price.toStringAsFixed(2)} • ${product.unitType}'),
+                      '${AppFormatters.formatCurrency(product.price, currencyCode)} • ${product.unitType}'),
                   trailing: const Icon(Icons.chevron_right_rounded),
 
                   // --- INTERACTION LOGIC ---
@@ -156,6 +164,7 @@ class _ProductsListViewState extends State<_ProductsListView> {
         },
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'product_add_fab',
         onPressed: () => _openProductForm(context),
         child: const Icon(Icons.add),
       ),

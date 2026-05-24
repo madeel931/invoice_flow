@@ -1,4 +1,4 @@
-package com.example.invoice_flow_pro
+package com.adiilabs.invoiceflow
 
 import io.flutter.embedding.android.FlutterActivity
 

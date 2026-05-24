@@ -93,8 +93,8 @@ Future<void> init() async {
       () => SettingsRepositoryImpl(localDb: sl()));
   sl.registerLazySingleton(() => GetBusinessProfileUseCase(sl()));
   sl.registerLazySingleton(() => UpdateBusinessProfileUseCase(sl()));
-  sl.registerFactory(
-      () => SettingsCubit(getProfile: sl(), updateProfile: sl()));
+  sl.registerLazySingleton(
+      () => SettingsCubit(getProfile: sl(), updateProfile: sl())..loadProfile());
 
   // ---------------------------------------------------------------------------
   // FEATURE: CUSTOMERS
@@ -163,7 +163,7 @@ Future<void> init() async {
       () => BackupRepositoryImpl(localDb: sl()));
   sl.registerLazySingleton(() => CreateBackupUseCase(sl()));
   sl.registerLazySingleton(() => RestoreBackupUseCase(sl()));
-  sl.registerFactory(
+  sl.registerLazySingleton(
       () => BackupCubit(createBackup: sl(), restoreBackup: sl()));
 
   sl<Logger>().i('Dependency Injection Initialized successfully.');

@@ -24,8 +24,7 @@ import '../../features/dashboard/presentation/pages/dashboard_page.dart';
 // 1. ADDED: Navigator keys for the shell routing
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
-final GlobalKey<NavigatorState> _shellNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'shell');
+
 
 class AppRouter {
   static final GoRouter router = GoRouter(

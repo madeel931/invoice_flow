@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'config/theme/cubit/theme_cubit.dart';
+import 'core/theme/cubit/theme_cubit.dart';
 import 'core/di/injection_container.dart' as di;
 import 'config/routes/app_router.dart';
-import 'config/theme/app_theme.dart';
+import 'core/theme/app_theme.dart';
 import 'features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'features/invoices/presentation/cubit/invoice_list_cubit.dart';
 

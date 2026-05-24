@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../core/presentation/widgets/primary_button.dart';
+import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/widgets/global_button.dart';
+import '../../../../core/widgets/global_text_field.dart';
 import '../../domain/entities/customer.dart';
 
 class CustomerFormSheet extends StatefulWidget {
@@ -78,10 +80,10 @@ class _CustomerFormSheetState extends State<CustomerFormSheet> {
 
     return Padding(
       padding: EdgeInsets.only(
-        left: 24,
-        right: 24,
-        top: 24,
-        bottom: bottomInset + 24,
+        left: AppSpacing.lg,
+        right: AppSpacing.lg,
+        top: AppSpacing.lg,
+        bottom: bottomInset + AppSpacing.lg,
       ),
       child: Form(
         key: _formKey,
@@ -98,43 +100,41 @@ class _CustomerFormSheetState extends State<CustomerFormSheet> {
                   .titleLarge
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 24),
-            TextFormField(
+            const SizedBox(height: AppSpacing.lg),
+            GlobalTextField(
               controller: _nameController,
               textInputAction: TextInputAction.next,
-              decoration: const InputDecoration(
-                  labelText: 'Client / Company Name *',
-                  prefixIcon: Icon(Icons.person)),
+              label: 'Client / Company Name *',
+              prefixIcon: const Icon(Icons.person),
               validator: (val) =>
                   val == null || val.trim().isEmpty ? 'Name is required' : null,
             ),
-            const SizedBox(height: 16),
-            TextFormField(
+            const SizedBox(height: AppSpacing.md),
+            GlobalTextField(
               controller: _emailController,
               textInputAction: TextInputAction.next,
               keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(
-                  labelText: 'Email Address', prefixIcon: Icon(Icons.email)),
+              label: 'Email Address',
+              prefixIcon: const Icon(Icons.email),
             ),
-            const SizedBox(height: 16),
-            TextFormField(
+            const SizedBox(height: AppSpacing.md),
+            GlobalTextField(
               controller: _phoneController,
               textInputAction: TextInputAction.next,
               keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(
-                  labelText: 'Phone Number', prefixIcon: Icon(Icons.phone)),
+              label: 'Phone Number',
+              prefixIcon: const Icon(Icons.phone),
             ),
-            const SizedBox(height: 16),
-            TextFormField(
+            const SizedBox(height: AppSpacing.md),
+            GlobalTextField(
               controller: _addressController,
               textInputAction: TextInputAction.done,
               maxLines: 2,
-              decoration: const InputDecoration(
-                  labelText: 'Billing Address',
-                  prefixIcon: Icon(Icons.location_city)),
+              label: 'Billing Address',
+              prefixIcon: const Icon(Icons.location_city),
             ),
-            const SizedBox(height: 32),
-            PrimaryButton(
+            const SizedBox(height: AppSpacing.xl),
+            GlobalButton(
               text: 'Save Customer',
               onPressed: _submit,
             ),

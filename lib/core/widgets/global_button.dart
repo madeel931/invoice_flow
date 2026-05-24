@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 
-class PrimaryButton extends StatelessWidget {
+class GlobalButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
   final bool isLoading;
   final IconData? icon;
+  final bool isSecondary;
 
-  const PrimaryButton({
+  const GlobalButton({
     super.key,
     required this.text,
     required this.onPressed,
     this.isLoading = false,
     this.icon,
+    this.isSecondary = false,
   });
 
   @override

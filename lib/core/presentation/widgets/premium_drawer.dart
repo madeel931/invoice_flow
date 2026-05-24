@@ -8,7 +8,7 @@ import '../../../config/routes/route_constants.dart';
 import '../../../features/settings/presentation/cubit/settings_cubit.dart';
 import '../../../features/settings/presentation/cubit/settings_state.dart';
 import '../../utils/app_directories.dart';
-import '../../../config/theme/cubit/theme_cubit.dart';
+import '../../theme/cubit/theme_cubit.dart';
 
 class PremiumDrawer extends StatelessWidget {
   const PremiumDrawer({super.key});
@@ -33,7 +33,7 @@ class PremiumDrawer extends StatelessWidget {
                     color: Theme.of(context)
                         .colorScheme
                         .primaryContainer
-                        .withOpacity(0.4),
+                        .withValues(alpha: 0.4),
                   ),
                   child: SizedBox(
                     width: double.infinity,
@@ -199,7 +199,7 @@ class _DrawerItem extends StatelessWidget {
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       onTap: onTap,
-      hoverColor: Theme.of(context).colorScheme.primary.withOpacity(0.05),
+      hoverColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.05),
     );
   }
 }

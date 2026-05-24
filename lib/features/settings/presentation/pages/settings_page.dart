@@ -7,8 +7,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../../../core/presentation/widgets/primary_button.dart';
-import '../../../../core/presentation/widgets/surface_card.dart';
+import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/global_button.dart';
+import '../../../../core/widgets/global_card.dart';
+import '../../../../core/widgets/global_text_field.dart';
 import '../../../../core/utils/app_directories.dart';
 import '../../domain/entities/business_profile.dart';
 import '../cubit/settings_cubit.dart';
@@ -23,9 +26,9 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-            create: (_) => GetIt.instance<SettingsCubit>()..loadProfile()),
-        BlocProvider(create: (_) => GetIt.instance<BackupCubit>()),
+        BlocProvider.value(
+            value: GetIt.instance<SettingsCubit>()),
+        BlocProvider.value(value: GetIt.instance<BackupCubit>()),
       ],
       child: const _SettingsView(),
     );
@@ -148,11 +151,11 @@ class _SettingsViewState extends State<_SettingsView> {
               if (state.status == SettingsStatus.error) {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text(state.errorMessage!),
-                    backgroundColor: Colors.red));
+                    backgroundColor: AppColors.error));
               } else if (state.status == SettingsStatus.success) {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text('Settings saved!'),
-                    backgroundColor: Colors.green));
+                    backgroundColor: AppColors.success));
               }
             },
           ),
@@ -161,7 +164,7 @@ class _SettingsViewState extends State<_SettingsView> {
               if (state.status == BackupStatus.error) {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text(state.errorMessage!),
-                    backgroundColor: Colors.red));
+                    backgroundColor: AppColors.error));
               } else if (state.status == BackupStatus.success &&
                   state.backupFilePath != null) {
                 final xFile = XFile(state.backupFilePath!);
@@ -173,7 +176,7 @@ class _SettingsViewState extends State<_SettingsView> {
                   barrierDismissible: false,
                   builder: (_) => AlertDialog(
                     title: const Text('Restore Complete!',
-                        style: TextStyle(color: Colors.green)),
+                        style: TextStyle(color: AppColors.success)),
                     content: const Text(
                         'Your data has been successfully restored.\n\n'
                         'To prevent data corruption, you MUST force close (swipe away) '
@@ -200,7 +203,7 @@ class _SettingsViewState extends State<_SettingsView> {
             if (state.profile != null) _populateForm(state.profile!);
 
             return SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(AppSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -209,7 +212,7 @@ class _SettingsViewState extends State<_SettingsView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        SurfaceCard(
+                        GlobalCard(
                           child: Column(
                             children: [
                               GestureDetector(
@@ -224,7 +227,7 @@ class _SettingsViewState extends State<_SettingsView> {
                                       backgroundColor: Theme.of(context)
                                           .colorScheme
                                           .primary
-                                          .withOpacity(0.1),
+                                          .withValues(alpha: 0.1),
                                       backgroundImage: state
                                                   .profile?.logoPath !=
                                               null
@@ -248,7 +251,7 @@ class _SettingsViewState extends State<_SettingsView> {
                                         height: 100,
                                         width: 100,
                                         decoration: BoxDecoration(
-                                          color: Colors.black.withOpacity(0.3),
+                                          color: Colors.black.withValues(alpha: 0.3),
                                           shape: BoxShape.circle,
                                         ),
                                         child: const Center(
@@ -259,38 +262,36 @@ class _SettingsViewState extends State<_SettingsView> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(height: 12),
-                              const Text('Tap to upload logo',
-                                  style: TextStyle(color: Colors.grey)),
+                              const SizedBox(height: AppSpacing.md),
+                              Text('Tap to upload logo',
+                                  style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                             ],
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: AppSpacing.md),
                         Text('Business Details',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
                                 ?.copyWith(fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 8),
-                        SurfaceCard(
+                        const SizedBox(height: AppSpacing.sm),
+                        GlobalCard(
                           child: Column(
                             children: [
-                              TextFormField(
+                              GlobalTextField(
                                   controller: _nameController,
-                                  decoration: const InputDecoration(
-                                      labelText: 'Business Name',
-                                      prefixIcon: Icon(Icons.storefront)),
+                                  label: 'Business Name',
+                                  prefixIcon: const Icon(Icons.storefront),
                                   validator: (val) =>
                                       val!.isEmpty ? 'Required' : null),
-                              const SizedBox(height: 16),
-                              TextFormField(
+                              const SizedBox(height: AppSpacing.md),
+                              GlobalTextField(
                                   controller: _taxIdController,
-                                  decoration: const InputDecoration(
-                                      labelText: 'Tax ID / VAT Number',
-                                      prefixIcon: Icon(Icons.receipt_long))),
-                              const SizedBox(height: 16),
+                                  label: 'Tax ID / VAT Number',
+                                  prefixIcon: const Icon(Icons.receipt_long)),
+                              const SizedBox(height: AppSpacing.md),
                               DropdownButtonFormField<String>(
-                                value: _selectedCurrency,
+                                initialValue: _selectedCurrency,
                                 decoration: const InputDecoration(
                                     labelText: 'Base Currency',
                                     prefixIcon: Icon(Icons.payments)),
@@ -304,60 +305,56 @@ class _SettingsViewState extends State<_SettingsView> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: AppSpacing.md),
                         Text('Contact Information',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
                                 ?.copyWith(fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 8),
-                        SurfaceCard(
+                        const SizedBox(height: AppSpacing.sm),
+                        GlobalCard(
                           child: Column(
                             children: [
-                              TextFormField(
+                              GlobalTextField(
                                   controller: _emailController,
-                                  decoration: const InputDecoration(
-                                      labelText: 'Email Address',
-                                      prefixIcon: Icon(Icons.email_outlined))),
-                              const SizedBox(height: 16),
-                              TextFormField(
+                                  label: 'Email Address',
+                                  prefixIcon: const Icon(Icons.email_outlined)),
+                              const SizedBox(height: AppSpacing.md),
+                              GlobalTextField(
                                   controller: _phoneController,
-                                  decoration: const InputDecoration(
-                                      labelText: 'Phone Number',
-                                      prefixIcon: Icon(Icons.phone_outlined))),
-                              const SizedBox(height: 16),
-                              TextFormField(
+                                  label: 'Phone Number',
+                                  prefixIcon: const Icon(Icons.phone_outlined)),
+                              const SizedBox(height: AppSpacing.md),
+                              GlobalTextField(
                                   controller: _websiteController,
-                                  decoration: const InputDecoration(
-                                      labelText: 'Website',
-                                      prefixIcon:
-                                          Icon(Icons.language_outlined))),
-                              const SizedBox(height: 16),
-                              TextFormField(
+                                  label: 'Website',
+                                  prefixIcon:
+                                      const Icon(Icons.language_outlined)),
+                              const SizedBox(height: AppSpacing.md),
+                              GlobalTextField(
                                   controller: _addressController,
-                                  decoration: const InputDecoration(
-                                      labelText: 'Registered Address',
-                                      prefixIcon: Icon(Icons.location_on)),
+                                  label: 'Registered Address',
+                                  prefixIcon: const Icon(Icons.location_on),
                                   maxLines: 3),
                             ],
                           ),
                         ),
-                        const SizedBox(height: 24),
-                        PrimaryButton(
+                        const SizedBox(height: AppSpacing.lg),
+                        GlobalButton(
                             text: 'Save Profile',
                             isLoading: state.status == SettingsStatus.saving,
                             onPressed: () => _saveProfile(state.profile!)),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: AppSpacing.xl),
                   Text('Data Management',
                       style: Theme.of(context)
                           .textTheme
                           .titleMedium
                           ?.copyWith(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 16),
-                  SurfaceCard(
+                  const SizedBox(height: AppSpacing.md),
+                  GlobalCard(
                     padding: EdgeInsets.zero,
                     child: Column(
                       children: [
@@ -396,7 +393,7 @@ class _SettingsViewState extends State<_SettingsView> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 48),
+                  const SizedBox(height: AppSpacing.xxl),
                 ],
               ),
             );

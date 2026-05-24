@@ -5,6 +5,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import '../../../../core/utils/app_directories.dart';
+import '../../../../core/utils/formatters.dart';
 import '../../settings/domain/entities/business_profile.dart';
 import '../domain/entities/invoice.dart';
 
@@ -28,8 +29,6 @@ class InvoicePdfGenerator {
     final pdf = pw.Document();
 
     // 3. Currency Formatter
-    final formatCurrency =
-        NumberFormat.simpleCurrency(name: profile.currencyCode);
     final dateFormat = DateFormat('MMM dd, yyyy');
 
     // 4. Load Logo if it exists
@@ -135,9 +134,9 @@ class InvoicePdfGenerator {
                   .map((item) => [
                         item.description,
                         item.quantity.toStringAsFixed(2),
-                        formatCurrency.format(item.unitPrice),
+                        AppFormatters.formatCurrency(item.unitPrice, profile.currencyCode),
                         '${item.taxRate.toStringAsFixed(1)}%',
-                        formatCurrency.format(item.total),
+                        AppFormatters.formatCurrency(item.total, profile.currencyCode),
                       ])
                   .toList(),
               border: null,
@@ -174,7 +173,7 @@ class InvoicePdfGenerator {
                             pw.Text('Subtotal:',
                                 style: const pw.TextStyle(
                                     color: PdfColors.grey700)),
-                            pw.Text(formatCurrency.format(invoice.subtotal)),
+                            pw.Text(AppFormatters.formatCurrency(invoice.subtotal, profile.currencyCode)),
                           ],
                         ),
                         pw.SizedBox(height: 4),
@@ -185,7 +184,7 @@ class InvoicePdfGenerator {
                                 style: const pw.TextStyle(
                                     color: PdfColors.grey700)),
                             pw.Text(
-                                '+ ${formatCurrency.format(invoice.totalTax)}'),
+                                '+ ${AppFormatters.formatCurrency(invoice.totalTax, profile.currencyCode)}'),
                           ],
                         ),
                         if (invoice.discountAmount > 0) ...[
@@ -198,7 +197,7 @@ class InvoicePdfGenerator {
                                   style: const pw.TextStyle(
                                       color: PdfColors.red700)),
                               pw.Text(
-                                  '- ${formatCurrency.format(invoice.discountAmount)}',
+                                  '- ${AppFormatters.formatCurrency(invoice.discountAmount, profile.currencyCode)}',
                                   style: const pw.TextStyle(
                                       color: PdfColors.red700)),
                             ],
@@ -212,7 +211,7 @@ class InvoicePdfGenerator {
                                 style: pw.TextStyle(
                                     fontWeight: pw.FontWeight.bold,
                                     fontSize: 14)),
-                            pw.Text(formatCurrency.format(invoice.totalAmount),
+                            pw.Text(AppFormatters.formatCurrency(invoice.totalAmount, profile.currencyCode),
                                 style: pw.TextStyle(
                                     fontWeight: pw.FontWeight.bold,
                                     fontSize: 16,

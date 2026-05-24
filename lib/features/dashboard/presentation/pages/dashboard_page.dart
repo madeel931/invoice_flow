@@ -11,6 +11,7 @@ import '../../../../core/presentation/widgets/premium_drawer.dart';
 import '../../../../core/utils/app_directories.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../invoices/presentation/cubit/invoice_list_cubit.dart';
+import '../../../invoices/presentation/cubit/invoice_list_state.dart';
 import '../../../settings/presentation/cubit/settings_cubit.dart';
 import '../../../settings/presentation/cubit/settings_state.dart';
 import '../cubit/dashboard_cubit.dart';
@@ -22,7 +23,16 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const _DashboardView();
+    return BlocListener<InvoiceListCubit, InvoiceListState>(
+      listenWhen: (previous, current) {
+        // Trigger dashboard reload if the invoice list changes (e.g. status update, add, delete)
+        return previous.allInvoices != current.allInvoices;
+      },
+      listener: (context, state) {
+        context.read<DashboardCubit>().loadDashboard();
+      },
+      child: const _DashboardView(),
+    );
   }
 }
 

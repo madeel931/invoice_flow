@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
@@ -26,6 +27,13 @@ class CustomerDetailPage extends StatelessWidget {
     } catch (_) {
       return 0; // Fail gracefully
     }
+  }
+
+  void _copyToClipboard(BuildContext context, String text, String label) {
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('$label copied to clipboard')),
+    );
   }
 
   Future<void> _showDeleteConfirmation(BuildContext context) async {
@@ -153,6 +161,12 @@ class CustomerDetailPage extends StatelessWidget {
                           color: colorScheme.secondary),
                       title: const Text('Email Address'),
                       subtitle: Text(customer.email!),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.copy_rounded, size: 20),
+                        tooltip: 'Copy Email',
+                        onPressed: () => _copyToClipboard(context, customer.email!, 'Email'),
+                      ),
+                      onTap: () => _copyToClipboard(context, customer.email!, 'Email'),
                     ),
                     if (customer.phone != null && customer.phone!.isNotEmpty)
                       const Divider(height: 1),
@@ -163,6 +177,12 @@ class CustomerDetailPage extends StatelessWidget {
                           color: colorScheme.secondary),
                       title: const Text('Phone Number'),
                       subtitle: Text(customer.phone!),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.copy_rounded, size: 20),
+                        tooltip: 'Copy Phone',
+                        onPressed: () => _copyToClipboard(context, customer.phone!, 'Phone'),
+                      ),
+                      onTap: () => _copyToClipboard(context, customer.phone!, 'Phone'),
                     ),
                     if (customer.billingAddress != null &&
                         customer.billingAddress!.isNotEmpty)

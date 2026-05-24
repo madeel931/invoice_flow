@@ -4,6 +4,7 @@ import 'package:path/path.dart' as p;
 
 import '../../../../core/usecases/usecase.dart';
 import '../../../../core/utils/app_directories.dart';
+import '../../../../core/utils/image_compressor.dart';
 import '../../domain/entities/business_profile.dart';
 import '../../domain/usecases/get_business_profile_usecase.dart';
 import '../../domain/usecases/update_business_profile_usecase.dart';
@@ -38,18 +39,31 @@ class SettingsCubit extends Cubit<SettingsState> {
   Future<void> pickAndSaveLogo(String tempPath) async {
     if (state.profile == null) return;
 
+    // ADDED: Show loading state while compressing
+    emit(state.copyWith(status: SettingsStatus.saving));
+
     try {
-      // Create a unique filename
-      final fileName =
-          '${DateTime.now().millisecondsSinceEpoch}_${p.basename(tempPath)}';
+      final originalFile = File(tempPath);
+
+      // ADDED: Compress the image optimally for PDF
+      final compressedFile =
+          await ImageCompressor.compressForLogo(originalFile);
+      final fileToProcess =
+          compressedFile ?? originalFile; // Fallback if compression fails
+
+      // Create a unique filename (Forcing .jpg since we compress to JPEG)
+      final fileName = 'logo_${DateTime.now().millisecondsSinceEpoch}.jpg';
       final localPath = AppDirectories.constructImagePath(fileName);
 
       // Copy image from temp cache to persistent document directory
-      await File(tempPath).copy(localPath);
+      await fileToProcess.copy(localPath);
 
       // Update in-memory state with JUST the filename (Update-safe for iOS)
       final updatedProfile = state.profile!.copyWith(logoPath: fileName);
-      emit(state.copyWith(profile: updatedProfile));
+
+      // Return to loaded state with the new logo attached
+      emit(state.copyWith(
+          status: SettingsStatus.loaded, profile: updatedProfile));
     } catch (e) {
       emit(state.copyWith(
         status: SettingsStatus.error,
@@ -61,6 +75,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   Future<void> saveSettings(BusinessProfile updatedProfile) async {
     emit(state.copyWith(status: SettingsStatus.saving));
 
+    // Kept your exact params wrapper
     final result = await updateProfile(
         UpdateBusinessProfileParams(profile: updatedProfile));
 

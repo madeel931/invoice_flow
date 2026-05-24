@@ -1,0 +1,196 @@
+import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/presentation/widgets/surface_card.dart';
+import '../../../../core/usecases/usecase.dart';
+import '../../../invoices/domain/usecases/get_invoices_usecase.dart';
+import '../../domain/entities/customer.dart';
+
+class CustomerDetailPage extends StatelessWidget {
+  final Customer customer;
+
+  const CustomerDetailPage({super.key, required this.customer});
+
+  // Dynamically fetch how many invoices this customer has
+  Future<int> _getInvoiceCount() async {
+    try {
+      final getInvoices = GetIt.instance<GetInvoicesUseCase>();
+      final result = await getInvoices(NoParams());
+      return result.fold(
+        (failure) => 0,
+        (invoices) =>
+            invoices.where((inv) => inv.customerName == customer.name).length,
+      );
+    } catch (_) {
+      return 0; // Fail gracefully
+    }
+  }
+
+  Future<void> _showDeleteConfirmation(BuildContext context) async {
+    final bool? confirm = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Customer?'),
+          content: Text(
+              'Are you sure you want to delete ${customer.name}? This action cannot be undone.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton.icon(
+              style: FilledButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.error),
+              onPressed: () => Navigator.of(context).pop(true),
+              icon: const Icon(Icons.delete_outline, size: 18),
+              label: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm == true && context.mounted) {
+      context.pop('delete'); // Return the delete intent to the list page
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Customer Details'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit_outlined),
+            tooltip: 'Edit Customer',
+            onPressed: () =>
+                context.pop('edit'), // Return the edit intent to the list page
+          ),
+          IconButton(
+            icon: Icon(Icons.delete_outline, color: colorScheme.error),
+            tooltip: 'Delete Customer',
+            onPressed: () => _showDeleteConfirmation(context),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // --- HEADER AVATAR ---
+            CircleAvatar(
+              radius: 48,
+              backgroundColor: colorScheme.primaryContainer,
+              child: Text(
+                customer.name.isNotEmpty ? customer.name[0].toUpperCase() : '?',
+                style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onPrimaryContainer),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              customer.name,
+              style: theme.textTheme.headlineSmall
+                  ?.copyWith(fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+
+            // --- INVOICE COUNT METRIC ---
+            FutureBuilder<int>(
+              future: _getInvoiceCount(),
+              builder: (context, snapshot) {
+                final count = snapshot.data ?? 0;
+                final isLoading =
+                    snapshot.connectionState == ConnectionState.waiting;
+
+                return SurfaceCard(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.receipt_long_rounded,
+                            color: colorScheme.primary),
+                        const SizedBox(width: 12),
+                        isLoading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2))
+                            : Text(
+                                '$count Total Invoices',
+                                style: theme.textTheme.titleMedium
+                                    ?.copyWith(fontWeight: FontWeight.w600),
+                              ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // --- CONTACT DETAILS ---
+            SurfaceCard(
+              padding: EdgeInsets.zero,
+              child: Column(
+                children: [
+                  if (customer.email != null && customer.email!.isNotEmpty) ...[
+                    ListTile(
+                      leading: Icon(Icons.email_outlined,
+                          color: colorScheme.secondary),
+                      title: const Text('Email Address'),
+                      subtitle: Text(customer.email!),
+                    ),
+                    if (customer.phone != null && customer.phone!.isNotEmpty)
+                      const Divider(height: 1),
+                  ],
+                  if (customer.phone != null && customer.phone!.isNotEmpty) ...[
+                    ListTile(
+                      leading: Icon(Icons.phone_outlined,
+                          color: colorScheme.secondary),
+                      title: const Text('Phone Number'),
+                      subtitle: Text(customer.phone!),
+                    ),
+                    if (customer.billingAddress != null &&
+                        customer.billingAddress!.isNotEmpty)
+                      const Divider(height: 1),
+                  ],
+                  // FIX: Using billingAddress exactly as defined in your entity
+                  if (customer.billingAddress != null &&
+                      customer.billingAddress!.isNotEmpty)
+                    ListTile(
+                      leading: Icon(Icons.location_on_outlined,
+                          color: colorScheme.secondary),
+                      title: const Text('Billing Address'),
+                      subtitle: Text(customer.billingAddress!),
+                    ),
+                  // If all are empty, show a placeholder
+                  if ((customer.email == null || customer.email!.isEmpty) &&
+                      (customer.phone == null || customer.phone!.isEmpty) &&
+                      (customer.billingAddress == null ||
+                          customer.billingAddress!.isEmpty))
+                    const ListTile(
+                      leading: Icon(Icons.info_outline, color: Colors.grey),
+                      title: Text('No contact information provided.'),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -67,8 +67,6 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
         _selectedUnit = widget.existingProduct!.unitType;
       } else {
         _selectedUnit = 'Custom';
-        // In a full implementation, you'd reveal a custom text field here.
-        // We'll keep it simple for the base dropdown.
       }
     }
   }
@@ -172,12 +170,19 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  flex: 1,
+                  flex:
+                      1, // Or flex: 2 if you want to give it slightly more room
                   child: DropdownButtonFormField<String>(
+                    isExpanded:
+                        true, // <--- THE FIX: Prevents RenderFlex overflow
                     value: _selectedUnit,
                     decoration: const InputDecoration(labelText: 'Unit'),
                     items: _unitTypes
-                        .map((u) => DropdownMenuItem(value: u, child: Text(u)))
+                        .map((u) => DropdownMenuItem(
+                              value: u,
+                              // Added TextOverflow.ellipsis to handle long words gracefully
+                              child: Text(u, overflow: TextOverflow.ellipsis),
+                            ))
                         .toList(),
                     onChanged: (val) => setState(() => _selectedUnit = val!),
                   ),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../../../core/presentation/widgets/surface_card.dart';
+import '../../../../config/routes/route_constants.dart';
 import '../../domain/entities/product.dart';
 import '../cubit/product_list_cubit.dart';
 import '../cubit/product_list_state.dart';
@@ -15,19 +16,19 @@ class ProductsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => GetIt.instance<ProductListCubit>()..loadProducts(),
-      child: const _ProductsView(),
+      child: const _ProductsListView(),
     );
   }
 }
 
-class _ProductsView extends StatefulWidget {
-  const _ProductsView();
+class _ProductsListView extends StatefulWidget {
+  const _ProductsListView();
 
   @override
-  State<_ProductsView> createState() => _ProductsViewState();
+  State<_ProductsListView> createState() => _ProductsListViewState();
 }
 
-class _ProductsViewState extends State<_ProductsView> {
+class _ProductsListViewState extends State<_ProductsListView> {
   final _searchController = TextEditingController();
 
   @override
@@ -36,9 +37,12 @@ class _ProductsViewState extends State<_ProductsView> {
     super.dispose();
   }
 
-  Future<void> _showProductForm([Product? product]) async {
+  // Uses your exact static show() method
+  Future<void> _openProductForm(BuildContext context,
+      {Product? product}) async {
     final result = await ProductFormSheet.show(context, product: product);
-    if (result != null && mounted) {
+
+    if (result != null && context.mounted) {
       context.read<ProductListCubit>().saveProduct(result);
     }
   }
@@ -47,16 +51,17 @@ class _ProductsViewState extends State<_ProductsView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Products & Services'),
+        title: const Text('Items & Services'),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(70),
+          preferredSize: const Size.fromHeight(60),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: TextField(
               controller: _searchController,
               onChanged: (val) => context.read<ProductListCubit>().search(val),
               decoration: InputDecoration(
-                hintText: 'Search inventory...',
+                hintText: 'Search items...',
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
@@ -72,22 +77,13 @@ class _ProductsViewState extends State<_ProductsView> {
           ),
         ),
       ),
-      body: BlocConsumer<ProductListCubit, ProductListState>(
-        listener: (context, state) {
-          if (state.errorMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text(state.errorMessage!),
-                  backgroundColor: Theme.of(context).colorScheme.error),
-            );
-          }
-        },
+      body: BlocBuilder<ProductListCubit, ProductListState>(
         builder: (context, state) {
           if (state.status == ProductListStatus.loading) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (state.allProducts.isEmpty) {
+          if (state.filteredProducts.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -99,65 +95,69 @@ class _ProductsViewState extends State<_ProductsView> {
                           .primary
                           .withOpacity(0.5)),
                   const SizedBox(height: 16),
-                  Text('Your catalog is empty.',
-                      style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: 8),
-                  const Text('Add items or services to speed up invoicing.'),
+                  const Text('No items found.'),
                 ],
               ),
             );
           }
 
-          if (state.filteredProducts.isEmpty) {
-            return const Center(child: Text('No matching items found.'));
-          }
-
           return ListView.separated(
             padding: const EdgeInsets.all(16),
             itemCount: state.filteredProducts.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
+            separatorBuilder: (_, __) => const SizedBox(height: 8),
             itemBuilder: (context, index) {
               final product = state.filteredProducts[index];
-              return SurfaceCard(
-                padding: EdgeInsets.zero,
+
+              return Card(
+                elevation: 0,
+                color: Theme.of(context)
+                    .colorScheme
+                    .surfaceVariant
+                    .withOpacity(0.3),
                 child: ListTile(
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  leading: CircleAvatar(
+                    backgroundColor:
+                        Theme.of(context).colorScheme.secondaryContainer,
+                    child: Icon(Icons.sell_outlined,
+                        color:
+                            Theme.of(context).colorScheme.onSecondaryContainer,
+                        size: 20),
+                  ),
                   title: Text(product.name,
                       style: const TextStyle(fontWeight: FontWeight.bold)),
-                  // We do not hardcode the currency symbol here since the user's currency is in Settings.
-                  // For the catalog, raw formatted numbers are sufficient. Currency is appended during invoice generation.
                   subtitle: Text(
-                    '${product.price.toStringAsFixed(2)} / ${product.unitType}'
-                    '${product.defaultTaxRate != null ? '  •  ${product.defaultTaxRate}% Tax' : ''}',
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit_outlined, size: 20),
-                        onPressed: () => _showProductForm(product),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete_outline,
-                            size: 20,
-                            color: Theme.of(context).colorScheme.error),
-                        onPressed: () => context
-                            .read<ProductListCubit>()
-                            .removeProduct(product.id!),
-                      ),
-                    ],
-                  ),
+                      '\$${product.price.toStringAsFixed(2)} • ${product.unitType}'),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+
+                  // --- INTERACTION LOGIC ---
+                  onTap: () async {
+                    final intent = await context.push(AppRoutes.productDetail,
+                        extra: product);
+
+                    if (!context.mounted) return;
+
+                    if (intent == 'delete') {
+                      // Uses your exact removeProduct(int id) method
+                      context
+                          .read<ProductListCubit>()
+                          .removeProduct(product.id!);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Item deleted successfully.')),
+                      );
+                    } else if (intent == 'edit') {
+                      _openProductForm(context, product: product);
+                    }
+                  },
                 ),
               );
             },
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showProductForm(),
-        icon: const Icon(Icons.add),
-        label: const Text('Add Item'),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _openProductForm(context),
+        child: const Icon(Icons.add),
       ),
     );
   }

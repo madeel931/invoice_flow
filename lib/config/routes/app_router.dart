@@ -5,22 +5,35 @@ import 'package:invoice_flow_pro/features/customers/presentation/pages/customers
 import 'package:invoice_flow_pro/features/settings/presentation/pages/settings_page.dart';
 
 import '../../core/data/local/local_database_service.dart';
+import '../../core/presentation/widgets/main_shell_page.dart';
+import '../../features/customers/domain/entities/customer.dart';
+import '../../features/customers/presentation/pages/customer_detail_page.dart';
 import '../../features/invoices/domain/entities/invoice.dart';
+import '../../features/invoices/presentation/pages/invoice_detail_page.dart';
 import '../../features/invoices/presentation/pages/invoice_form_page.dart';
 import '../../features/invoices/presentation/pages/invoice_preview_page.dart';
 import '../../features/invoices/presentation/pages/invoices_list_page.dart';
+import '../../features/products/domain/entities/product.dart';
+import '../../features/products/presentation/pages/product_detail_page.dart';
 import '../../features/products/presentation/pages/products_page.dart';
 import 'route_constants.dart';
 import '../../features/splash/presentation/pages/splash_page.dart';
 import '../../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../../features/dashboard/presentation/pages/dashboard_page.dart';
 
+// 1. ADDED: Navigator keys for the shell routing
+final GlobalKey<NavigatorState> _rootNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'root');
+final GlobalKey<NavigatorState> _shellNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'shell');
+
 class AppRouter {
   static final GoRouter router = GoRouter(
+    navigatorKey: _rootNavigatorKey, // ADDED: Attach root key
     initialLocation: AppRoutes.splash,
     debugLogDiagnostics: true,
 
-    // Navigation Guard
+    // Navigation Guard (Kept exactly as you wrote it)
     redirect: (BuildContext context, GoRouterState state) async {
       final dbService = GetIt.instance<LocalDatabaseService>();
       final metadata = await dbService.getAppMetadata();
@@ -47,54 +60,111 @@ class AppRouter {
     },
 
     routes: [
+      // --- NON-SHELL ROUTES (Full Screen Pages) ---
       GoRoute(
         path: AppRoutes.splash,
         name: 'splash',
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const SplashPage(),
       ),
       GoRoute(
         path: AppRoutes.onboarding,
         name: 'onboarding',
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const OnboardingPage(),
-      ),
-      GoRoute(
-        path: AppRoutes.dashboard,
-        name: 'dashboard',
-        builder: (context, state) => const DashboardPage(),
       ),
       GoRoute(
         path: AppRoutes.settings,
         name: 'settings',
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const SettingsPage(),
-      ),
-      GoRoute(
-        path: AppRoutes.customers,
-        name: 'customers',
-        builder: (context, state) => const CustomersPage(),
-      ),
-      GoRoute(
-        path: AppRoutes.products,
-        name: 'products',
-        builder: (context, state) => const ProductsPage(),
       ),
       GoRoute(
         path: AppRoutes.invoiceForm,
         name: 'invoice-form',
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const InvoiceFormPage(),
-      ),
-      GoRoute(
-        path: AppRoutes.invoicesList,
-        name: 'invoices-list',
-        builder: (context, state) => const InvoicesListPage(),
       ),
       GoRoute(
         path: AppRoutes.invoicePreview,
         name: 'invoice-preview',
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
-          // Pass the invoice entity strongly typed through go_router's extra parameter
           final invoice = state.extra as Invoice;
           return InvoicePreviewPage(invoice: invoice);
         },
+      ),
+      GoRoute(
+        path: AppRoutes.customerDetail,
+        name: 'customer-detail',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final customer = state.extra as Customer;
+          return CustomerDetailPage(customer: customer);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.productDetail,
+        name: 'product-detail',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final product = state.extra as Product;
+          return ProductDetailPage(product: product);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.invoiceDetail,
+        name: 'invoice-detail',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final invoice = state.extra as Invoice;
+          return InvoiceDetailPage(invoice: invoice);
+        },
+      ),
+
+      // --- SHELL ROUTE (Bottom Nav + Drawer Pages) ---
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return MainShellPage(navigationShell: navigationShell);
+        },
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.dashboard,
+                name: 'dashboard',
+                builder: (context, state) => const DashboardPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.invoicesList,
+                name: 'invoices-list',
+                builder: (context, state) => const InvoicesListPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.customers,
+                name: 'customers',
+                builder: (context, state) => const CustomersPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.products,
+                name: 'products',
+                builder: (context, state) => const ProductsPage(),
+              ),
+            ],
+          ),
+        ],
       ),
     ],
 

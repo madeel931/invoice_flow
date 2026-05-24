@@ -155,10 +155,8 @@ Future<void> init() async {
   sl.registerLazySingleton<AnalyticsRepository>(
       () => AnalyticsRepositoryImpl(localDb: sl()));
   sl.registerLazySingleton(() => GetDashboardMetricsUseCase(sl()));
-  sl.registerFactory(() => DashboardCubit(
-        getMetrics: sl(),
-        getProfile: sl(),
-      ));
+  sl.registerFactory(() =>
+      DashboardCubit(getMetrics: sl(), getProfile: sl(), getInvoices: sl()));
 
   // Backup System
   sl.registerLazySingleton<BackupRepository>(

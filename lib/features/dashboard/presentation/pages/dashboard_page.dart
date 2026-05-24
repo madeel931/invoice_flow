@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -6,6 +7,9 @@ import 'package:intl/intl.dart';
 
 import '../../../../config/routes/route_constants.dart';
 import '../../../../core/presentation/widgets/surface_card.dart';
+import '../../../../core/presentation/widgets/premium_drawer.dart';
+import '../../../../core/utils/app_directories.dart';
+import '../../../invoices/presentation/cubit/invoice_list_cubit.dart';
 import '../cubit/dashboard_cubit.dart';
 import '../cubit/dashboard_state.dart';
 import '../widgets/metric_card.dart';
@@ -15,17 +19,13 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => GetIt.instance<DashboardCubit>()..loadDashboard(),
-      child: const _DashboardView(),
-    );
+    return const _DashboardView();
   }
 }
 
 class _DashboardView extends StatelessWidget {
   const _DashboardView();
 
-  /// Formats the raw double into a beautiful localized currency string
   String _formatCurrency(double amount, String currencyCode) {
     final format = NumberFormat.simpleCurrency(name: currencyCode);
     return format.format(amount);
@@ -34,7 +34,33 @@ class _DashboardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const PremiumDrawer(),
       appBar: AppBar(
+        // REPLACE HAMBURGER WITH LOGO
+        leading: BlocBuilder<DashboardCubit, DashboardState>(
+          builder: (context, state) {
+            final hasLogo = state.profile?.logoPath != null;
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                onTap: () => Scaffold.of(context).openDrawer(),
+                child: CircleAvatar(
+                  backgroundColor:
+                      Theme.of(context).colorScheme.primaryContainer,
+                  backgroundImage: hasLogo
+                      ? FileImage(File(AppDirectories.constructImagePath(
+                          state.profile!.logoPath!)))
+                      : null,
+                  child: !hasLogo
+                      ? Icon(Icons.storefront_rounded,
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer)
+                      : null,
+                ),
+              ),
+            );
+          },
+        ),
         title: BlocBuilder<DashboardCubit, DashboardState>(
           builder: (context, state) {
             final name = state.profile?.businessName ?? 'Dashboard';
@@ -42,16 +68,6 @@ class _DashboardView extends StatelessWidget {
                 style: const TextStyle(fontWeight: FontWeight.bold));
           },
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings_rounded),
-            onPressed: () => context.push(AppRoutes.settings).then((_) {
-              // Refresh in case they changed their currency in settings
-              if (context.mounted)
-                context.read<DashboardCubit>().loadDashboard();
-            }),
-          ),
-        ],
       ),
       body: BlocBuilder<DashboardCubit, DashboardState>(
         builder: (context, state) {
@@ -78,20 +94,14 @@ class _DashboardView extends StatelessWidget {
                   title: 'Total Revenue',
                   amount: _formatCurrency(metrics.totalRevenue, currency),
                   icon: Icons.account_balance_wallet_rounded,
-                  gradientColors: const [
-                    Color(0xFF2563EB),
-                    Color(0xFF1D4ED8)
-                  ], // Primary Fintech Blue
+                  gradientColors: const [Color(0xFF2563EB), Color(0xFF1D4ED8)],
                 ),
                 const SizedBox(height: 16),
                 MetricCard(
                   title: 'Outstanding Balance',
                   amount: _formatCurrency(metrics.outstandingBalance, currency),
                   icon: Icons.hourglass_empty_rounded,
-                  gradientColors: const [
-                    Color(0xFFF59E0B),
-                    Color(0xFFD97706)
-                  ], // Warning Amber
+                  gradientColors: const [Color(0xFFF59E0B), Color(0xFFD97706)],
                 ),
                 const SizedBox(height: 24),
 
@@ -108,7 +118,7 @@ class _DashboardView extends StatelessWidget {
                         child: _StatBox(
                             title: 'Drafts',
                             count: metrics.draftInvoicesCount,
-                            color: Colors.grey)), // Added Drafts
+                            color: Colors.grey)),
                     const SizedBox(width: 12),
                     Expanded(
                         child: _StatBox(
@@ -131,44 +141,79 @@ class _DashboardView extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
 
-                // 3. QUICK ACTIONS
-                Text('Quick Actions',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 16),
+                // 3. RECENT INVOICE CARD
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: _QuickActionCard(
-                        icon: Icons.receipt_long_rounded,
-                        title: 'Invoices',
-                        onTap: () =>
-                            context.push(AppRoutes.invoicesList).then((_) {
-                          if (context.mounted)
-                            context.read<DashboardCubit>().loadDashboard();
-                        }),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _QuickActionCard(
-                        icon: Icons.people_rounded,
-                        title: 'Customers',
-                        onTap: () => context.push(AppRoutes.customers),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _QuickActionCard(
-                        icon: Icons.inventory_2_rounded,
-                        title: 'Products',
-                        onTap: () => context.push(AppRoutes.products),
-                      ),
-                    ),
+                    Text('Recent Invoice',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold)),
+                    TextButton(
+                      onPressed: () => context.go(AppRoutes.invoicesList),
+                      child: const Text('View All'),
+                    )
                   ],
                 ),
+                const SizedBox(height: 8),
+                if (state.recentInvoice == null)
+                  SurfaceCard(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Center(
+                        child: Text('No invoices generated yet.',
+                            style: TextStyle(color: Colors.grey[600])),
+                      ),
+                    ),
+                  )
+                else
+                  SurfaceCard(
+                    padding: EdgeInsets.zero,
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(16),
+                      leading: CircleAvatar(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.primaryContainer,
+                        child: const Icon(Icons.receipt_long_rounded),
+                      ),
+                      title: Text(state.recentInvoice!.customerName,
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: Text(
+                          '${state.recentInvoice!.invoiceNumber} • ${DateFormat('MMM dd').format(state.recentInvoice!.issueDate)}'),
+                      trailing: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            _formatCurrency(
+                                state.recentInvoice!.totalAmount, currency),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            state.recentInvoice!.status.name.toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: state.recentInvoice!.status.name == 'paid'
+                                  ? Colors.green
+                                  : Colors.orange,
+                            ),
+                          ),
+                        ],
+                      ),
+                      onTap: () => context
+                          .push(AppRoutes.invoicePreview,
+                              extra: state.recentInvoice)
+                          .then((_) {
+                        if (context.mounted)
+                          context.read<DashboardCubit>().loadDashboard();
+                      }),
+                    ),
+                  ),
+                const SizedBox(height: 48), // Padding for FAB
               ],
             ),
           );
@@ -176,8 +221,10 @@ class _DashboardView extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(AppRoutes.invoiceForm).then((_) {
-          // Instantly refresh metrics when returning from creating an invoice!
-          if (context.mounted) context.read<DashboardCubit>().loadDashboard();
+          if (context.mounted) {
+            context.read<DashboardCubit>().loadDashboard();
+            context.read<InvoiceListCubit>().loadInvoices();
+          }
         }),
         icon: const Icon(Icons.add),
         label: const Text('New Invoice'),
@@ -186,6 +233,7 @@ class _DashboardView extends StatelessWidget {
   }
 }
 
+// Keep your _StatBox widget exactly as it was
 class _StatBox extends StatelessWidget {
   final String title;
   final int count;
@@ -205,33 +253,6 @@ class _StatBox extends StatelessWidget {
                   fontSize: 24, fontWeight: FontWeight.bold, color: color)),
           const SizedBox(height: 4),
           Text(title, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-        ],
-      ),
-    );
-  }
-}
-
-class _QuickActionCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final VoidCallback onTap;
-
-  const _QuickActionCard(
-      {required this.icon, required this.title, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return SurfaceCard(
-      onTap: onTap,
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 28, color: Theme.of(context).colorScheme.primary),
-          const SizedBox(height: 12),
-          Text(title,
-              style:
-                  const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
         ],
       ),
     );

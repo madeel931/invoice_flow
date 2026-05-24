@@ -13,10 +13,7 @@ class InvoicesListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => GetIt.instance<InvoiceListCubit>()..loadInvoices(),
-      child: const _InvoicesListView(),
-    );
+    return const _InvoicesListView();
   }
 }
 
@@ -175,7 +172,7 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                         icon: const Icon(Icons.more_vert),
                         onSelected: (value) {
                           if (value == 'view_pdf') {
-                            context.push(AppRoutes.invoicePreview, extra: inv);
+                            context.push(AppRoutes.invoiceDetail, extra: inv);
                           } else {
                             // Convert string back to InvoiceStatus
                             final newStatus = InvoiceStatus.values

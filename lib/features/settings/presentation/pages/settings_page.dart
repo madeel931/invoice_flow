@@ -213,26 +213,50 @@ class _SettingsViewState extends State<_SettingsView> {
                           child: Column(
                             children: [
                               GestureDetector(
-                                onTap: _pickImage,
-                                child: CircleAvatar(
-                                  radius: 50,
-                                  backgroundColor: Theme.of(context)
-                                      .colorScheme
-                                      .primary
-                                      .withOpacity(0.1),
-                                  backgroundImage:
-                                      state.profile?.logoPath != null
+                                onTap: state.status == SettingsStatus.saving
+                                    ? null
+                                    : _pickImage,
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 50,
+                                      backgroundColor: Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withOpacity(0.1),
+                                      backgroundImage: state
+                                                  .profile?.logoPath !=
+                                              null
                                           ? FileImage(File(
                                               AppDirectories.constructImagePath(
                                                   state.profile!.logoPath!)))
                                           : null,
-                                  child: state.profile?.logoPath == null
-                                      ? Icon(Icons.add_a_photo,
-                                          size: 32,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary)
-                                      : null,
+                                      child: state.profile?.logoPath == null &&
+                                              state.status !=
+                                                  SettingsStatus.saving
+                                          ? Icon(Icons.add_a_photo,
+                                              size: 32,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary)
+                                          : null,
+                                    ),
+                                    // ADDED: Circular progress indicator overlaid on the avatar during compression
+                                    if (state.status == SettingsStatus.saving)
+                                      Container(
+                                        height: 100,
+                                        width: 100,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.3),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Center(
+                                          child: CircularProgressIndicator(
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                  ],
                                 ),
                               ),
                               const SizedBox(height: 12),

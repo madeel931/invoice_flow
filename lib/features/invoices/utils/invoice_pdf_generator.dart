@@ -9,16 +9,30 @@ import '../../settings/domain/entities/business_profile.dart';
 import '../domain/entities/invoice.dart';
 
 class InvoicePdfGenerator {
+  // ---  Smart Memory Cache ---
+  // Stores generated PDFs in RAM to prevent CPU-heavy rebuilds
+  static final Map<String, Uint8List> _pdfCache = {};
+
   static Future<Uint8List> generate(
       Invoice invoice, BusinessProfile profile) async {
+    // 1. Generate Unique Cache Key
+    // If the invoice is updated, the timestamp changes and forces a new PDF generation.
+    final cacheKey =
+        '${invoice.id}_${invoice.status.name}_${invoice.updatedAt?.millisecondsSinceEpoch}';
+
+    // 2. Check Cache First
+    if (_pdfCache.containsKey(cacheKey)) {
+      return _pdfCache[cacheKey]!; // Instantly return cached PDF!
+    }
+
     final pdf = pw.Document();
 
-    // 1. Currency Formatter
+    // 3. Currency Formatter
     final formatCurrency =
         NumberFormat.simpleCurrency(name: profile.currencyCode);
     final dateFormat = DateFormat('MMM dd, yyyy');
 
-    // 2. Load Logo if it exists
+    // 4. Load Logo if it exists
     pw.MemoryImage? logoImage;
     if (profile.logoPath != null) {
       try {
@@ -31,7 +45,7 @@ class InvoicePdfGenerator {
       }
     }
 
-    // 3. Build Document
+    // 5. Build Document
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
@@ -227,6 +241,9 @@ class InvoicePdfGenerator {
       ),
     );
 
-    return pdf.save();
+    // 6. Save PDF to bytes, store in Cache, and return
+    final bytes = await pdf.save();
+    _pdfCache[cacheKey] = bytes;
+    return bytes;
   }
 }

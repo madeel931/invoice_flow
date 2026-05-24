@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../../../core/presentation/widgets/surface_card.dart';
+import '../../../../config/routes/route_constants.dart';
 import '../../domain/entities/customer.dart';
 import '../cubit/customer_list_cubit.dart';
 import '../cubit/customer_list_state.dart';
@@ -15,19 +16,19 @@ class CustomersPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => GetIt.instance<CustomerListCubit>()..loadCustomers(),
-      child: const _CustomersView(),
+      child: const _CustomersListView(),
     );
   }
 }
 
-class _CustomersView extends StatefulWidget {
-  const _CustomersView();
+class _CustomersListView extends StatefulWidget {
+  const _CustomersListView();
 
   @override
-  State<_CustomersView> createState() => _CustomersViewState();
+  State<_CustomersListView> createState() => _CustomersListViewState();
 }
 
-class _CustomersViewState extends State<_CustomersView> {
+class _CustomersListViewState extends State<_CustomersListView> {
   final _searchController = TextEditingController();
 
   @override
@@ -36,9 +37,14 @@ class _CustomersViewState extends State<_CustomersView> {
     super.dispose();
   }
 
-  Future<void> _showCustomerForm([Customer? customer]) async {
+  // FIX: Properly await the result from your static show() method
+  Future<void> _openCustomerForm(BuildContext context,
+      {Customer? customer}) async {
     final result = await CustomerFormSheet.show(context, customer: customer);
-    if (result != null && mounted) {
+
+    // If the user saved the form, the sheet returns a Customer object.
+    // We send it to your existing saveCustomer method!
+    if (result != null && context.mounted) {
       context.read<CustomerListCubit>().saveCustomer(result);
     }
   }
@@ -49,9 +55,10 @@ class _CustomersViewState extends State<_CustomersView> {
       appBar: AppBar(
         title: const Text('Customers'),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(70),
+          preferredSize: const Size.fromHeight(60),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: TextField(
               controller: _searchController,
               onChanged: (val) => context.read<CustomerListCubit>().search(val),
@@ -72,22 +79,13 @@ class _CustomersViewState extends State<_CustomersView> {
           ),
         ),
       ),
-      body: BlocConsumer<CustomerListCubit, CustomerListState>(
-        listener: (context, state) {
-          if (state.errorMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text(state.errorMessage!),
-                  backgroundColor: Theme.of(context).colorScheme.error),
-            );
-          }
-        },
+      body: BlocBuilder<CustomerListCubit, CustomerListState>(
         builder: (context, state) {
           if (state.status == CustomerListStatus.loading) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (state.allCustomers.isEmpty) {
+          if (state.filteredCustomers.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -99,71 +97,75 @@ class _CustomersViewState extends State<_CustomersView> {
                           .primary
                           .withOpacity(0.5)),
                   const SizedBox(height: 16),
-                  Text('No customers yet.',
-                      style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: 8),
-                  const Text('Add your first client to start invoicing.'),
+                  const Text('No customers found.'),
                 ],
               ),
             );
           }
 
-          if (state.filteredCustomers.isEmpty) {
-            return const Center(child: Text('No matching customers found.'));
-          }
-
           return ListView.separated(
             padding: const EdgeInsets.all(16),
             itemCount: state.filteredCustomers.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
+            separatorBuilder: (_, __) => const SizedBox(height: 8),
             itemBuilder: (context, index) {
               final customer = state.filteredCustomers[index];
-              return SurfaceCard(
-                padding: EdgeInsets.zero,
+
+              return Card(
+                elevation: 0,
+                color: Theme.of(context)
+                    .colorScheme
+                    .surfaceVariant
+                    .withOpacity(0.3),
                 child: ListTile(
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   leading: CircleAvatar(
                     backgroundColor:
-                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                        Theme.of(context).colorScheme.primaryContainer,
                     child: Text(
-                      customer.name.substring(0, 1).toUpperCase(),
+                      customer.name.isNotEmpty
+                          ? customer.name[0].toUpperCase()
+                          : '?',
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.bold),
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer),
                     ),
                   ),
                   title: Text(customer.name,
                       style: const TextStyle(fontWeight: FontWeight.bold)),
                   subtitle: Text(
                       customer.email ?? customer.phone ?? 'No contact info'),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit_outlined, size: 20),
-                        onPressed: () => _showCustomerForm(customer),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete_outline,
-                            size: 20,
-                            color: Theme.of(context).colorScheme.error),
-                        onPressed: () => context
-                            .read<CustomerListCubit>()
-                            .removeCustomer(customer.id!),
-                      ),
-                    ],
-                  ),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+
+                  // --- INTERACTION LOGIC ---
+                  onTap: () async {
+                    // Push to detail page and await the result
+                    final intent = await context.push(AppRoutes.customerDetail,
+                        extra: customer);
+
+                    if (!context.mounted) return;
+
+                    if (intent == 'delete') {
+                      // FIX: Using your exact Cubit method `removeCustomer(int id)`
+                      context
+                          .read<CustomerListCubit>()
+                          .removeCustomer(customer.id!);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Customer deleted successfully.')),
+                      );
+                    } else if (intent == 'edit') {
+                      // Call the form opening method
+                      _openCustomerForm(context, customer: customer);
+                    }
+                  },
                 ),
               );
             },
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showCustomerForm(),
-        icon: const Icon(Icons.add),
-        label: const Text('Add Client'),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _openCustomerForm(context),
+        child: const Icon(Icons.add),
       ),
     );
   }

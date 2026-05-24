@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'config/theme/cubit/theme_cubit.dart';
 import 'core/di/injection_container.dart' as di;
 import 'config/routes/app_router.dart';
 import 'config/theme/app_theme.dart';
+import 'features/dashboard/presentation/cubit/dashboard_cubit.dart';
+import 'features/invoices/presentation/cubit/invoice_list_cubit.dart';
 
 void main() async {
-  // Ensure Flutter engine is properly initialized before running native code
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Lock orientation to portrait for a consistent business app experience
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-
-  // Initialize Dependency Injection
   await di.init();
-
   runApp(const InvoiceFlowApp());
 }
 
@@ -25,13 +23,25 @@ class InvoiceFlowApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'InvoiceFlow Pro',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      routerConfig: AppRouter.router,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => ThemeCubit()),
+        // LIFTING STATE UP: Now all tabs share these exact instances!
+        BlocProvider(create: (_) => di.sl<DashboardCubit>()..loadDashboard()),
+        BlocProvider(create: (_) => di.sl<InvoiceListCubit>()..loadInvoices()),
+      ],
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, themeMode) {
+          return MaterialApp.router(
+            title: 'InvoiceFlow Pro',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeMode,
+            routerConfig: AppRouter.router,
+          );
+        },
+      ),
     );
   }
 }

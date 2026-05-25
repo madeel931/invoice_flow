@@ -43,6 +43,7 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
   late TextEditingController _qtyController;
   late TextEditingController _priceController;
   late TextEditingController _taxController;
+  String? _unitType;
 
 
   @override
@@ -65,6 +66,7 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
           ? widget.existingItem!.taxRate.toStringAsFixed(2)
           : '0.00',
     );
+    _unitType = widget.existingItem?.unitType;
   }
 
   @override
@@ -88,6 +90,7 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
       _priceController.text = product.price.toStringAsFixed(2);
       _taxController.text =
           product.defaultTaxRate?.toStringAsFixed(2) ?? '0.00';
+      _unitType = product.unitType;
     });
   }
 
@@ -102,6 +105,7 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
         quantity: qty,
         unitPrice: price,
         taxRate: tax,
+        unitType: _unitType,
       );
       Navigator.of(context).pop(item);
     }
@@ -177,9 +181,15 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
                     controller: _qtyController,
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
-                    label: 'Quantity *',
-                    validator: (val) =>
-                        val == null || val.trim().isEmpty ? 'Required' : null,
+                    label: _unitType != null ? 'Quantity ($_unitType)' : 'Quantity *',
+                    validator: (val) {
+                      if (val == null || val.trim().isEmpty) return 'Required';
+                      final parsed = double.tryParse(val.replaceAll(',', '.').trim());
+                      if (parsed == null) return 'Enter a valid quantity';
+                      if (parsed <= 0) return 'Quantity must be greater than zero';
+                      if (parsed > 999999) return 'Quantity is too large';
+                      return null;
+                    },
                   ),
                 ),
                 const SizedBox(width: AppSpacing.md),
@@ -190,8 +200,14 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
                     label: 'Unit Price *',
-                    validator: (val) =>
-                        val == null || val.trim().isEmpty ? 'Required' : null,
+                    validator: (val) {
+                      if (val == null || val.trim().isEmpty) return 'Required';
+                      final parsed = double.tryParse(val.replaceAll(',', '.').trim());
+                      if (parsed == null) return 'Enter a valid amount';
+                      if (parsed < 0) return 'Price cannot be negative';
+                      if (parsed > 99999999.99) return 'Amount is too large';
+                      return null;
+                    },
                   ),
                 ),
               ],

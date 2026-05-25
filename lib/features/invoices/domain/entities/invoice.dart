@@ -14,6 +14,7 @@ class Invoice extends Equatable {
   final InvoiceStatus status;
   final double discountAmount;
   final String? notes;
+  final String? currencyCode;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -28,6 +29,7 @@ class Invoice extends Equatable {
     this.status = InvoiceStatus.draft,
     this.discountAmount = 0.0,
     this.notes,
+    this.currencyCode,
     this.createdAt,
     this.updatedAt,
   });
@@ -59,6 +61,7 @@ class Invoice extends Equatable {
     InvoiceStatus? status,
     double? discountAmount,
     String? notes,
+    String? currencyCode,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -73,6 +76,7 @@ class Invoice extends Equatable {
       status: status ?? this.status,
       discountAmount: discountAmount ?? this.discountAmount,
       notes: notes ?? this.notes,
+      currencyCode: currencyCode ?? this.currencyCode,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -90,6 +94,7 @@ class Invoice extends Equatable {
         status,
         discountAmount,
         notes,
+        currencyCode,
         createdAt,
         updatedAt
       ];

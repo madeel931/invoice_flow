@@ -60,15 +60,15 @@ class InvoiceDetailPage extends StatelessWidget {
     return BlocBuilder<SettingsCubit, SettingsState>(
       bloc: GetIt.instance<SettingsCubit>(),
       builder: (context, settingsState) {
-        final currencyCode = settingsState.profile?.currencyCode ?? 'AED';
+        final profileCurrency = settingsState.profile?.currencyCode ?? 'AED';
 
         return BlocBuilder<InvoiceListCubit, InvoiceListState>(
           builder: (context, state) {
-            // Find the LIVE version of this invoice from the global state so status updates reflect instantly
             final currentInvoice = state.allInvoices.firstWhere(
               (i) => i.id == invoice.id,
               orElse: () => invoice, // Fallback if not found
             );
+            final currencyCode = currentInvoice.currencyCode?.trim().isNotEmpty == true ? currentInvoice.currencyCode! : profileCurrency;
 
             return Scaffold(
               appBar: AppBar(
@@ -190,7 +190,7 @@ class InvoiceDetailPage extends StatelessWidget {
                                                 fontWeight: FontWeight.bold)),
                                         const SizedBox(height: 4),
                                         Text(
-                                            '${item.quantity} x ${AppFormatters.formatCurrency(item.unitPrice, currencyCode)}',
+                                            '${item.quantity} x ${AppFormatters.formatCurrency(item.unitPrice, currencyCode)}${item.unitType != null ? ' / ${item.unitType!.toLowerCase()}' : ''}',
                                             style: const TextStyle(
                                                 color: Colors.grey,
                                                 fontSize: 13)),
@@ -203,11 +203,16 @@ class InvoiceDetailPage extends StatelessWidget {
                                       ],
                                     ),
                                   ),
-                                  Text(
-                                      AppFormatters.formatCurrency(
-                                          item.total, currencyCode),
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold)),
+                                  Flexible(
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                          AppFormatters.formatCurrency(
+                                              item.total, currencyCode),
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                  ),
                                 ],
                               ),
                             );
@@ -262,15 +267,22 @@ class InvoiceDetailPage extends StatelessWidget {
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold)),
-                              Text(
-                                  AppFormatters.formatCurrency(
-                                      currentInvoice.totalAmount, currencyCode),
-                                  style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary)),
+                              const SizedBox(width: 16),
+                              Flexible(
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                      AppFormatters.formatCurrency(
+                                          currentInvoice.totalAmount, currencyCode),
+                                      style: TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary)),
+                                ),
+                              ),
                             ],
                           ),
                         ],

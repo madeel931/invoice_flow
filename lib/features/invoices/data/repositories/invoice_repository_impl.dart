@@ -21,6 +21,7 @@ extension on InvoiceCollection {
       status: status,
       discountAmount: discountAmount,
       notes: notes,
+      currencyCode: currencyCode,
       createdAt: createdAt,
       updatedAt: updatedAt,
       items: items
@@ -29,6 +30,7 @@ extension on InvoiceCollection {
                 quantity: i.quantity,
                 unitPrice: i.unitPrice,
                 taxRate: i.taxRate,
+                unitType: i.unitType,
               ))
           .toList(),
     );
@@ -46,6 +48,7 @@ extension on Invoice {
       ..status = status
       ..discountAmount = discountAmount
       ..notes = notes
+      ..currencyCode = currencyCode
       ..createdAt = createdAt ?? DateTime.now()
       ..updatedAt = DateTime.now()
       ..items = items
@@ -53,7 +56,8 @@ extension on Invoice {
             ..description = i.description
             ..quantity = i.quantity
             ..unitPrice = i.unitPrice
-            ..taxRate = i.taxRate)
+            ..taxRate = i.taxRate
+            ..unitType = i.unitType)
           .toList();
 
     if (id != null) {

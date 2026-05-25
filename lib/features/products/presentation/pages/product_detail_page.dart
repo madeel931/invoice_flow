@@ -103,7 +103,7 @@ class ProductDetailPage extends StatelessWidget {
                               style: theme.textTheme.titleMedium
                                   ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
                           Text(
-                            AppFormatters.formatCurrency(product.price, currencyCode),
+                            '${AppFormatters.formatCurrency(product.price, currencyCode)} / ${product.unitType.toLowerCase()}',
                             style: theme.textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: colorScheme.primary),

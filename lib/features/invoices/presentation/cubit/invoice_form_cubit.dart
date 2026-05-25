@@ -17,12 +17,19 @@ class InvoiceFormCubit extends Cubit<InvoiceFormState> {
     required this.saveInvoiceUseCase,
   }) : super(const InvoiceFormState());
 
-  Future<void> initForm([Invoice? existingInvoice]) async {
+  Future<void> initForm({String? defaultCurrencyCode, Invoice? existingInvoice}) async {
     emit(state.copyWith(status: InvoiceFormStatus.loading));
 
     if (existingInvoice != null) {
+      final resolvedCurrencyCode =
+          existingInvoice.currencyCode?.trim().isNotEmpty == true
+              ? existingInvoice.currencyCode
+              : defaultCurrencyCode;
+
+      final updatedInvoice = existingInvoice.copyWith(currencyCode: resolvedCurrencyCode);
+
       emit(state.copyWith(
-          status: InvoiceFormStatus.ready, draftInvoice: existingInvoice));
+          status: InvoiceFormStatus.ready, draftInvoice: updatedInvoice));
       return;
     }
 
@@ -40,6 +47,9 @@ class InvoiceFormCubit extends Cubit<InvoiceFormState> {
           issueDate: now,
           dueDate: now.add(const Duration(days: 14)),
           items: const [],
+          currencyCode: defaultCurrencyCode?.trim().isNotEmpty == true 
+              ? defaultCurrencyCode!.trim().toUpperCase() 
+              : 'USD',
         );
 
         emit(state.copyWith(

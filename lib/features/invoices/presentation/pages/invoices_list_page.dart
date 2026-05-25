@@ -11,7 +11,7 @@ import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
-import '../../../../core/widgets/global_card.dart';
+
 import '../../../../core/widgets/loading_widget.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../settings/presentation/cubit/settings_cubit.dart';
@@ -65,10 +65,12 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
 
   @override
   Widget build(BuildContext context) {
+    final themeBrightness = Theme.of(context).brightness;
+
     return BlocBuilder<SettingsCubit, SettingsState>(
       bloc: GetIt.instance<SettingsCubit>(),
       builder: (context, settingsState) {
-        final currencyCode = settingsState.profile?.currencyCode ?? 'AED';
+        final profileCurrency = settingsState.profile?.currencyCode ?? 'AED';
 
         return Scaffold(
           appBar: AppBar(
@@ -82,8 +84,8 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                 children: [
                   // Search Bar
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md, vertical: AppSpacing.sm),
                     child: TextField(
                       controller: _searchController,
                       onChanged: (val) =>
@@ -106,15 +108,18 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                   // Status Filter Chips
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.only(bottom: AppSpacing.sm, left: AppSpacing.md, right: AppSpacing.md),
+                    padding: const EdgeInsets.only(
+                        bottom: AppSpacing.sm,
+                        left: AppSpacing.md,
+                        right: AppSpacing.md),
                     child: Row(
                       children: [null, ...InvoiceStatus.values].map((status) {
                         return Padding(
                           padding: const EdgeInsets.only(right: AppSpacing.sm),
                           child: ChoiceChip(
                             label: Text(status?.name.toUpperCase() ?? 'ALL'),
-                            selected: context.select(
-                                    (InvoiceListCubit c) => c.state.filterStatus) ==
+                            selected: context.select((InvoiceListCubit c) =>
+                                    c.state.filterStatus) ==
                                 status,
                             onSelected: (_) => context
                                 .read<InvoiceListCubit>()
@@ -128,14 +133,15 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
               ),
             ),
           ),
-          body: BlocBuilder<InvoiceListCubit, InvoiceListState>(
-            builder: (context, state) {
+          body: KeyedSubtree(
+            key: ValueKey('invoice_list_body_$themeBrightness'),
+            child: BlocBuilder<InvoiceListCubit, InvoiceListState>(
+              builder: (context, state) {
               // Apply UI-level customer filtering
               List<Invoice> displayInvoices = state.filteredInvoices;
               if (widget.filterCustomer != null) {
                 displayInvoices = displayInvoices
-                    .where((inv) =>
-                        inv.customerId == widget.filterCustomer!.id)
+                    .where((inv) => inv.customerId == widget.filterCustomer!.id)
                     .toList();
               }
 
@@ -167,12 +173,23 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                 itemBuilder: (context, index) {
                   final inv = displayInvoices[index];
                   final statusColor = _getStatusColor(context, inv.status);
+                  final theme = Theme.of(context);
+                  final colorScheme = theme.colorScheme;
+                  final textTheme = theme.textTheme;
 
-                  return GlobalCard(
-                    padding: EdgeInsets.zero,
+                  return Card(
+                    key: ValueKey(
+                        '${inv.id}_${theme.brightness}_${inv.status.name}_${inv.updatedAt?.millisecondsSinceEpoch}'),
+                    color: colorScheme.surface,
+                    margin: EdgeInsets.zero,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                      side: BorderSide(color: colorScheme.outlineVariant),
+                    ),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                      onTap: () => context.push(AppRoutes.invoiceDetail, extra: inv),
+                      onTap: () =>
+                          context.push(AppRoutes.invoiceDetail, extra: inv),
                       child: Padding(
                         padding: const EdgeInsets.all(AppSpacing.md),
                         child: Column(
@@ -183,12 +200,17 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(inv.invoiceNumber,
-                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                    style: textTheme.titleMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: colorScheme.onSurface,
+                                    )),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: AppSpacing.sm, vertical: 4),
                                   decoration: BoxDecoration(
                                     color: statusColor.withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(AppSizes.radiusXl),
+                                    borderRadius: BorderRadius.circular(
+                                        AppSizes.radiusXl),
                                   ),
                                   child: Text(
                                     inv.status.name.toUpperCase(),
@@ -204,11 +226,15 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                             const SizedBox(height: AppSpacing.sm),
                             // Middle section: Customer name & Date
                             Text(inv.customerName,
-                                style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                )),
                             const SizedBox(height: 2),
                             Text(
                                 'Issue Date: ${DateFormat('MMM dd, yyyy').format(inv.issueDate)}',
-                                style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 12)),
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                )),
                             const SizedBox(height: AppSpacing.md),
                             const Divider(height: 1),
                             const SizedBox(height: AppSpacing.md),
@@ -216,18 +242,30 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  AppFormatters.formatCurrency(inv.totalAmount, currencyCode),
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold, 
-                                      fontSize: 20, 
-                                      color: Theme.of(context).colorScheme.onSurface),
+                                Expanded(
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      AppFormatters.formatCurrency(
+                                          inv.totalAmount,
+                                          inv.currencyCode?.trim().isNotEmpty ==
+                                                  true
+                                              ? inv.currencyCode!
+                                              : profileCurrency),
+                                      style: textTheme.titleLarge?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: colorScheme.onSurface),
+                                    ),
+                                  ),
                                 ),
                                 PopupMenuButton<String>(
-                                  icon: Icon(Icons.more_vert, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                  icon: Icon(Icons.more_vert,
+                                      color: colorScheme.onSurfaceVariant),
                                   onSelected: (value) {
                                     if (value == 'view_pdf') {
-                                      context.push(AppRoutes.invoiceDetail, extra: inv);
+                                      context.push(AppRoutes.invoiceDetail,
+                                          extra: inv);
                                     } else {
                                       final newStatus = InvoiceStatus.values
                                           .firstWhere((e) => e.name == value);
@@ -240,17 +278,21 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                                     const PopupMenuItem(
                                         value: 'view_pdf',
                                         child: Row(children: [
-                                          Icon(Icons.picture_as_pdf_rounded, size: 20),
+                                          Icon(Icons.picture_as_pdf_rounded,
+                                              size: 20),
                                           SizedBox(width: 8),
                                           Text('View PDF')
                                         ])),
                                     const PopupMenuDivider(),
                                     const PopupMenuItem(
-                                        value: 'paid', child: Text('Mark as Paid')),
+                                        value: 'paid',
+                                        child: Text('Mark as Paid')),
                                     const PopupMenuItem(
-                                        value: 'unpaid', child: Text('Mark as Unpaid')),
+                                        value: 'unpaid',
+                                        child: Text('Mark as Unpaid')),
                                     const PopupMenuItem(
-                                        value: 'overdue', child: Text('Mark as Overdue')),
+                                        value: 'overdue',
+                                        child: Text('Mark as Overdue')),
                                     const PopupMenuItem(
                                         value: 'cancelled',
                                         child: Text('Cancel Invoice')),
@@ -265,7 +307,8 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                   );
                 },
               );
-            },
+              },
+            ),
           ),
         );
       },

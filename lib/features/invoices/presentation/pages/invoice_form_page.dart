@@ -27,7 +27,10 @@ class InvoiceFormPage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-            create: (_) => GetIt.instance<InvoiceFormCubit>()..initForm()),
+            create: (_) {
+              final profileCurrency = GetIt.instance<SettingsCubit>().state.profile?.currencyCode ?? 'AED';
+              return GetIt.instance<InvoiceFormCubit>()..initForm(defaultCurrencyCode: profileCurrency);
+            }),
         BlocProvider(
             create: (_) =>
                 GetIt.instance<CustomerListCubit>()..loadCustomers()),
@@ -95,7 +98,7 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
     return BlocBuilder<SettingsCubit, SettingsState>(
       bloc: GetIt.instance<SettingsCubit>(),
       builder: (context, settingsState) {
-        final currencyCode = settingsState.profile?.currencyCode ?? 'AED';
+        final profileCurrency = settingsState.profile?.currencyCode ?? 'AED';
 
         return BlocConsumer<InvoiceFormCubit, InvoiceFormState>(
           listener: (context, state) {
@@ -119,6 +122,7 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
             }
 
             final invoice = invoiceState.draftInvoice!;
+            final currencyCode = invoice.currencyCode?.trim().isNotEmpty == true ? invoice.currencyCode! : profileCurrency;
 
             return Scaffold(
               appBar: AppBar(
@@ -260,13 +264,19 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold)),
                                 subtitle: Text(
-                                    '${item.quantity} x ${AppFormatters.formatCurrency(item.unitPrice, currencyCode)}   (Tax: ${item.taxRate}%)'),
-                                trailing: Text(
-                                    AppFormatters.formatCurrency(
-                                        item.total, currencyCode),
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16)),
+                                    '${item.quantity} x ${AppFormatters.formatCurrency(item.unitPrice, currencyCode)}${item.unitType != null ? ' / ${item.unitType!.toLowerCase()}' : ''}   (Tax: ${item.taxRate}%)'),
+                                trailing: ConstrainedBox(
+                                    constraints: const BoxConstraints(maxWidth: 150),
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                          AppFormatters.formatCurrency(
+                                              item.total, currencyCode),
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16)),
+                                    )),
                                 onTap: () => _openItemSheet(item, index),
                                 onLongPress: () => context
                                     .read<InvoiceFormCubit>()
@@ -375,14 +385,21 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                           const Text('TOTAL',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 18)),
-                          Text(
-                              AppFormatters.formatCurrency(
-                                  invoice.totalAmount, currencyCode),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24,
-                                  color:
-                                      Theme.of(context).colorScheme.primary)),
+                          const SizedBox(width: 16),
+                          Flexible(
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                  AppFormatters.formatCurrency(
+                                      invoice.totalAmount, currencyCode),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 24,
+                                      color:
+                                          Theme.of(context).colorScheme.primary)),
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 16),

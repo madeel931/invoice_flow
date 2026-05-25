@@ -15,6 +15,30 @@ class AppFormatters {
     return format.format(amount);
   }
 
+  /// Compact currency for dashboard/stat cards only. NOT for invoices/PDF/exports.
+  static String formatCurrencyCompact(double amount, [String? currencyCode]) {
+    final code = (currencyCode == null || currencyCode.trim().isEmpty) ? 'AED' : currencyCode;
+    final format = NumberFormat.compactCurrency(name: code);
+    return format.format(amount);
+  }
+
+  /// PDF-safe currency formatter. Uses ISO 3-letter code instead of Unicode symbols
+  /// because PDF default font (Helvetica/WinAnsiEncoding) cannot render ₹, ﷼, ₨, etc.
+  /// Output examples: INR 1,000.00 / USD 1,000.00 / SAR 1,000.00
+  /// Use ONLY in PDF generation. UI should continue using formatCurrency.
+  static String formatCurrencyPdf(double amount, [String? currencyCode]) {
+    final code = (currencyCode == null || currencyCode.trim().isEmpty)
+        ? 'AED'
+        : currencyCode.trim().toUpperCase();
+    final format = NumberFormat.currency(
+      name: code,
+      symbol: '$code ',
+      decimalDigits: 2,
+    );
+    return format.format(amount);
+  }
+
+
   static String formatNumber(double number) {
     return _numberFormat.format(number);
   }

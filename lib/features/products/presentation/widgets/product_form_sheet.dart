@@ -32,17 +32,20 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
   late TextEditingController _priceController;
   late TextEditingController _taxRateController;
 
-  String _selectedUnit = 'Item';
+  String _selectedUnit = 'piece';
   final List<String> _unitTypes = [
-    'Item',
-    'Hour',
-    'Day',
-    'Project',
-    'Kg',
-    'Lbs',
-    'Km',
-    'Mile',
-    'Custom'
+    'piece',
+    'hour',
+    'day',
+    'project',
+    'kg',
+    'gram',
+    'meter',
+    'km',
+    'liter',
+    'month',
+    'service',
+    'custom'
   ];
 
   @override
@@ -65,10 +68,13 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
     );
 
     if (widget.existingProduct != null) {
-      if (_unitTypes.contains(widget.existingProduct!.unitType)) {
-        _selectedUnit = widget.existingProduct!.unitType;
+      String oldUnit = widget.existingProduct!.unitType.toLowerCase();
+      if (oldUnit == 'item') oldUnit = 'piece';
+
+      if (_unitTypes.contains(oldUnit)) {
+        _selectedUnit = oldUnit;
       } else {
-        _selectedUnit = 'Custom';
+        _selectedUnit = 'custom';
       }
     }
   }
@@ -164,8 +170,14 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
                     textInputAction: TextInputAction.next,
                     label: 'Base Price *',
                     prefixIcon: const Icon(Icons.attach_money),
-                    validator: (val) =>
-                        val == null || val.trim().isEmpty ? 'Required' : null,
+                    validator: (val) {
+                      if (val == null || val.trim().isEmpty) return 'Required';
+                      final parsed = double.tryParse(val.replaceAll(',', '.').trim());
+                      if (parsed == null) return 'Enter a valid price';
+                      if (parsed < 0) return 'Price cannot be negative';
+                      if (parsed > 99999999.99) return 'Amount is too large';
+                      return null;
+                    },
                   ),
                 ),
                 const SizedBox(width: AppSpacing.md),

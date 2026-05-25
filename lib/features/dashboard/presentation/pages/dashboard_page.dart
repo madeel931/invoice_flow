@@ -104,7 +104,7 @@ class _DashboardView extends StatelessWidget {
                     // 1. HERO METRICS
                     MetricCard(
                       title: 'Total Revenue',
-                      amount: AppFormatters.formatCurrency(
+                      amount: AppFormatters.formatCurrencyCompact(
                           metrics.totalRevenue, currency),
                       icon: Icons.account_balance_wallet_rounded,
                       gradientColors: const [
@@ -115,7 +115,7 @@ class _DashboardView extends StatelessWidget {
                     const SizedBox(height: 16),
                     MetricCard(
                       title: 'Outstanding Balance',
-                      amount: AppFormatters.formatCurrency(
+                      amount: AppFormatters.formatCurrencyCompact(
                           metrics.outstandingBalance, currency),
                       icon: Icons.hourglass_empty_rounded,
                       gradientColors: const [
@@ -206,11 +206,17 @@ class _DashboardView extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Text(
-                                AppFormatters.formatCurrency(
-                                    state.recentInvoice!.totalAmount, currency),
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16),
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  AppFormatters.formatCurrency(
+                                      state.recentInvoice!.totalAmount, 
+                                      state.recentInvoice!.currencyCode?.trim().isNotEmpty == true 
+                                          ? state.recentInvoice!.currencyCode! 
+                                          : currency),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold, fontSize: 16),
+                                ),
                               ),
                               const SizedBox(height: 4),
                               Text(
@@ -227,7 +233,7 @@ class _DashboardView extends StatelessWidget {
                             ],
                           ),
                           onTap: () => context
-                              .push(AppRoutes.invoicePreview,
+                              .push(AppRoutes.invoiceDetail,
                                   extra: state.recentInvoice)
                               .then((_) {
                             if (context.mounted)

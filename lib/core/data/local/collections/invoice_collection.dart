@@ -9,6 +9,7 @@ class InvoiceItemCollection {
   late double quantity;
   late double unitPrice;
   late double taxRate;
+  String? unitType;
 }
 
 @collection
@@ -37,6 +38,7 @@ class InvoiceCollection {
   late double discountAmount;
 
   String? notes;
+  String? currencyCode;
 
   DateTime? createdAt;
   DateTime? updatedAt;

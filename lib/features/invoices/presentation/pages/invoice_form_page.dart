@@ -175,8 +175,8 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
               // FIX: Wait for Products and Customers to finish loading from DB before showing form
               body: Builder(builder: (context) {
                 final custState = context.watch<CustomerListCubit>().state;
-                final walkInCustomer =
-                    const Customer(id: 0, name: 'Walk-in Customer');
+                const walkInCustomer =
+                    Customer(id: 0, name: 'Walk-in Customer');
                 final availableCustomers = [
                   walkInCustomer,
                   ...custState.allCustomers
@@ -364,12 +364,15 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                                     0.0;
                                 if (parsed < 0) return 'Cannot be negative';
                                 if (invoice.discountType == 'percentage' &&
-                                    parsed > 100) return 'Cannot exceed 100%';
+                                    parsed > 100) {
+                                  return 'Cannot exceed 100%';
+                                }
                                 final calc =
                                     InvoiceCalculator.calculate(invoice);
                                 if (invoice.discountType == 'amount' &&
-                                    parsed > calc.subtotal)
+                                    parsed > calc.subtotal) {
                                   return 'Cannot exceed subtotal';
+                                }
                                 return null;
                               },
                               onChanged: (val) {
@@ -401,8 +404,9 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                                 if (parsed < 0) return 'Cannot be negative';
                                 final calc =
                                     InvoiceCalculator.calculate(invoice);
-                                if (parsed > calc.grandTotal)
+                                if (parsed > calc.grandTotal) {
                                   return 'Cannot exceed grand total';
+                                }
                                 return null;
                               },
                               onChanged: (val) {

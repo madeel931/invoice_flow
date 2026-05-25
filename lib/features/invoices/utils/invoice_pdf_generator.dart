@@ -38,6 +38,52 @@ class InvoicePdfGenerator {
   // Stores generated PDFs in RAM to prevent CPU-heavy rebuilds
   static final Map<String, Uint8List> _pdfCache = {};
 
+  static String _formatQuantity(double quantity) {
+    if (quantity % 1 == 0) {
+      return quantity.toInt().toString();
+    }
+    return quantity.toStringAsFixed(2).replaceAll(RegExp(r'0*$'), '').replaceAll(RegExp(r'\.$'), '');
+  }
+
+  static String _formatTax(double tax) {
+    if (tax % 1 == 0) {
+      return '${tax.toInt()}%';
+    }
+    return '${tax.toStringAsFixed(2).replaceAll(RegExp(r'0*$'), '').replaceAll(RegExp(r'\.$'), '')}%';
+  }
+
+  static pw.Widget _tableHeaderCell(String text, pw.Alignment alignment) {
+    return pw.Padding(
+      padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+      child: pw.Align(
+        alignment: alignment,
+        child: pw.Text(text,
+            style: pw.TextStyle(
+                fontWeight: pw.FontWeight.bold,
+                color: PdfColors.white,
+                fontSize: 10)),
+      ),
+    );
+  }
+
+  static pw.Widget _tableBodyCell(String text, pw.Alignment alignment, {bool useFittedBox = false}) {
+    pw.Widget textWidget = pw.Text(text, style: const pw.TextStyle(fontSize: 10));
+    if (useFittedBox) {
+      textWidget = pw.FittedBox(
+        fit: pw.BoxFit.scaleDown,
+        alignment: alignment,
+        child: textWidget,
+      );
+    }
+    return pw.Padding(
+      padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+      child: pw.Align(
+        alignment: alignment,
+        child: textWidget,
+      ),
+    );
+  }
+
   static Future<Uint8List> generate(
       Invoice invoice, BusinessProfile profile) async {
     // 1. Generate Unique Cache Key
@@ -158,77 +204,54 @@ class InvoicePdfGenerator {
             pw.Table(
               border: null,
               columnWidths: {
-                0: const pw.FlexColumnWidth(4), // Description
-                1: const pw.FlexColumnWidth(1), // Qty
-                2: const pw.FlexColumnWidth(2), // Unit Price
-                3: const pw.FlexColumnWidth(1), // Tax
-                4: const pw.FlexColumnWidth(2), // Total
+                0: const pw.FlexColumnWidth(3.2), // Description
+                1: const pw.FlexColumnWidth(1.2), // Qty
+                2: const pw.FlexColumnWidth(1.8), // Unit Price
+                3: const pw.FlexColumnWidth(1.0), // Tax
+                4: const pw.FlexColumnWidth(1.8), // Total
               },
               children: [
                 // Header row
                 pw.TableRow(
                   decoration: const pw.BoxDecoration(color: PdfColors.blue800),
-                  children: ['Description', 'Qty', 'Unit Price', 'Tax %', 'Total']
-                      .map((header) => pw.Padding(
-                            padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-                            child: pw.Text(header,
-                                style: pw.TextStyle(
-                                    fontWeight: pw.FontWeight.bold,
-                                    color: PdfColors.white,
-                                    fontSize: 10)),
-                          ))
-                      .toList(),
+                  children: [
+                    _tableHeaderCell('Description', pw.Alignment.centerLeft),
+                    _tableHeaderCell('Qty', pw.Alignment.center),
+                    _tableHeaderCell('Unit Price', pw.Alignment.centerRight),
+                    _tableHeaderCell('Tax %', pw.Alignment.center),
+                    _tableHeaderCell('Total', pw.Alignment.centerRight),
+                  ],
                 ),
                 // Data rows
-                ...calc.itemBreakdowns.map((calcItem) {
-                  final item = calcItem.item;
-                  final total = AppFormatters.formatCurrencyPdf(
-                      calcItem.itemTotal, displayCurrency);
+                if (calc.itemBreakdowns.isEmpty)
+                  pw.TableRow(
+                    children: [
+                      _tableBodyCell('No items added', pw.Alignment.centerLeft),
+                      _tableBodyCell('-', pw.Alignment.center),
+                      _tableBodyCell('-', pw.Alignment.centerRight),
+                      _tableBodyCell('-', pw.Alignment.center),
+                      _tableBodyCell('-', pw.Alignment.centerRight),
+                    ]
+                  )
+                else
+                  ...calc.itemBreakdowns.map((calcItem) {
+                    final item = calcItem.item;
+                    final total = AppFormatters.formatCurrencyPdf(
+                        calcItem.itemTotal, displayCurrency);
+                        
+                    final qtyString = '${_formatQuantity(item.quantity)}${item.unitType != null ? ' ${item.unitType!.toLowerCase()}' : ''}';
+                    final taxString = _formatTax(item.taxRate);
 
-                  final cells = [
-                    // Description
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-                      child: pw.Text(item.description, style: const pw.TextStyle(fontSize: 10)),
-                    ),
-                    // Qty
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-                      child: pw.Align(
-                        alignment: pw.Alignment.centerRight,
-                        child: pw.Text('${item.quantity}${item.unitType != null ? ' ${item.unitType!.toLowerCase()}' : ''}', style: const pw.TextStyle(fontSize: 10)),
-                      ),
-                    ),
-                    // Price - right aligned
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-                      child: pw.Align(
-                        alignment: pw.Alignment.centerRight,
-                        child: pw.Text(AppFormatters.formatCurrencyPdf(item.unitPrice, displayCurrency), style: const pw.TextStyle(fontSize: 10)),
-                      ),
-                    ),
-                    // Tax % - right aligned
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-                      child: pw.Align(
-                        alignment: pw.Alignment.centerRight,
-                        child: pw.Text('${item.taxRate.toStringAsFixed(1)}%', style: const pw.TextStyle(fontSize: 10)),
-                      ),
-                    ),
-                    // Total - right aligned with FittedBox
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-                      child: pw.Align(
-                        alignment: pw.Alignment.centerRight,
-                        child: pw.FittedBox(
-                          fit: pw.BoxFit.scaleDown,
-                          child: pw.Text(total, style: const pw.TextStyle(fontSize: 10)),
-                        ),
-                      ),
-                    ),
-                  ];
-                  return pw.TableRow(children: cells);
-                }),
+                    return pw.TableRow(
+                      children: [
+                        _tableBodyCell(item.description, pw.Alignment.centerLeft),
+                        _tableBodyCell(qtyString, pw.Alignment.center),
+                        _tableBodyCell(AppFormatters.formatCurrencyPdf(item.unitPrice, displayCurrency), pw.Alignment.centerRight, useFittedBox: true),
+                        _tableBodyCell(taxString, pw.Alignment.center),
+                        _tableBodyCell(total, pw.Alignment.centerRight, useFittedBox: true),
+                      ]
+                    );
+                  }),
               ],
             ),
             pw.Divider(),

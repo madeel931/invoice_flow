@@ -251,8 +251,7 @@ class _DashboardView extends StatelessWidget {
                             ],
                           ),
                           onTap: () => context
-                              .push(AppRoutes.invoiceDetail,
-                                  extra: state.recentInvoice)
+                              .push('${AppRoutes.invoiceDetail}/${state.recentInvoice!.id}')
                               .then((_) {
                             if (context.mounted) {
                               context.read<DashboardCubit>().loadDashboard();

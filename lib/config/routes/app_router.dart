@@ -9,7 +9,7 @@ import '../../core/data/local/local_database_service.dart';
 import '../../core/presentation/widgets/main_shell_page.dart';
 import '../../features/customers/domain/entities/customer.dart';
 import '../../features/customers/presentation/pages/customer_detail_page.dart';
-import '../../features/invoices/domain/entities/invoice.dart';
+
 import '../../features/invoices/presentation/pages/invoice_detail_page.dart';
 import '../../features/invoices/presentation/pages/invoice_form_page.dart';
 import '../../features/invoices/presentation/pages/invoice_preview_page.dart';
@@ -92,12 +92,12 @@ class AppRouter {
         builder: (context, state) => const InvoiceFormPage(),
       ),
       GoRoute(
-        path: AppRoutes.invoicePreview,
+        path: '${AppRoutes.invoicePreview}/:id',
         name: 'invoice-preview',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
-          final invoice = state.extra as Invoice;
-          return InvoicePreviewPage(invoice: invoice);
+          final invoiceId = state.pathParameters['id']!;
+          return InvoicePreviewPage(invoiceId: invoiceId);
         },
       ),
       GoRoute(
@@ -119,12 +119,12 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: AppRoutes.invoiceDetail,
+        path: '${AppRoutes.invoiceDetail}/:id',
         name: 'invoice-detail',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
-          final invoice = state.extra as Invoice;
-          return InvoiceDetailPage(invoice: invoice);
+          final invoiceId = state.pathParameters['id']!;
+          return InvoiceDetailPage(invoiceId: invoiceId);
         },
       ),
       GoRoute(

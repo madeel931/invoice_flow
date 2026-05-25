@@ -200,7 +200,7 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                       onTap: () =>
-                          context.push(AppRoutes.invoiceDetail, extra: inv),
+                          context.push('${AppRoutes.invoiceDetail}/${inv.id}'),
                       child: Padding(
                         padding: const EdgeInsets.all(AppSpacing.md),
                         child: Column(
@@ -287,8 +287,7 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                                       color: colorScheme.onSurfaceVariant),
                                   onSelected: (value) {
                                     if (value == 'view_pdf') {
-                                      context.push(AppRoutes.invoiceDetail,
-                                          extra: inv);
+                                      context.push('${AppRoutes.invoiceDetail}/${inv.id}');
                                     } else {
                                       final newStatus = InvoiceStatus.values
                                           .firstWhere((e) => e.name == value);

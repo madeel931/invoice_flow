@@ -12,6 +12,7 @@ import '../../../../config/routes/route_constants.dart';
 import '../../../../core/widgets/global_card.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../../../settings/domain/usecases/get_business_profile_usecase.dart';
+import '../../domain/usecases/get_invoices_usecase.dart';
 import '../../domain/entities/invoice.dart';
 import '../../domain/entities/invoice_status.dart';
 import '../../domain/services/invoice_calculator.dart';
@@ -19,10 +20,37 @@ import '../../utils/invoice_pdf_generator.dart';
 import '../cubit/invoice_list_cubit.dart';
 import '../cubit/invoice_list_state.dart';
 
-class InvoiceDetailPage extends StatelessWidget {
-  final Invoice invoice; // The initial invoice passed via routing
+class InvoiceDetailPage extends StatefulWidget {
+  final String invoiceId;
 
-  const InvoiceDetailPage({super.key, required this.invoice});
+  const InvoiceDetailPage({super.key, required this.invoiceId});
+
+  @override
+  State<InvoiceDetailPage> createState() => _InvoiceDetailPageState();
+}
+
+class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
+  late Future<Invoice> _invoiceFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _invoiceFuture = _loadInvoice();
+  }
+
+  Future<Invoice> _loadInvoice() async {
+    final getInvoices = GetIt.instance<GetInvoicesUseCase>();
+    final result = await getInvoices(NoParams());
+    
+    return result.fold(
+      (failure) => throw Exception(failure.message),
+      (invoices) {
+        final index = invoices.indexWhere((i) => i.id?.toString() == widget.invoiceId);
+        if (index == -1) throw Exception('Invoice not found.');
+        return invoices[index];
+      },
+    );
+  }
 
   Color _getStatusColor(InvoiceStatus status) {
     switch (status) {
@@ -60,17 +88,33 @@ class InvoiceDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SettingsCubit, SettingsState>(
-      bloc: GetIt.instance<SettingsCubit>(),
-      builder: (context, settingsState) {
-        final profileCurrency = settingsState.profile?.currencyCode ?? 'AED';
+    return FutureBuilder<Invoice>(
+      future: _invoiceFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
+        
+        if (snapshot.hasError || !snapshot.hasData) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Error')),
+            body: Center(child: Text(snapshot.error?.toString() ?? 'Invoice not found')),
+          );
+        }
+        
+        final invoice = snapshot.data!;
+        
+        return BlocBuilder<SettingsCubit, SettingsState>(
+          bloc: GetIt.instance<SettingsCubit>(),
+          builder: (context, settingsState) {
+            final profileCurrency = settingsState.profile?.currencyCode ?? 'AED';
 
-        return BlocBuilder<InvoiceListCubit, InvoiceListState>(
-          builder: (context, state) {
-            final currentInvoice = state.allInvoices.firstWhere(
-              (inv) => inv.id == invoice.id,
-              orElse: () => invoice,
-            );
+            return BlocBuilder<InvoiceListCubit, InvoiceListState>(
+              builder: (context, state) {
+                final currentInvoice = state.allInvoices.firstWhere(
+                  (inv) => inv.id?.toString() == invoice.id?.toString(),
+                  orElse: () => invoice,
+                );
             
             final calc = InvoiceCalculator.calculate(currentInvoice);
             final currencyCode = currentInvoice.currencyCode?.trim().isNotEmpty == true 
@@ -343,9 +387,7 @@ class InvoiceDetailPage extends StatelessWidget {
                         child: OutlinedButton.icon(
                           icon: const Icon(Icons.picture_as_pdf),
                           label: const Text('Preview PDF'),
-                          onPressed: () => context.push(
-                              AppRoutes.invoicePreview,
-                              extra: currentInvoice),
+                          onPressed: () => context.push('${AppRoutes.invoicePreview}/${currentInvoice.id}'),
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -383,6 +425,8 @@ class InvoiceDetailPage extends StatelessWidget {
           },
         );
       },
+    );
+      }
     );
   }
 }

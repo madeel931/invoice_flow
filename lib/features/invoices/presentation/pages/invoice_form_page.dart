@@ -26,11 +26,13 @@ class InvoiceFormPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-            create: (_) {
-              final profileCurrency = GetIt.instance<SettingsCubit>().state.profile?.currencyCode ?? 'AED';
-              return GetIt.instance<InvoiceFormCubit>()..initForm(defaultCurrencyCode: profileCurrency);
-            }),
+        BlocProvider(create: (_) {
+          final profileCurrency =
+              GetIt.instance<SettingsCubit>().state.profile?.currencyCode ??
+                  'AED';
+          return GetIt.instance<InvoiceFormCubit>()
+            ..initForm(defaultCurrencyCode: profileCurrency);
+        }),
         BlocProvider(
             create: (_) =>
                 GetIt.instance<CustomerListCubit>()..loadCustomers()),
@@ -127,7 +129,9 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
             }
 
             final invoice = invoiceState.draftInvoice!;
-            final currencyCode = invoice.currencyCode?.trim().isNotEmpty == true ? invoice.currencyCode! : profileCurrency;
+            final currencyCode = invoice.currencyCode?.trim().isNotEmpty == true
+                ? invoice.currencyCode!
+                : profileCurrency;
 
             if (!_controllersInitialized) {
               if (invoice.discountAmount > 0) {
@@ -148,9 +152,19 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                 actions: [
                   IconButton(
                     icon: const Icon(Icons.check_circle_outline),
-                    onPressed: () => context
-                        .read<InvoiceFormCubit>()
-                        .saveInvoice(InvoiceStatus.unpaid),
+                    onPressed: () {
+                      if (invoice.items.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  'Add at least one item before creating invoice.')),
+                        );
+                        return;
+                      }
+                      context
+                          .read<InvoiceFormCubit>()
+                          .saveInvoice(InvoiceStatus.unpaid);
+                    },
                   ),
                 ],
               ),
@@ -276,7 +290,8 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                                 subtitle: Text(
                                     '${item.quantity}${item.unitType != null ? ' ${item.unitType!.toLowerCase()}' : ''} x ${AppFormatters.formatCurrency(item.unitPrice, currencyCode)}   (Tax: ${item.taxRate}%)'),
                                 trailing: ConstrainedBox(
-                                    constraints: const BoxConstraints(maxWidth: 150),
+                                    constraints:
+                                        const BoxConstraints(maxWidth: 150),
                                     child: FittedBox(
                                       fit: BoxFit.scaleDown,
                                       alignment: Alignment.centerRight,
@@ -307,12 +322,17 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                           children: [
                             SegmentedButton<String>(
                               segments: const [
-                                ButtonSegment(value: 'amount', label: Text('Amount')),
-                                ButtonSegment(value: 'percentage', label: Text('Percentage')),
+                                ButtonSegment(
+                                    value: 'amount', label: Text('Amount')),
+                                ButtonSegment(
+                                    value: 'percentage',
+                                    label: Text('Percentage')),
                               ],
                               selected: {invoice.discountType},
                               onSelectionChanged: (Set<String> newSelection) {
-                                context.read<InvoiceFormCubit>().updateDiscountType(newSelection.first);
+                                context
+                                    .read<InvoiceFormCubit>()
+                                    .updateDiscountType(newSelection.first);
                               },
                             ),
                             const SizedBox(height: 16),
@@ -324,15 +344,28 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                               maxLength: 12,
                               inputFormatters: [AppInputFormatters.amount],
                               decoration: InputDecoration(
-                                  labelText: invoice.discountType == 'percentage' ? 'Discount Percentage (%)' : 'Discount Amount (-)',
-                                  prefixIcon: invoice.discountType == 'percentage' ? const Icon(Icons.percent) : const Icon(Icons.money_off)),
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                                  labelText:
+                                      invoice.discountType == 'percentage'
+                                          ? 'Discount Percentage (%)'
+                                          : 'Discount Amount (-)',
+                                  prefixIcon:
+                                      invoice.discountType == 'percentage'
+                                          ? const Icon(Icons.percent)
+                                          : const Icon(Icons.money_off)),
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                               validator: (val) {
-                                final parsed = double.tryParse(val?.replaceAll(',', '.') ?? '') ?? 0.0;
+                                final parsed = double.tryParse(
+                                        val?.replaceAll(',', '.') ?? '') ??
+                                    0.0;
                                 if (parsed < 0) return 'Cannot be negative';
-                                if (invoice.discountType == 'percentage' && parsed > 100) return 'Cannot exceed 100%';
-                                final calc = InvoiceCalculator.calculate(invoice);
-                                if (invoice.discountType == 'amount' && parsed > calc.subtotal) return 'Cannot exceed subtotal';
+                                if (invoice.discountType == 'percentage' &&
+                                    parsed > 100) return 'Cannot exceed 100%';
+                                final calc =
+                                    InvoiceCalculator.calculate(invoice);
+                                if (invoice.discountType == 'amount' &&
+                                    parsed > calc.subtotal)
+                                  return 'Cannot exceed subtotal';
                                 return null;
                               },
                               onChanged: (val) {
@@ -355,12 +388,17 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                               decoration: const InputDecoration(
                                   labelText: 'Paid Amount',
                                   prefixIcon: Icon(Icons.payments)),
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                               validator: (val) {
-                                final parsed = double.tryParse(val?.replaceAll(',', '.') ?? '') ?? 0.0;
+                                final parsed = double.tryParse(
+                                        val?.replaceAll(',', '.') ?? '') ??
+                                    0.0;
                                 if (parsed < 0) return 'Cannot be negative';
-                                final calc = InvoiceCalculator.calculate(invoice);
-                                if (parsed > calc.grandTotal) return 'Cannot exceed grand total';
+                                final calc =
+                                    InvoiceCalculator.calculate(invoice);
+                                if (parsed > calc.grandTotal)
+                                  return 'Cannot exceed grand total';
                                 return null;
                               },
                               onChanged: (val) {
@@ -424,7 +462,10 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(invoice.discountType == 'percentage' ? 'Discount (${invoice.discountAmount}%):' : 'Discount:',
+                                Text(
+                                    invoice.discountType == 'percentage'
+                                        ? 'Discount (${invoice.discountAmount}%):'
+                                        : 'Discount:',
                                     style: const TextStyle(color: Colors.red)),
                                 Text(
                                     '- ${AppFormatters.formatCurrency(calc.discountValue, currencyCode)}',
@@ -448,7 +489,8 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                             children: [
                               const Text('TOTAL',
                                   style: TextStyle(
-                                      fontWeight: FontWeight.bold, fontSize: 18)),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18)),
                               const SizedBox(width: 16),
                               Flexible(
                                 child: FittedBox(
@@ -460,7 +502,9 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 24,
-                                          color: Theme.of(context).colorScheme.primary)),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary)),
                                 ),
                               ),
                             ],
@@ -486,36 +530,40 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18,
-                                      color: calc.balanceDue > 0 ? Colors.orange : null)),
+                                      color: calc.balanceDue > 0
+                                          ? Colors.orange
+                                          : null)),
                               Text(
                                   AppFormatters.formatCurrency(
                                       calc.balanceDue, currencyCode),
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18,
-                                      color: calc.balanceDue > 0 ? Colors.orange : null))
+                                      color: calc.balanceDue > 0
+                                          ? Colors.orange
+                                          : null))
                             ],
                           ),
-                      const SizedBox(height: 16),
-                      GlobalButton(
-                        text: 'Save as Draft',
-                        isLoading:
-                            invoiceState.status == InvoiceFormStatus.saving,
-                        onPressed: invoice.items.isEmpty
-                            ? null
-                            : () => context
-                                .read<InvoiceFormCubit>()
-                                .saveInvoice(InvoiceStatus.draft),
+                          const SizedBox(height: 16),
+                          GlobalButton(
+                            text: 'Save as Draft',
+                            isLoading:
+                                invoiceState.status == InvoiceFormStatus.saving,
+                            onPressed: invoice.items.isEmpty
+                                ? null
+                                : () => context
+                                    .read<InvoiceFormCubit>()
+                                    .saveInvoice(InvoiceStatus.draft),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                );
-              },
-            ),
-            ),
-          );
-        },
-      );
+                    );
+                  },
+                ),
+              ),
+            );
+          },
+        );
       },
     );
   }

@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 	<dict>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>InvoiceFlow Pro needs photo library access so you can select a business logo for invoices.</string>
+		<key>NSCameraUsageDescription</key>
+		<string>InvoiceFlow Pro needs camera access so you can capture a business logo if you choose.</string>
+		<key>NSPhotoLibraryAddUsageDescription</key>
+		<string>InvoiceFlow Pro needs permission to save invoice-related images if you choose.</string>
 		<key>CADisableMinimumFrameDurationOnPhone</key>
 		<true/>
 		<key>CFBundleDevelopmentRegion</key>

@@ -104,17 +104,15 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
         return;
       }
 
-      if (Platform.isAndroid || Platform.isIOS) {
-         final file = File(path);
-         if (!await file.exists()) {
-             if (mounted) {
-                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                     content: Text('Please select a valid InvoiceFlow Pro backup file.'),
-                     backgroundColor: AppColors.error,
-                  ));
-             }
-             return;
+      final file = File(path);
+      if (!await file.exists()) {
+         if (mounted) {
+             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                 content: Text('Could not access the selected backup file.'),
+                 backgroundColor: AppColors.error,
+              ));
          }
+         return;
       }
 
       await _confirmSelectedFile(path);
@@ -165,16 +163,39 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
                 content: Text(state.errorMessage ?? 'An error occurred'),
                 backgroundColor: AppColors.error,
               ));
-            } else if (state.status == BackupStatus.success &&
-                state.backupFilePath != null) {
-              final xFile = XFile(state.backupFilePath!);
-              await Share.shareXFiles([xFile],
-                  text: 'InvoiceFlow Pro Backup File');
-              if (context.mounted) {
-                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                   content: Text('Backup created successfully.'),
-                   backgroundColor: AppColors.success,
-                 ));
+            } else if (state.status == BackupStatus.success) {
+              if (state.backupFilePath == null || state.backupFilePath!.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text('Backup created but file path is missing.'),
+                  backgroundColor: AppColors.error,
+                ));
+                return;
+              }
+              try {
+                final box = context.findRenderObject() as RenderBox?;
+                final origin = box != null
+                    ? box.localToGlobal(Offset.zero) & box.size
+                    : null;
+                
+                final xFile = XFile(state.backupFilePath!);
+                await Share.shareXFiles(
+                  [xFile],
+                  text: 'InvoiceFlow Pro Backup',
+                  sharePositionOrigin: origin,
+                );
+                if (context.mounted) {
+                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                     content: Text('Backup created successfully.'),
+                     backgroundColor: AppColors.success,
+                   ));
+                }
+              } catch (e) {
+                if (context.mounted) {
+                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                     content: Text('Backup created but sharing failed. File path: ${state.backupFilePath}'),
+                     backgroundColor: AppColors.error,
+                   ));
+                }
               }
             } else if (state.status == BackupStatus.restoreSuccess) {
               setState(() {
@@ -276,46 +297,51 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
               children: [
                 BlocBuilder<BackupCubit, BackupState>(
                   builder: (context, backupState) {
-                    final isProcessing =
-                        backupState.status == BackupStatus.processing;
-                    return ListTile(
-                      leading: Icon(Icons.cloud_upload_outlined, color: Theme.of(context).colorScheme.primary),
-                      title: const Text('Export Backup'),
-                      subtitle: const Text('Save your database securely.'),
-                      trailing: isProcessing
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2))
-                          : const Icon(Icons.chevron_right),
-                      enabled: !isProcessing,
-                      onTap: isProcessing
-                          ? null
-                          : _confirmExport,
-                    );
-                  },
-                ),
-                const Divider(height: 1),
-                BlocBuilder<BackupCubit, BackupState>(
-                  builder: (context, backupState) {
-                    final isProcessing =
-                        backupState.status == BackupStatus.processing;
-                    return ListTile(
-                      leading: Icon(Icons.restore, color: Theme.of(context).colorScheme.error),
-                      title: const Text('Restore Backup'),
-                      subtitle: const Text('Replace current data with backup.'),
-                      trailing: isProcessing
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2))
-                          : const Icon(Icons.chevron_right),
-                      enabled: !isProcessing,
-                      onTap: isProcessing 
-                          ? null 
-                          : _confirmRestoreWarning,
+                    final isProcessing = backupState.status == BackupStatus.processing;
+                    return Column(
+                      children: [
+                        ListTile(
+                          leading: Icon(Icons.cloud_upload_outlined, color: Theme.of(context).colorScheme.primary),
+                          title: const Text('Export Backup'),
+                          subtitle: const Text('Save your database securely.'),
+                          trailing: const Icon(Icons.chevron_right),
+                          enabled: !isProcessing,
+                          onTap: isProcessing ? null : _confirmExport,
+                        ),
+                        const Divider(height: 1),
+                        ListTile(
+                          leading: Icon(Icons.restore, color: Theme.of(context).colorScheme.error),
+                          title: const Text('Restore Backup'),
+                          subtitle: const Text('Replace current data with backup.'),
+                          trailing: const Icon(Icons.chevron_right),
+                          enabled: !isProcessing,
+                          onTap: isProcessing ? null : _confirmRestoreWarning,
+                        ),
+                        if (isProcessing) ...[
+                          const Divider(height: 1),
+                          Padding(
+                            padding: const EdgeInsets.all(AppSpacing.md),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                ),
+                                const SizedBox(width: AppSpacing.md),
+                                Text(
+                                  'Processing backup request...',
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.primary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ]
+                      ],
                     );
                   },
                 ),

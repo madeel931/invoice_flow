@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../../config/routes/route_constants.dart';
+import '../../../../core/presentation/widgets/app_currency_picker_field.dart';
 import '../../../../core/widgets/global_button.dart';
 import '../cubit/onboarding_cubit.dart';
 import '../cubit/onboarding_state.dart';
@@ -32,17 +33,6 @@ class _OnboardingViewState extends State<_OnboardingView> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
 
-  // Hardcoded for setup; in production, this could be a localized list
-  final List<String> _currencies = [
-    'USD',
-    'EUR',
-    'GBP',
-    'SAR',
-    'AED',
-    'INR',
-    'AUD',
-    'CAD'
-  ];
   String? _selectedCurrency = 'USD';
 
   @override
@@ -127,18 +117,9 @@ class _OnboardingViewState extends State<_OnboardingView> {
                         },
                       ),
                       const SizedBox(height: 20),
-                      DropdownButtonFormField<String>(
-                        initialValue: _selectedCurrency,
-                        decoration: const InputDecoration(
-                          labelText: 'Base Currency',
-                          prefixIcon: Icon(Icons.payments_rounded),
-                        ),
-                        items: _currencies.map((currency) {
-                          return DropdownMenuItem(
-                            value: currency,
-                            child: Text(currency),
-                          );
-                        }).toList(),
+                      AppCurrencyPickerField(
+                        label: 'Base Currency',
+                        selectedCurrencyCode: _selectedCurrency,
                         onChanged: (value) {
                           setState(() {
                             _selectedCurrency = value;

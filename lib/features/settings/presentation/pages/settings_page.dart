@@ -11,6 +11,7 @@ import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/global_button.dart';
 import '../../../../core/widgets/global_card.dart';
+import '../../../../core/presentation/widgets/app_currency_picker_field.dart';
 import '../../../../core/widgets/global_text_field.dart';
 import '../../../../core/utils/app_directories.dart';
 import '../../domain/entities/business_profile.dart';
@@ -55,16 +56,6 @@ class _SettingsViewState extends State<_SettingsView> {
   late TextEditingController _websiteController;
 
   String _selectedCurrency = 'USD';
-  final List<String> _currencies = [
-    'USD',
-    'EUR',
-    'GBP',
-    'SAR',
-    'AED',
-    'INR',
-    'AUD',
-    'CAD'
-  ];
 
   @override
   void initState() {
@@ -290,17 +281,11 @@ class _SettingsViewState extends State<_SettingsView> {
                                   label: 'Tax ID / VAT Number',
                                   prefixIcon: const Icon(Icons.receipt_long)),
                               const SizedBox(height: AppSpacing.md),
-                              DropdownButtonFormField<String>(
-                                initialValue: _selectedCurrency,
-                                decoration: const InputDecoration(
-                                    labelText: 'Base Currency',
-                                    prefixIcon: Icon(Icons.payments)),
-                                items: _currencies
-                                    .map((c) => DropdownMenuItem(
-                                        value: c, child: Text(c)))
-                                    .toList(),
+                              AppCurrencyPickerField(
+                                label: 'Base Currency',
+                                selectedCurrencyCode: _selectedCurrency,
                                 onChanged: (val) =>
-                                    setState(() => _selectedCurrency = val!),
+                                    setState(() => _selectedCurrency = val),
                               ),
                             ],
                           ),

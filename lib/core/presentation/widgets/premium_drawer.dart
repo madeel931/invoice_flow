@@ -15,6 +15,7 @@ class PremiumDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentLocation = GoRouterState.of(context).uri.toString();
     // We inject the SettingsCubit here to ensure the Drawer always has fresh profile data
     return BlocProvider.value(
       value: GetIt.instance<SettingsCubit>()..loadProfile(),
@@ -94,6 +95,7 @@ class PremiumDrawer extends StatelessWidget {
                   _DrawerItem(
                     icon: Icons.business_center_outlined,
                     title: 'Business Profile',
+                    isSelected: currentLocation == AppRoutes.settings,
                     onTap: () {
                       context.pop(); // Close drawer
                       context.push(AppRoutes.settings);
@@ -103,18 +105,12 @@ class PremiumDrawer extends StatelessWidget {
                   _DrawerItem(
                     icon: Icons.cloud_upload_outlined,
                     title: 'Backup & Restore',
+                    isSelected: currentLocation == AppRoutes.backupRestore,
                     onTap: () {
                       context.pop();
-                      context.push(AppRoutes
-                          .settings); // Assuming Backup is inside Settings right now
+                      context.push(AppRoutes.backupRestore);
                     },
                   ),
-                  const Padding(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-                    child: Divider(height: 1),
-                  ),
-                  // Inside the ListView of PremiumDrawer...
                   const Padding(
                     padding:
                         EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
@@ -151,6 +147,7 @@ class PremiumDrawer extends StatelessWidget {
                   _DrawerItem(
                     icon: Icons.language_rounded,
                     title: 'Language',
+                    isSelected: false,
                     onTap: () {
                       context.pop();
                     },
@@ -187,19 +184,35 @@ class _DrawerItem extends StatelessWidget {
   final IconData icon;
   final String title;
   final VoidCallback onTap;
+  final bool isSelected;
 
-  const _DrawerItem(
-      {required this.icon, required this.title, required this.onTap});
+  const _DrawerItem({
+    required this.icon,
+    required this.title,
+    required this.onTap,
+    this.isSelected = false,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    
     return ListTile(
-      leading:
-          Icon(icon, color: Theme.of(context).colorScheme.onSurfaceVariant),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
+      leading: Icon(
+        icon,
+        color: isSelected ? colorScheme.onPrimaryContainer : colorScheme.onSurfaceVariant,
+      ),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+          color: isSelected ? colorScheme.onPrimaryContainer : colorScheme.onSurface,
+        ),
+      ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      selected: isSelected,
+      selectedTileColor: colorScheme.primaryContainer,
       onTap: onTap,
-      hoverColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.05),
     );
   }
 }

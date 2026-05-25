@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/widgets/global_button.dart';
 import '../../../../core/widgets/global_text_field.dart';
+import '../../../../core/utils/app_validators.dart';
+import '../../../../core/utils/app_input_formatters.dart';
 import '../../domain/entities/product.dart';
 
 class ProductFormSheet extends StatefulWidget {
@@ -134,9 +136,11 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
         top: AppSpacing.lg,
         bottom: bottomInset + AppSpacing.lg,
       ),
-      child: Form(
-        key: _formKey,
-        child: Column(
+      child: SafeArea(
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -155,8 +159,8 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
               textInputAction: TextInputAction.next,
               label: 'Item Name *',
               prefixIcon: const Icon(Icons.inventory_2_outlined),
-              validator: (val) =>
-                  val == null || val.trim().isEmpty ? 'Required' : null,
+              maxLength: 100,
+              validator: (val) => AppValidators.requiredText(val, min: 2, max: 100, fieldName: 'Item Name'),
             ),
             const SizedBox(height: AppSpacing.md),
             Row(
@@ -170,14 +174,9 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
                     textInputAction: TextInputAction.next,
                     label: 'Base Price *',
                     prefixIcon: const Icon(Icons.attach_money),
-                    validator: (val) {
-                      if (val == null || val.trim().isEmpty) return 'Required';
-                      final parsed = double.tryParse(val.replaceAll(',', '.').trim());
-                      if (parsed == null) return 'Enter a valid price';
-                      if (parsed < 0) return 'Price cannot be negative';
-                      if (parsed > 99999999.99) return 'Amount is too large';
-                      return null;
-                    },
+                    maxLength: 12,
+                    inputFormatters: [AppInputFormatters.amount],
+                    validator: (val) => AppValidators.amount(val, fieldName: 'Price', max: 99999999.99),
                   ),
                 ),
                 const SizedBox(width: AppSpacing.md),
@@ -209,6 +208,9 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
               textInputAction: TextInputAction.next,
               label: 'Default Tax Rate (%)',
               prefixIcon: const Icon(Icons.percent),
+              maxLength: 5,
+              inputFormatters: [AppInputFormatters.percentage],
+              validator: (val) => AppValidators.percentage(val, fieldName: 'Tax Rate'),
             ),
             const SizedBox(height: AppSpacing.md),
             GlobalTextField(
@@ -216,6 +218,8 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
               textInputAction: TextInputAction.done,
               maxLines: 2,
               label: 'Description (Optional)',
+              maxLength: 300,
+              validator: (val) => AppValidators.optionalText(val, max: 300, fieldName: 'Description'),
             ),
             const SizedBox(height: AppSpacing.xl),
             GlobalButton(
@@ -223,6 +227,8 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
               onPressed: _submit,
             ),
           ],
+        ),
+      ),
         ),
       ),
     );

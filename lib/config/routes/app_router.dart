@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
 import 'package:invoice_flow_pro/features/customers/presentation/pages/customers_page.dart';
 import 'package:invoice_flow_pro/features/settings/presentation/pages/settings_page.dart';
+import 'package:invoice_flow_pro/features/settings/presentation/pages/backup_restore_page.dart';
 
 import '../../core/data/local/local_database_service.dart';
 import '../../core/presentation/widgets/main_shell_page.dart';
@@ -77,6 +78,12 @@ class AppRouter {
         name: 'settings',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const SettingsPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.backupRestore,
+        name: 'backup-restore',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const BackupRestorePage(),
       ),
       GoRoute(
         path: AppRoutes.invoiceForm,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class GlobalTextField extends StatelessWidget {
   final String label;
@@ -14,6 +15,10 @@ class GlobalTextField extends StatelessWidget {
   final Widget? prefixIcon;
   final bool enabled;
   final bool readOnly;
+  final int? maxLength;
+  final List<TextInputFormatter>? inputFormatters;
+
+  final bool hideCounter;
 
   const GlobalTextField({
     super.key,
@@ -30,6 +35,9 @@ class GlobalTextField extends StatelessWidget {
     this.prefixIcon,
     this.enabled = true,
     this.readOnly = false,
+    this.maxLength,
+    this.inputFormatters,
+    this.hideCounter = true,
   });
 
   @override
@@ -45,10 +53,13 @@ class GlobalTextField extends StatelessWidget {
       maxLines: maxLines,
       enabled: enabled,
       readOnly: readOnly,
+      maxLength: maxLength,
+      inputFormatters: inputFormatters,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
         prefixIcon: prefixIcon,
+        counterText: hideCounter ? '' : null,
       ),
     );
   }

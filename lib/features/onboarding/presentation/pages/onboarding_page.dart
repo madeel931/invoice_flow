@@ -6,6 +6,7 @@ import 'package:get_it/get_it.dart';
 import '../../../../config/routes/route_constants.dart';
 import '../../../../core/presentation/widgets/app_currency_picker_field.dart';
 import '../../../../core/widgets/global_button.dart';
+import '../../../../core/utils/app_validators.dart';
 import '../cubit/onboarding_cubit.dart';
 import '../cubit/onboarding_state.dart';
 
@@ -104,17 +105,13 @@ class _OnboardingViewState extends State<_OnboardingView> {
                       const SizedBox(height: 48),
                       TextFormField(
                         controller: _nameController,
+                        maxLength: 100,
                         decoration: const InputDecoration(
                           labelText: 'Business Name',
                           prefixIcon: Icon(Icons.storefront_rounded),
                         ),
                         textInputAction: TextInputAction.next,
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Please enter your business name';
-                          }
-                          return null;
-                        },
+                        validator: (value) => AppValidators.requiredText(value, min: 2, max: 100, fieldName: 'Business Name'),
                       ),
                       const SizedBox(height: 20),
                       AppCurrencyPickerField(

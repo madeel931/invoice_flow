@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/widgets/global_button.dart';
 import '../../../../core/widgets/global_text_field.dart';
+import '../../../../core/utils/app_validators.dart';
+import '../../../../core/utils/app_input_formatters.dart';
 import '../../domain/entities/customer.dart';
 
 class CustomerFormSheet extends StatefulWidget {
@@ -85,9 +87,11 @@ class _CustomerFormSheetState extends State<CustomerFormSheet> {
         top: AppSpacing.lg,
         bottom: bottomInset + AppSpacing.lg,
       ),
-      child: Form(
-        key: _formKey,
-        child: Column(
+      child: SafeArea(
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
           mainAxisSize: MainAxisSize.min, // Wrap content height
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -106,8 +110,8 @@ class _CustomerFormSheetState extends State<CustomerFormSheet> {
               textInputAction: TextInputAction.next,
               label: 'Client / Company Name *',
               prefixIcon: const Icon(Icons.person),
-              validator: (val) =>
-                  val == null || val.trim().isEmpty ? 'Name is required' : null,
+              maxLength: 80,
+              validator: (val) => AppValidators.requiredText(val, min: 2, max: 80, fieldName: 'Name'),
             ),
             const SizedBox(height: AppSpacing.md),
             GlobalTextField(
@@ -116,6 +120,8 @@ class _CustomerFormSheetState extends State<CustomerFormSheet> {
               keyboardType: TextInputType.emailAddress,
               label: 'Email Address',
               prefixIcon: const Icon(Icons.email),
+              maxLength: 120,
+              validator: (val) => AppValidators.email(val, max: 120),
             ),
             const SizedBox(height: AppSpacing.md),
             GlobalTextField(
@@ -124,6 +130,9 @@ class _CustomerFormSheetState extends State<CustomerFormSheet> {
               keyboardType: TextInputType.phone,
               label: 'Phone Number',
               prefixIcon: const Icon(Icons.phone),
+              maxLength: 20,
+              inputFormatters: [AppInputFormatters.phone],
+              validator: (val) => AppValidators.phone(val, max: 20),
             ),
             const SizedBox(height: AppSpacing.md),
             GlobalTextField(
@@ -132,6 +141,8 @@ class _CustomerFormSheetState extends State<CustomerFormSheet> {
               maxLines: 2,
               label: 'Billing Address',
               prefixIcon: const Icon(Icons.location_city),
+              maxLength: 250,
+              validator: (val) => AppValidators.optionalText(val, max: 250, fieldName: 'Address'),
             ),
             const SizedBox(height: AppSpacing.xl),
             GlobalButton(
@@ -139,6 +150,8 @@ class _CustomerFormSheetState extends State<CustomerFormSheet> {
               onPressed: _submit,
             ),
           ],
+        ),
+      ),
         ),
       ),
     );

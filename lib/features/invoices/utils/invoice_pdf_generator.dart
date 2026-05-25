@@ -135,18 +135,17 @@ class InvoicePdfGenerator {
             pw.Table(
               border: null,
               columnWidths: {
-                0: const pw.FlexColumnWidth(3), // Description
+                0: const pw.FlexColumnWidth(4), // Description
                 1: const pw.FlexColumnWidth(1), // Qty
-                2: const pw.FlexColumnWidth(1), // Unit
-                3: const pw.FlexColumnWidth(2), // Unit Price
-                4: const pw.FlexColumnWidth(1), // Tax %
-                5: const pw.FlexColumnWidth(2), // Total
+                2: const pw.FlexColumnWidth(2), // Unit Price
+                3: const pw.FlexColumnWidth(1), // Tax
+                4: const pw.FlexColumnWidth(2), // Total
               },
               children: [
                 // Header row
                 pw.TableRow(
                   decoration: const pw.BoxDecoration(color: PdfColors.blue800),
-                  children: ['Description', 'Qty', 'Unit', 'Unit Price', 'Tax %', 'Total']
+                  children: ['Description', 'Qty', 'Unit Price', 'Tax %', 'Total']
                       .map((header) => pw.Padding(
                             padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 8),
                             child: pw.Text(header,
@@ -172,17 +171,12 @@ class InvoicePdfGenerator {
                       padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 6),
                       child: pw.Align(
                         alignment: pw.Alignment.centerRight,
-                        child: pw.Text(item.quantity.toStringAsFixed(2), style: const pw.TextStyle(fontSize: 10)),
+                        child: pw.Text(
+                            '${item.quantity.toStringAsFixed(2)}${item.unitType != null ? ' ${item.unitType!.toLowerCase()}' : ''}', 
+                            style: const pw.TextStyle(fontSize: 10)),
                       ),
                     ),
-                    // Unit - right aligned
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-                      child: pw.Align(
-                        alignment: pw.Alignment.centerRight,
-                        child: pw.Text(item.unitType?.toLowerCase() ?? '-', style: const pw.TextStyle(fontSize: 10)),
-                      ),
-                    ),
+
                     // Unit Price - right aligned with FittedBox
                     pw.Padding(
                       padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 6),

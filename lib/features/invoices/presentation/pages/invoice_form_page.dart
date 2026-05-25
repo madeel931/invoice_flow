@@ -18,6 +18,7 @@ import '../../domain/entities/invoice_status.dart';
 import '../cubit/invoice_form_cubit.dart';
 import '../cubit/invoice_form_state.dart';
 import '../widgets/invoice_item_sheet.dart';
+import '../../../../core/utils/app_input_formatters.dart';
 
 class InvoiceFormPage extends StatelessWidget {
   const InvoiceFormPage({super.key});
@@ -264,7 +265,7 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold)),
                                 subtitle: Text(
-                                    '${item.quantity} x ${AppFormatters.formatCurrency(item.unitPrice, currencyCode)}${item.unitType != null ? ' / ${item.unitType!.toLowerCase()}' : ''}   (Tax: ${item.taxRate}%)'),
+                                    '${item.quantity}${item.unitType != null ? ' ${item.unitType!.toLowerCase()}' : ''} x ${AppFormatters.formatCurrency(item.unitPrice, currencyCode)}   (Tax: ${item.taxRate}%)'),
                                 trailing: ConstrainedBox(
                                     constraints: const BoxConstraints(maxWidth: 150),
                                     child: FittedBox(
@@ -300,6 +301,8 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                               keyboardType:
                                   const TextInputType.numberWithOptions(
                                       decimal: true),
+                              maxLength: 12,
+                              inputFormatters: [AppInputFormatters.amount],
                               decoration: const InputDecoration(
                                   labelText: 'Discount Amount (-)',
                                   prefixIcon: Icon(Icons.money_off)),
@@ -316,6 +319,7 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                             TextFormField(
                               controller: _notesController,
                               maxLines: 2,
+                              maxLength: 500,
                               decoration: const InputDecoration(
                                   labelText: 'Notes / Payment Terms',
                                   prefixIcon: Icon(Icons.notes)),

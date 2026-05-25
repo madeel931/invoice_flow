@@ -4,6 +4,8 @@ import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/widgets/global_button.dart';
 import '../../../../core/widgets/global_text_field.dart';
+import '../../../../core/utils/app_validators.dart';
+import '../../../../core/utils/app_input_formatters.dart';
 import '../../../products/domain/entities/product.dart';
 import '../../domain/entities/invoice_item.dart';
 
@@ -43,7 +45,22 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
   late TextEditingController _qtyController;
   late TextEditingController _priceController;
   late TextEditingController _taxController;
-  String? _unitType;
+  
+  String _selectedUnit = 'piece';
+  final List<String> _unitTypes = [
+    'piece',
+    'hour',
+    'day',
+    'project',
+    'kg',
+    'gram',
+    'meter',
+    'km',
+    'liter',
+    'month',
+    'service',
+    'custom'
+  ];
 
 
   @override
@@ -64,9 +81,17 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
     _taxController = TextEditingController(
       text: widget.existingItem != null
           ? widget.existingItem!.taxRate.toStringAsFixed(2)
-          : '0.00',
+          : '',
     );
-    _unitType = widget.existingItem?.unitType;
+    
+    if (widget.existingItem?.unitType != null) {
+      String oldUnit = widget.existingItem!.unitType!.toLowerCase();
+      if (_unitTypes.contains(oldUnit)) {
+        _selectedUnit = oldUnit;
+      } else {
+        _selectedUnit = 'custom';
+      }
+    }
   }
 
   @override
@@ -88,24 +113,29 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
     setState(() {
       _descController.text = product.name;
       _priceController.text = product.price.toStringAsFixed(2);
-      _taxController.text =
-          product.defaultTaxRate?.toStringAsFixed(2) ?? '0.00';
-      _unitType = product.unitType;
+      _taxController.text = (product.defaultTaxRate ?? 0.0).toStringAsFixed(2);
+      
+      String prodUnit = product.unitType.toLowerCase();
+      if (_unitTypes.contains(prodUnit)) {
+        _selectedUnit = prodUnit;
+      } else {
+        _selectedUnit = 'custom';
+      }
     });
   }
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      final qty = _parseDouble(_qtyController.text) ?? 1.0;
-      final price = _parseDouble(_priceController.text) ?? 0.0;
-      final tax = _parseDouble(_taxController.text) ?? 0.0;
+      final parsedQty = _parseDouble(_qtyController.text) ?? 1.0;
+      final parsedPrice = _parseDouble(_priceController.text) ?? 0.0;
+      final parsedTax = _parseDouble(_taxController.text) ?? 0.0;
 
       final item = InvoiceItem(
         description: _descController.text.trim(),
-        quantity: qty,
-        unitPrice: price,
-        taxRate: tax,
-        unitType: _unitType,
+        quantity: parsedQty,
+        unitPrice: parsedPrice,
+        taxRate: parsedTax,
+        unitType: _selectedUnit,
       );
       Navigator.of(context).pop(item);
     }
@@ -118,9 +148,11 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
     return Padding(
       padding: EdgeInsets.only(
           left: AppSpacing.lg, right: AppSpacing.lg, top: AppSpacing.lg, bottom: bottomInset + AppSpacing.lg),
-      child: Form(
-        key: _formKey,
-        child: Column(
+      child: SafeArea(
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -170,8 +202,8 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
             GlobalTextField(
               controller: _descController,
               label: 'Description *',
-              validator: (val) =>
-                  val == null || val.trim().isEmpty ? 'Required' : null,
+              maxLength: 100,
+              validator: (val) => AppValidators.requiredText(val, min: 2, max: 100, fieldName: 'Item Name'),
             ),
             const SizedBox(height: AppSpacing.md),
             Row(
@@ -181,7 +213,9 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
                     controller: _qtyController,
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
-                    label: _unitType != null ? 'Quantity ($_unitType)' : 'Quantity *',
+                    label: 'Quantity *',
+                    maxLength: 6,
+                    inputFormatters: [AppInputFormatters.amount],
                     validator: (val) {
                       if (val == null || val.trim().isEmpty) return 'Required';
                       final parsed = double.tryParse(val.replaceAll(',', '.').trim());
@@ -194,20 +228,35 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
                 ),
                 const SizedBox(width: AppSpacing.md),
                 Expanded(
+                  flex: 1,
+                  child: DropdownButtonFormField<String>(
+                    isExpanded: true,
+                    initialValue: _selectedUnit,
+                    decoration: const InputDecoration(labelText: 'Unit'),
+                    items: _unitTypes
+                        .map((u) => DropdownMenuItem(
+                              value: u,
+                              child: Text(u, overflow: TextOverflow.ellipsis),
+                            ))
+                        .toList(),
+                    onChanged: (val) => setState(() => _selectedUnit = val!),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Row(
+              children: [
+                Expanded(
                   flex: 2,
                   child: GlobalTextField(
                     controller: _priceController,
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
                     label: 'Unit Price *',
-                    validator: (val) {
-                      if (val == null || val.trim().isEmpty) return 'Required';
-                      final parsed = double.tryParse(val.replaceAll(',', '.').trim());
-                      if (parsed == null) return 'Enter a valid amount';
-                      if (parsed < 0) return 'Price cannot be negative';
-                      if (parsed > 99999999.99) return 'Amount is too large';
-                      return null;
-                    },
+                    maxLength: 12,
+                    inputFormatters: [AppInputFormatters.amount],
+                    validator: (val) => AppValidators.amount(val, fieldName: 'Unit Price', max: 99999999.99),
                   ),
                 ),
               ],
@@ -218,10 +267,15 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
               label: 'Tax Rate (%)',
+              maxLength: 5,
+              inputFormatters: [AppInputFormatters.percentage],
+              validator: (val) => AppValidators.percentage(val, fieldName: 'Tax Rate'),
             ),
             const SizedBox(height: AppSpacing.xl),
             GlobalButton(text: 'Save Item', onPressed: _submit),
           ],
+        ),
+      ),
         ),
       ),
     );

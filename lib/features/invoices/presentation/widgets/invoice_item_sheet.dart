@@ -66,26 +66,28 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
   @override
   void initState() {
     super.initState();
+    final item = widget.existingItem;
+    
     _descController =
-        TextEditingController(text: widget.existingItem?.description);
+        TextEditingController(text: item?.description);
     _qtyController = TextEditingController(
-      text: widget.existingItem != null
-          ? widget.existingItem!.quantity.toStringAsFixed(2)
+      text: item != null
+          ? item.quantity.toStringAsFixed(2)
           : '1.00',
     );
     _priceController = TextEditingController(
-      text: widget.existingItem != null
-          ? widget.existingItem!.unitPrice.toStringAsFixed(2)
+      text: item != null
+          ? item.unitPrice.toStringAsFixed(2)
           : '',
     );
     _taxController = TextEditingController(
-      text: widget.existingItem != null
-          ? widget.existingItem!.taxRate.toStringAsFixed(2)
+      text: item != null
+          ? item.taxRate.toStringAsFixed(2)
           : '',
     );
     
-    if (widget.existingItem?.unitType != null) {
-      String oldUnit = widget.existingItem!.unitType!.toLowerCase();
+    if (item?.unitType != null) {
+      String oldUnit = item!.unitType!.toLowerCase();
       if (_unitTypes.contains(oldUnit)) {
         _selectedUnit = oldUnit;
       } else {

@@ -82,7 +82,14 @@ class _InvoicePreviewPageState extends State<InvoicePreviewPage> {
           final pdfBytes = snapshot.data!;
           final theme = Theme.of(context);
           final invoices = context.read<InvoiceListCubit>().state.allInvoices;
-          final invoice = invoices.firstWhere((i) => i.id?.toString() == widget.invoiceId);
+          final invoiceIndex = invoices.indexWhere((i) => i.id?.toString() == widget.invoiceId);
+          if (invoiceIndex == -1) {
+            return const EmptyStateWidget(
+              message: 'Invoice not found.',
+              icon: Icons.error_outline,
+            );
+          }
+          final invoice = invoices[invoiceIndex];
 
           return Padding(
             padding: const EdgeInsets.all(24.0),

@@ -70,7 +70,8 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
 
         switch (inv.status) {
           case InvoiceStatus.paid:
-            totalRevenue += paidAmount;
+            // A fully paid invoice collects the grandTotal, regardless of the DB paidAmount field
+            totalRevenue += calc.grandTotal;
             paidCount++;
             break;
           case InvoiceStatus.partiallyPaid:

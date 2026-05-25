@@ -201,7 +201,7 @@ class _DashboardView extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Center(
-                            child: Text('No invoices generated yet.',
+                            child: Text('No recent invoices yet.',
                                 style: TextStyle(color: Colors.grey[600])),
                           ),
                         ),

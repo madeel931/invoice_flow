@@ -128,7 +128,11 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                   body: Center(child: CircularProgressIndicator()));
             }
 
-            final invoice = invoiceState.draftInvoice!;
+            final invoice = invoiceState.draftInvoice;
+            if (invoice == null) {
+              return const Scaffold(
+                  body: Center(child: Text('Draft invoice is unavailable.')));
+            }
             final currencyCode = invoice.currencyCode?.trim().isNotEmpty == true
                 ? invoice.currencyCode!
                 : profileCurrency;

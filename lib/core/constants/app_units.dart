@@ -8,11 +8,15 @@ class AppUnit {
   });
 }
 
+/// Centralized registry for item measurement units.
+/// Raw lowercase `value` is stored in the local database.
+/// Capitalized `label` is presented in the UI to ensure a professional look.
 class AppUnits {
   AppUnits._();
 
   static const String defaultUnit = 'piece';
 
+  // To add a new unit across the entire app, simply add an AppUnit to this list.
   static const List<AppUnit> all = [
     AppUnit(value: 'piece', label: 'Piece'),
     AppUnit(value: 'hour', label: 'Hour'),

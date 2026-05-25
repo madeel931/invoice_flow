@@ -61,6 +61,7 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
     }
   }
 
+  // Restore is destructive to local data. We force confirmation before even opening the file picker.
   Future<void> _confirmRestoreWarning() async {
     final bool? confirm = await showDialog<bool>(
       context: context,
@@ -149,6 +150,7 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
 
   @override
   Widget build(BuildContext context) {
+    // If restore is complete, block the back button. The app must be restarted to safely load the new database instance.
     return PopScope(
       canPop: !_restoreCompleted,
       child: Scaffold(
@@ -190,6 +192,7 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
                    ));
                 }
               } catch (e) {
+                // Catch share failures (e.g., iPad share sheet cancellation bugs) and show path as fallback
                 if (context.mounted) {
                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                      content: Text('Backup created but sharing failed. File path: ${state.backupFilePath}'),

@@ -441,6 +441,7 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
               bottomNavigationBar: SafeArea(
                 child: Builder(
                   builder: (context) {
+                    // Live-calculate totals so the user sees real-time impact of discounts/taxes.
                     final calc = InvoiceCalculator.calculate(invoice);
                     return Container(
                       padding: const EdgeInsets.all(16.0),

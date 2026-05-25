@@ -38,6 +38,8 @@ extension on InvoiceCollection {
   }
 }
 
+/// Concrete implementation of [AnalyticsRepository] using Isar local database.
+/// Aggregates financial totals (revenue, outstanding) and computes dashboard metrics.
 class AnalyticsRepositoryImpl implements AnalyticsRepository {
   final LocalDatabaseService localDb;
 
@@ -66,10 +68,12 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
       for (final inv in invoices) {
         if (inv.status == InvoiceStatus.draft) {
           draftCount++;
-          continue; // Skip heavy calculator math for drafts
+          // Skip heavy InvoiceCalculator math for drafts, they aren't revenue yet.
+          continue; 
         }
         if (inv.status == InvoiceStatus.cancelled) {
-          continue; // Skip heavy calculator math for cancelled
+          // Cancelled invoices hold no financial weight.
+          continue; 
         }
 
         final calc = InvoiceCalculator.calculate(inv);
@@ -78,11 +82,12 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
 
         switch (inv.status) {
           case InvoiceStatus.paid:
-            // A fully paid invoice collects the grandTotal, regardless of the DB paidAmount field
+            // A fully paid invoice guarantees revenue is equal to the grand total.
             totalRevenue += calc.grandTotal;
             paidCount++;
             break;
           case InvoiceStatus.partiallyPaid:
+            // For partials, revenue is only what was paid, the rest is outstanding.
             totalRevenue += paidAmount;
             outstandingBalance += balanceDue;
             unpaidCount++; // Treat partially paid as unpaid in basic metrics for now
@@ -118,6 +123,8 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
     }
   }
 
+  /// Retrieves the most recently issued invoice for quick display on the dashboard.
+  /// Uses a direct Isar `.findFirst()` query for extremely fast O(1) performance.
   @override
   Future<Either<Failure, Invoice?>> getRecentInvoice() async {
     try {

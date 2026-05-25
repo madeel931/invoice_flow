@@ -96,6 +96,8 @@ class AppRouter {
         name: 'invoice-preview',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
+          // We pass the ID in the path instead of passing the full Invoice object as 'extra'.
+          // This avoids GoRouter serialization crashes when deep linking or web reloading.
           final invoiceId = state.pathParameters['id']!;
           return InvoicePreviewPage(invoiceId: invoiceId);
         },
@@ -123,6 +125,7 @@ class AppRouter {
         name: 'invoice-detail',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
+          // Pass ID in path to avoid GoRouter serialization issues
           final invoiceId = state.pathParameters['id']!;
           return InvoiceDetailPage(invoiceId: invoiceId);
         },

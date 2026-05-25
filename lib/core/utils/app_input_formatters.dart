@@ -1,5 +1,7 @@
 import 'package:flutter/services.dart';
 
+/// Restricts keyboard input to prevent malformed data from entering the UI text fields.
+/// Protects against invalid string-to-number parsing errors during calculations.
 class AppInputFormatters {
   AppInputFormatters._();
 

@@ -102,6 +102,7 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
     }
     
     if (action == 'delete_draft') {
+      // Drafts can be safely deleted as they are not finalized financial records.
       final confirm = await _showConfirmDialog(
         title: 'Delete Draft?',
         message: 'This draft invoice will be permanently deleted. This action cannot be undone.',
@@ -137,6 +138,7 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
     }
 
     if (action == 'delete_cancelled') {
+      // Allow permanent deletion ONLY for cancelled invoices. Keep strict audit trail for active ones.
       final confirm = await _showConfirmDialog(
         title: 'Delete Cancelled Invoice?',
         message: 'This will permanently delete this cancelled invoice record. This action cannot be undone.',

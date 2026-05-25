@@ -136,6 +136,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
     }
 
     if (action == 'cancel_invoice') {
+      // Cancelling an invoice preserves it for accounting records instead of deleting it entirely.
       final confirm = await _showConfirmDialog(
         title: 'Cancel Invoice?',
         message: 'This invoice will be marked as cancelled but kept for your records.',
@@ -515,6 +516,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                         child: OutlinedButton.icon(
                           icon: const Icon(Icons.picture_as_pdf),
                           label: const Text('Preview PDF'),
+                          // Navigate via GoRouter ID to avoid passing massive Invoice objects in the route state
                           onPressed: () => context.push('${AppRoutes.invoicePreview}/${currentInvoice.id}'),
                         ),
                       ),

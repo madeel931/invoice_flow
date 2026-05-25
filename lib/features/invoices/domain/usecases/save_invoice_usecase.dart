@@ -6,6 +6,8 @@ import '../entities/invoice.dart';
 import '../services/invoice_calculator.dart';
 import '../repositories/invoice_repository.dart';
 
+/// Validates and saves an invoice to the local database.
+/// Enforces domain-level business rules before persisting financial data.
 class SaveInvoiceUseCase implements UseCase<Invoice, SaveInvoiceParams> {
   final InvoiceRepository repository;
 
@@ -25,9 +27,12 @@ class SaveInvoiceUseCase implements UseCase<Invoice, SaveInvoiceParams> {
       return DateTime(date.year, date.month, date.day);
     }
 
+    // Strip time components to compare calendar dates only. 
+    // This allows invoices to be due on the exact same day they are issued.
     final dueOnly = dateOnly(inv.dueDate);
     final issueOnly = dateOnly(inv.issueDate);
 
+    // Prevent illogical timelines (due dates cannot be in the past relative to issue date).
     if (dueOnly.isBefore(issueOnly)) {
       return const Left(
           ValidationFailure('Due date cannot be before issue date.'));

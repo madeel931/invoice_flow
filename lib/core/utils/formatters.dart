@@ -8,7 +8,8 @@ class AppFormatters {
     return _dateFormat.format(date);
   }
 
-  // Global Currency Formatter
+  /// UI currency formatter. 
+  /// Automatically renders Unicode currency symbols based on the device locale and the provided code.
   static String formatCurrency(double amount, [String? currencyCode]) {
     final code = (currencyCode == null || currencyCode.trim().isEmpty) ? 'AED' : currencyCode;
     final format = NumberFormat.simpleCurrency(name: code);

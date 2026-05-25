@@ -1,3 +1,5 @@
+/// Centralized validation logic for all forms in the app.
+/// Ensures database integrity by strictly enforcing max lengths before data is saved to Isar.
 class AppValidators {
   AppValidators._();
 

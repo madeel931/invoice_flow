@@ -11,6 +11,8 @@ import '../domain/entities/invoice.dart';
 import '../domain/entities/invoice_status.dart';
 import '../domain/services/invoice_calculator.dart';
 
+/// Generates a professional PDF document for an invoice.
+/// Handles multi-page table layouts, caching, and PDF-safe text rendering.
 class InvoicePdfGenerator {
   static String _getPdfStatusString(InvoiceStatus status) {
     switch (status) {
@@ -69,6 +71,7 @@ class InvoicePdfGenerator {
   static pw.Widget _tableBodyCell(String text, pw.Alignment alignment, {bool useFittedBox = false}) {
     pw.Widget textWidget = pw.Text(text, style: const pw.TextStyle(fontSize: 10));
     if (useFittedBox) {
+      // Prevents massive numbers (e.g., 100,000,000) from breaking the PDF table layout
       textWidget = pw.FittedBox(
         fit: pw.BoxFit.scaleDown,
         alignment: alignment,
@@ -239,6 +242,7 @@ class InvoicePdfGenerator {
                     final total = AppFormatters.formatCurrencyPdf(
                         calcItem.itemTotal, displayCurrency);
                         
+                    // We append the unit to the quantity string for clear professional display (e.g. "5 kg")
                     final qtyString = '${_formatQuantity(item.quantity)}${item.unitType != null ? ' ${item.unitType!.toLowerCase()}' : ''}';
                     final taxString = _formatTax(item.taxRate);
 

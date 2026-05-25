@@ -42,11 +42,14 @@ class InvoiceCalculation {
   });
 }
 
+/// Centralized service for all invoice financial calculations.
+/// Handles subtotals, mixed-tax distribution, and rounding rules to ensure UI and PDF match exactly.
 class InvoiceCalculator {
   static double roundMoney(double value) {
     return (value * 100).roundToDouble() / 100;
   }
 
+  /// Computes the full financial breakdown of an invoice.
   static InvoiceCalculation calculate(Invoice invoice) {
     double subtotal = 0.0;
     
@@ -107,7 +110,7 @@ class InvoiceCalculator {
     taxableAmount = roundMoney(taxableAmount);
     totalTax = roundMoney(totalTax);
 
-    // Ensure we don't drop fractional cents in distribution
+    // 4. Ensure we don't drop fractional cents when distributing discounts across multiple items.
     if (itemBreakdowns.isNotEmpty && discountValue > 0) {
        double distributedDiscount = itemBreakdowns.fold(0, (sum, i) => sum + i.itemDiscount);
        double diff = roundMoney(discountValue - distributedDiscount);
@@ -134,7 +137,7 @@ class InvoiceCalculator {
        }
     }
 
-    // 4. Grand Total & Payments
+    // 5. Grand Total & Payments
     double grandTotal = roundMoney(taxableAmount + totalTax);
     
     double paidAmount = invoice.paidAmount;
@@ -155,6 +158,7 @@ class InvoiceCalculator {
     );
   }
 
+  /// Determines the current status of the invoice based on payments and due date.
   static InvoiceStatus resolveStatus({
     required InvoiceStatus currentStatus,
     required DateTime dueDate,
@@ -169,6 +173,7 @@ class InvoiceCalculator {
     if (paidAmount > 0 && paidAmount < grandTotal) return InvoiceStatus.partiallyPaid;
     
     final today = DateTime.now();
+    // Compare date-only values so same-day due dates remain valid and don't trigger overdue status early.
     final dateOnly = DateTime(today.year, today.month, today.day);
     final dueOnly = DateTime(dueDate.year, dueDate.month, dueDate.day);
     if (dueOnly.isBefore(dateOnly) && balanceDue > 0) return InvoiceStatus.overdue;

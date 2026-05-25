@@ -6,6 +6,7 @@ import '../../../../core/widgets/global_button.dart';
 import '../../../../core/widgets/global_text_field.dart';
 import '../../../../core/utils/app_validators.dart';
 import '../../../../core/utils/app_input_formatters.dart';
+import '../../../../core/constants/app_units.dart';
 import '../../../products/domain/entities/product.dart';
 import '../../domain/entities/invoice_item.dart';
 
@@ -46,21 +47,7 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
   late TextEditingController _priceController;
   late TextEditingController _taxController;
   
-  String _selectedUnit = 'piece';
-  final List<String> _unitTypes = [
-    'piece',
-    'hour',
-    'day',
-    'project',
-    'kg',
-    'gram',
-    'meter',
-    'km',
-    'liter',
-    'month',
-    'service',
-    'custom'
-  ];
+  String _selectedUnit = AppUnits.defaultUnit;
 
 
   @override
@@ -87,12 +74,7 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
     );
     
     if (item?.unitType != null) {
-      String oldUnit = item!.unitType!.toLowerCase();
-      if (_unitTypes.contains(oldUnit)) {
-        _selectedUnit = oldUnit;
-      } else {
-        _selectedUnit = 'custom';
-      }
+      _selectedUnit = AppUnits.normalize(item!.unitType);
     }
   }
 
@@ -117,12 +99,7 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
       _priceController.text = product.price.toStringAsFixed(2);
       _taxController.text = (product.defaultTaxRate ?? 0.0).toStringAsFixed(2);
       
-      String prodUnit = product.unitType.toLowerCase();
-      if (_unitTypes.contains(prodUnit)) {
-        _selectedUnit = prodUnit;
-      } else {
-        _selectedUnit = 'custom';
-      }
+      _selectedUnit = AppUnits.normalize(product.unitType);
     });
   }
 
@@ -237,13 +214,13 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
                     isExpanded: true,
                     initialValue: _selectedUnit,
                     decoration: const InputDecoration(labelText: 'Unit'),
-                    items: _unitTypes
+                    items: AppUnits.all
                         .map((u) => DropdownMenuItem(
-                              value: u,
-                              child: Text(u, overflow: TextOverflow.ellipsis),
+                              value: u.value,
+                              child: Text(u.label, overflow: TextOverflow.ellipsis),
                             ))
                         .toList(),
-                    onChanged: (val) => setState(() => _selectedUnit = val!),
+                    onChanged: (val) => setState(() => _selectedUnit = val ?? AppUnits.defaultUnit),
                   ),
                 ),
               ],

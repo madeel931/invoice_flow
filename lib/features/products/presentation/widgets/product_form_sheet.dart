@@ -4,6 +4,7 @@ import '../../../../core/widgets/global_button.dart';
 import '../../../../core/widgets/global_text_field.dart';
 import '../../../../core/utils/app_validators.dart';
 import '../../../../core/utils/app_input_formatters.dart';
+import '../../../../core/constants/app_units.dart';
 import '../../domain/entities/product.dart';
 
 class ProductFormSheet extends StatefulWidget {
@@ -34,21 +35,7 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
   late TextEditingController _priceController;
   late TextEditingController _taxRateController;
 
-  String _selectedUnit = 'piece';
-  final List<String> _unitTypes = [
-    'piece',
-    'hour',
-    'day',
-    'project',
-    'kg',
-    'gram',
-    'meter',
-    'km',
-    'liter',
-    'month',
-    'service',
-    'custom'
-  ];
+  String _selectedUnit = AppUnits.defaultUnit;
 
   @override
   void initState() {
@@ -73,11 +60,7 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
       String oldUnit = widget.existingProduct!.unitType.toLowerCase();
       if (oldUnit == 'item') oldUnit = 'piece';
 
-      if (_unitTypes.contains(oldUnit)) {
-        _selectedUnit = oldUnit;
-      } else {
-        _selectedUnit = 'custom';
-      }
+      _selectedUnit = AppUnits.normalize(oldUnit);
     }
   }
 
@@ -186,14 +169,14 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
                         true, // <--- THE FIX: Prevents RenderFlex overflow
                     initialValue: _selectedUnit,
                     decoration: const InputDecoration(labelText: 'Unit'),
-                    items: _unitTypes
+                    items: AppUnits.all
                         .map((u) => DropdownMenuItem(
-                              value: u,
+                              value: u.value,
                               // Added TextOverflow.ellipsis to handle long words gracefully
-                              child: Text(u, overflow: TextOverflow.ellipsis),
+                              child: Text(u.label, overflow: TextOverflow.ellipsis),
                             ))
                         .toList(),
-                    onChanged: (val) => setState(() => _selectedUnit = val!),
+                    onChanged: (val) => setState(() => _selectedUnit = val ?? AppUnits.defaultUnit),
                   ),
                 ),
               ],

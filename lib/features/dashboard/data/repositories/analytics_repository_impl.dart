@@ -64,6 +64,14 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
 
       // Single pass aggregation - O(n) Time Complexity
       for (final inv in invoices) {
+        if (inv.status == InvoiceStatus.draft) {
+          draftCount++;
+          continue; // Skip heavy calculator math for drafts
+        }
+        if (inv.status == InvoiceStatus.cancelled) {
+          continue; // Skip heavy calculator math for cancelled
+        }
+
         final calc = InvoiceCalculator.calculate(inv);
         final balanceDue = calc.balanceDue;
         final paidAmount = calc.paidAmount;
@@ -89,11 +97,8 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
             overdueCount++;
             break;
           case InvoiceStatus.draft:
-            draftCount++;
-            break;
           case InvoiceStatus.cancelled:
-            // Do not include cancelled invoices in revenue or outstanding balances
-            break;
+            break; // Handled earlier, required for exhaustive switch
         }
       }
 
@@ -110,6 +115,21 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
       return Right(metrics);
     } catch (e) {
       return Left(DatabaseFailure('Failed to aggregate dashboard metrics: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Invoice?>> getRecentInvoice() async {
+    try {
+      final isar = localDb.db;
+      final collection = await isar.invoiceCollections
+          .where()
+          .sortByIssueDateDesc()
+          .findFirst();
+      
+      return Right(collection?.toEntity());
+    } catch (e) {
+      return Left(DatabaseFailure('Failed to fetch recent invoice: $e'));
     }
   }
 }

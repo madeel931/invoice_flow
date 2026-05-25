@@ -56,6 +56,7 @@ import '../../features/invoices/presentation/cubit/invoice_list_cubit.dart';
 import '../../features/dashboard/domain/repositories/analytics_repository.dart';
 import '../../features/dashboard/data/repositories/analytics_repository_impl.dart';
 import '../../features/dashboard/domain/usecases/get_dashboard_metrics_usecase.dart';
+import '../../features/dashboard/domain/usecases/get_recent_invoice_usecase.dart';
 import '../../features/dashboard/presentation/cubit/dashboard_cubit.dart';
 
 final sl = GetIt.instance;
@@ -155,8 +156,9 @@ Future<void> init() async {
   sl.registerLazySingleton<AnalyticsRepository>(
       () => AnalyticsRepositoryImpl(localDb: sl()));
   sl.registerLazySingleton(() => GetDashboardMetricsUseCase(sl()));
+  sl.registerLazySingleton(() => GetRecentInvoiceUseCase(sl()));
   sl.registerFactory(() =>
-      DashboardCubit(getMetrics: sl(), getProfile: sl(), getInvoices: sl()));
+      DashboardCubit(getMetrics: sl(), getProfile: sl(), getRecentInvoice: sl()));
 
   // Backup System
   sl.registerLazySingleton<BackupRepository>(

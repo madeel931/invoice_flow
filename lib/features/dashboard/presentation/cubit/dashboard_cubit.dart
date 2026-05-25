@@ -2,19 +2,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../../../settings/domain/usecases/get_business_profile_usecase.dart';
 import '../../domain/usecases/get_dashboard_metrics_usecase.dart';
-import '../../../invoices/domain/usecases/get_invoices_usecase.dart'; // ADDED
-import '../../../invoices/domain/entities/invoice.dart'; // ADDED
+import '../../domain/usecases/get_recent_invoice_usecase.dart'; // ADDED
+import '../../../invoices/domain/entities/invoice.dart';
 import 'dashboard_state.dart';
 
 class DashboardCubit extends Cubit<DashboardState> {
   final GetDashboardMetricsUseCase getMetrics;
   final GetBusinessProfileUseCase getProfile;
-  final GetInvoicesUseCase getInvoices; // ADDED
+  final GetRecentInvoiceUseCase getRecentInvoice; // ADDED
 
   DashboardCubit({
     required this.getMetrics,
     required this.getProfile,
-    required this.getInvoices, // ADDED
+    required this.getRecentInvoice, // ADDED
   }) : super(const DashboardState());
 
   Future<void> loadDashboard() async {
@@ -24,12 +24,12 @@ class DashboardCubit extends Cubit<DashboardState> {
     final results = await Future.wait([
       getMetrics(NoParams()),
       getProfile(NoParams()),
-      getInvoices(NoParams()),
+      getRecentInvoice(NoParams()),
     ]);
 
     final metricsResult = results[0] as dynamic;
     final profileResult = results[1] as dynamic;
-    final invoicesResult = results[2] as dynamic;
+    final recentResult = results[2] as dynamic;
 
     if (metricsResult.isLeft() || profileResult.isLeft()) {
       emit(state.copyWith(
@@ -43,13 +43,8 @@ class DashboardCubit extends Cubit<DashboardState> {
 
     // EXTRACT RECENT INVOICE
     Invoice? recent;
-    invoicesResult.fold((l) => null, (invoices) {
-      if (invoices.isNotEmpty) {
-        // Sort by issue date descending (newest first)
-        final sortedList = List<Invoice>.from(invoices)
-          ..sort((a, b) => b.issueDate.compareTo(a.issueDate));
-        recent = sortedList.first;
-      }
+    recentResult.fold((l) => null, (r) {
+      recent = r;
     });
 
     emit(state.copyWith(

@@ -42,40 +42,50 @@ const InvoiceCollectionSchema = CollectionSchema(
       name: r'discountAmount',
       type: IsarType.double,
     ),
-    r'dueDate': PropertySchema(
+    r'discountType': PropertySchema(
       id: 5,
+      name: r'discountType',
+      type: IsarType.string,
+    ),
+    r'dueDate': PropertySchema(
+      id: 6,
       name: r'dueDate',
       type: IsarType.dateTime,
     ),
     r'invoiceNumber': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'invoiceNumber',
       type: IsarType.string,
     ),
     r'issueDate': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'issueDate',
       type: IsarType.dateTime,
     ),
     r'items': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'items',
       type: IsarType.objectList,
       target: r'InvoiceItemCollection',
     ),
     r'notes': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'notes',
       type: IsarType.string,
     ),
+    r'paidAmount': PropertySchema(
+      id: 11,
+      name: r'paidAmount',
+      type: IsarType.double,
+    ),
     r'status': PropertySchema(
-      id: 10,
+      id: 12,
       name: r'status',
       type: IsarType.byte,
       enumMap: _InvoiceCollectionstatusEnumValueMap,
     ),
     r'updatedAt': PropertySchema(
-      id: 11,
+      id: 13,
       name: r'updatedAt',
       type: IsarType.dateTime,
     )
@@ -147,6 +157,7 @@ int _invoiceCollectionEstimateSize(
     }
   }
   bytesCount += 3 + object.customerName.length * 3;
+  bytesCount += 3 + object.discountType.length * 3;
   bytesCount += 3 + object.invoiceNumber.length * 3;
   bytesCount += 3 + object.items.length * 3;
   {
@@ -177,18 +188,20 @@ void _invoiceCollectionSerialize(
   writer.writeLong(offsets[2], object.customerId);
   writer.writeString(offsets[3], object.customerName);
   writer.writeDouble(offsets[4], object.discountAmount);
-  writer.writeDateTime(offsets[5], object.dueDate);
-  writer.writeString(offsets[6], object.invoiceNumber);
-  writer.writeDateTime(offsets[7], object.issueDate);
+  writer.writeString(offsets[5], object.discountType);
+  writer.writeDateTime(offsets[6], object.dueDate);
+  writer.writeString(offsets[7], object.invoiceNumber);
+  writer.writeDateTime(offsets[8], object.issueDate);
   writer.writeObjectList<InvoiceItemCollection>(
-    offsets[8],
+    offsets[9],
     allOffsets,
     InvoiceItemCollectionSchema.serialize,
     object.items,
   );
-  writer.writeString(offsets[9], object.notes);
-  writer.writeByte(offsets[10], object.status.index);
-  writer.writeDateTime(offsets[11], object.updatedAt);
+  writer.writeString(offsets[10], object.notes);
+  writer.writeDouble(offsets[11], object.paidAmount);
+  writer.writeByte(offsets[12], object.status.index);
+  writer.writeDateTime(offsets[13], object.updatedAt);
 }
 
 InvoiceCollection _invoiceCollectionDeserialize(
@@ -203,22 +216,24 @@ InvoiceCollection _invoiceCollectionDeserialize(
   object.customerId = reader.readLong(offsets[2]);
   object.customerName = reader.readString(offsets[3]);
   object.discountAmount = reader.readDouble(offsets[4]);
-  object.dueDate = reader.readDateTime(offsets[5]);
+  object.discountType = reader.readString(offsets[5]);
+  object.dueDate = reader.readDateTime(offsets[6]);
   object.id = id;
-  object.invoiceNumber = reader.readString(offsets[6]);
-  object.issueDate = reader.readDateTime(offsets[7]);
+  object.invoiceNumber = reader.readString(offsets[7]);
+  object.issueDate = reader.readDateTime(offsets[8]);
   object.items = reader.readObjectList<InvoiceItemCollection>(
-        offsets[8],
+        offsets[9],
         InvoiceItemCollectionSchema.deserialize,
         allOffsets,
         InvoiceItemCollection(),
       ) ??
       [];
-  object.notes = reader.readStringOrNull(offsets[9]);
+  object.notes = reader.readStringOrNull(offsets[10]);
+  object.paidAmount = reader.readDouble(offsets[11]);
   object.status = _InvoiceCollectionstatusValueEnumMap[
-          reader.readByteOrNull(offsets[10])] ??
+          reader.readByteOrNull(offsets[12])] ??
       InvoiceStatus.draft;
-  object.updatedAt = reader.readDateTimeOrNull(offsets[11]);
+  object.updatedAt = reader.readDateTimeOrNull(offsets[13]);
   return object;
 }
 
@@ -240,12 +255,14 @@ P _invoiceCollectionDeserializeProp<P>(
     case 4:
       return (reader.readDouble(offset)) as P;
     case 5:
-      return (reader.readDateTime(offset)) as P;
-    case 6:
       return (reader.readString(offset)) as P;
-    case 7:
+    case 6:
       return (reader.readDateTime(offset)) as P;
+    case 7:
+      return (reader.readString(offset)) as P;
     case 8:
+      return (reader.readDateTime(offset)) as P;
+    case 9:
       return (reader.readObjectList<InvoiceItemCollection>(
             offset,
             InvoiceItemCollectionSchema.deserialize,
@@ -253,13 +270,15 @@ P _invoiceCollectionDeserializeProp<P>(
             InvoiceItemCollection(),
           ) ??
           []) as P;
-    case 9:
-      return (reader.readStringOrNull(offset)) as P;
     case 10:
+      return (reader.readStringOrNull(offset)) as P;
+    case 11:
+      return (reader.readDouble(offset)) as P;
+    case 12:
       return (_InvoiceCollectionstatusValueEnumMap[
               reader.readByteOrNull(offset)] ??
           InvoiceStatus.draft) as P;
-    case 11:
+    case 13:
       return (reader.readDateTimeOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -269,16 +288,18 @@ P _invoiceCollectionDeserializeProp<P>(
 const _InvoiceCollectionstatusEnumValueMap = {
   'draft': 0,
   'unpaid': 1,
-  'paid': 2,
-  'overdue': 3,
-  'cancelled': 4,
+  'partiallyPaid': 2,
+  'paid': 3,
+  'overdue': 4,
+  'cancelled': 5,
 };
 const _InvoiceCollectionstatusValueEnumMap = {
   0: InvoiceStatus.draft,
   1: InvoiceStatus.unpaid,
-  2: InvoiceStatus.paid,
-  3: InvoiceStatus.overdue,
-  4: InvoiceStatus.cancelled,
+  2: InvoiceStatus.partiallyPaid,
+  3: InvoiceStatus.paid,
+  4: InvoiceStatus.overdue,
+  5: InvoiceStatus.cancelled,
 };
 
 Id _invoiceCollectionGetId(InvoiceCollection object) {
@@ -1217,6 +1238,142 @@ extension InvoiceCollectionQueryFilter
   }
 
   QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterFilterCondition>
+      discountTypeEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'discountType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterFilterCondition>
+      discountTypeGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'discountType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterFilterCondition>
+      discountTypeLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'discountType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterFilterCondition>
+      discountTypeBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'discountType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterFilterCondition>
+      discountTypeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'discountType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterFilterCondition>
+      discountTypeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'discountType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterFilterCondition>
+      discountTypeContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'discountType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterFilterCondition>
+      discountTypeMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'discountType',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterFilterCondition>
+      discountTypeIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'discountType',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterFilterCondition>
+      discountTypeIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'discountType',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterFilterCondition>
       dueDateEqualTo(DateTime value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1764,6 +1921,72 @@ extension InvoiceCollectionQueryFilter
   }
 
   QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterFilterCondition>
+      paidAmountEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'paidAmount',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterFilterCondition>
+      paidAmountGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'paidAmount',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterFilterCondition>
+      paidAmountLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'paidAmount',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterFilterCondition>
+      paidAmountBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'paidAmount',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterFilterCondition>
       statusEqualTo(InvoiceStatus value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1980,6 +2203,20 @@ extension InvoiceCollectionQuerySortBy
   }
 
   QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterSortBy>
+      sortByDiscountType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'discountType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterSortBy>
+      sortByDiscountTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'discountType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterSortBy>
       sortByDueDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dueDate', Sort.asc);
@@ -2032,6 +2269,20 @@ extension InvoiceCollectionQuerySortBy
       sortByNotesDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'notes', Sort.desc);
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterSortBy>
+      sortByPaidAmount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'paidAmount', Sort.asc);
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterSortBy>
+      sortByPaidAmountDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'paidAmount', Sort.desc);
     });
   }
 
@@ -2137,6 +2388,20 @@ extension InvoiceCollectionQuerySortThenBy
   }
 
   QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterSortBy>
+      thenByDiscountType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'discountType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterSortBy>
+      thenByDiscountTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'discountType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterSortBy>
       thenByDueDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dueDate', Sort.asc);
@@ -2202,6 +2467,20 @@ extension InvoiceCollectionQuerySortThenBy
       thenByNotesDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'notes', Sort.desc);
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterSortBy>
+      thenByPaidAmount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'paidAmount', Sort.asc);
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QAfterSortBy>
+      thenByPaidAmountDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'paidAmount', Sort.desc);
     });
   }
 
@@ -2272,6 +2551,13 @@ extension InvoiceCollectionQueryWhereDistinct
   }
 
   QueryBuilder<InvoiceCollection, InvoiceCollection, QDistinct>
+      distinctByDiscountType({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'discountType', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QDistinct>
       distinctByDueDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'dueDate');
@@ -2297,6 +2583,13 @@ extension InvoiceCollectionQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'notes', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, InvoiceCollection, QDistinct>
+      distinctByPaidAmount() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'paidAmount');
     });
   }
 
@@ -2357,6 +2650,13 @@ extension InvoiceCollectionQueryProperty
     });
   }
 
+  QueryBuilder<InvoiceCollection, String, QQueryOperations>
+      discountTypeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'discountType');
+    });
+  }
+
   QueryBuilder<InvoiceCollection, DateTime, QQueryOperations>
       dueDateProperty() {
     return QueryBuilder.apply(this, (query) {
@@ -2388,6 +2688,13 @@ extension InvoiceCollectionQueryProperty
   QueryBuilder<InvoiceCollection, String?, QQueryOperations> notesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'notes');
+    });
+  }
+
+  QueryBuilder<InvoiceCollection, double, QQueryOperations>
+      paidAmountProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'paidAmount');
     });
   }
 

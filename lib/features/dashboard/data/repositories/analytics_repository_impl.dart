@@ -9,6 +9,7 @@ import '../../../invoices/domain/entities/invoice.dart';
 import '../../../invoices/domain/entities/invoice_status.dart';
 import '../../domain/entities/dashboard_metrics.dart';
 import '../../domain/repositories/analytics_repository.dart';
+import '../../../invoices/domain/services/invoice_calculator.dart';
 
 // We reuse the mapping logic from Phase 12 locally to convert the DB models
 extension on InvoiceCollection {
@@ -28,8 +29,11 @@ extension on InvoiceCollection {
                 quantity: i.quantity,
                 unitPrice: i.unitPrice,
                 taxRate: i.taxRate,
+                unitType: i.unitType,
               ))
           .toList(),
+      discountType: discountType,
+      paidAmount: paidAmount,
     );
   }
 }
@@ -60,19 +64,27 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
 
       // Single pass aggregation - O(n) Time Complexity
       for (final inv in invoices) {
-        final amount = inv.totalAmount;
+        final calc = InvoiceCalculator.calculate(inv);
+        final balanceDue = calc.balanceDue;
+        final paidAmount = calc.paidAmount;
 
         switch (inv.status) {
           case InvoiceStatus.paid:
-            totalRevenue += amount;
+            totalRevenue += paidAmount;
             paidCount++;
             break;
+          case InvoiceStatus.partiallyPaid:
+            totalRevenue += paidAmount;
+            outstandingBalance += balanceDue;
+            unpaidCount++; // Treat partially paid as unpaid in basic metrics for now
+            break;
           case InvoiceStatus.unpaid:
-            outstandingBalance += amount;
+            outstandingBalance += balanceDue;
             unpaidCount++;
             break;
           case InvoiceStatus.overdue:
-            outstandingBalance += amount;
+            totalRevenue += paidAmount;
+            outstandingBalance += balanceDue;
             overdueCount++;
             break;
           case InvoiceStatus.draft:

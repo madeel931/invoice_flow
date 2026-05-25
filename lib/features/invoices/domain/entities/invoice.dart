@@ -12,7 +12,9 @@ class Invoice extends Equatable {
   final DateTime dueDate;
   final List<InvoiceItem> items;
   final InvoiceStatus status;
+  final String discountType; // 'amount' or 'percentage'
   final double discountAmount;
+  final double paidAmount;
   final String? notes;
   final String? currencyCode;
   final DateTime? createdAt;
@@ -27,28 +29,16 @@ class Invoice extends Equatable {
     required this.dueDate,
     this.items = const [],
     this.status = InvoiceStatus.draft,
+    this.discountType = 'amount',
     this.discountAmount = 0.0,
+    this.paidAmount = 0.0,
     this.notes,
     this.currencyCode,
     this.createdAt,
     this.updatedAt,
   });
 
-  // ---------------------------------------------------------------------------
-  // PURE DOMAIN MATHEMATICS
-  // ---------------------------------------------------------------------------
 
-  /// Sum of all line item subtotals
-  double get subtotal => items.fold(0, (sum, item) => sum + item.subtotal);
-
-  /// Sum of all line item tax amounts
-  double get totalTax => items.fold(0, (sum, item) => sum + item.taxAmount);
-
-  /// Final calculable total: (Subtotal + Tax) - Discount
-  double get totalAmount {
-    final rawTotal = (subtotal + totalTax) - discountAmount;
-    return rawTotal > 0 ? rawTotal : 0.0; // Prevent negative totals
-  }
 
   Invoice copyWith({
     int? id,
@@ -59,7 +49,9 @@ class Invoice extends Equatable {
     DateTime? dueDate,
     List<InvoiceItem>? items,
     InvoiceStatus? status,
+    String? discountType,
     double? discountAmount,
+    double? paidAmount,
     String? notes,
     String? currencyCode,
     DateTime? createdAt,
@@ -74,7 +66,9 @@ class Invoice extends Equatable {
       dueDate: dueDate ?? this.dueDate,
       items: items ?? this.items,
       status: status ?? this.status,
+      discountType: discountType ?? this.discountType,
       discountAmount: discountAmount ?? this.discountAmount,
+      paidAmount: paidAmount ?? this.paidAmount,
       notes: notes ?? this.notes,
       currencyCode: currencyCode ?? this.currencyCode,
       createdAt: createdAt ?? this.createdAt,
@@ -92,7 +86,9 @@ class Invoice extends Equatable {
         dueDate,
         items,
         status,
+        discountType,
         discountAmount,
+        paidAmount,
         notes,
         currencyCode,
         createdAt,

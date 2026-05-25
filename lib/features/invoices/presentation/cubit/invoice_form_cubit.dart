@@ -6,6 +6,7 @@ import '../../domain/entities/invoice_item.dart';
 import '../../domain/entities/invoice_status.dart';
 import '../../domain/usecases/get_next_invoice_number_usecase.dart';
 import '../../domain/usecases/save_invoice_usecase.dart';
+import '../../domain/services/invoice_calculator.dart';
 import 'invoice_form_state.dart';
 
 class InvoiceFormCubit extends Cubit<InvoiceFormState> {
@@ -102,6 +103,19 @@ class InvoiceFormCubit extends Cubit<InvoiceFormState> {
             state.draftInvoice!.copyWith(discountAmount: discountAmount)));
   }
 
+  void updateDiscountType(String discountType) {
+    if (state.draftInvoice == null) return;
+    emit(state.copyWith(
+        draftInvoice:
+            state.draftInvoice!.copyWith(discountType: discountType)));
+  }
+
+  void updatePaidAmount(double paidAmount) {
+    if (state.draftInvoice == null) return;
+    emit(state.copyWith(
+        draftInvoice: state.draftInvoice!.copyWith(paidAmount: paidAmount)));
+  }
+
   void updateDates({DateTime? issueDate, DateTime? dueDate}) {
     if (state.draftInvoice == null) return;
     final updated = state.draftInvoice!.copyWith(
@@ -123,7 +137,19 @@ class InvoiceFormCubit extends Cubit<InvoiceFormState> {
     // FIX: Removed the customerId == 0 block. Walk-in customers are now allowed!
     emit(state.copyWith(status: InvoiceFormStatus.saving));
 
-    final finalInvoice = state.draftInvoice!.copyWith(status: statusToSave);
+    InvoiceStatus resolvedStatus = statusToSave;
+    if (statusToSave != InvoiceStatus.draft) {
+      final calc = InvoiceCalculator.calculate(state.draftInvoice!);
+      resolvedStatus = InvoiceCalculator.resolveStatus(
+        currentStatus: state.draftInvoice!.status,
+        dueDate: state.draftInvoice!.dueDate,
+        grandTotal: calc.grandTotal,
+        paidAmount: calc.paidAmount,
+        balanceDue: calc.balanceDue,
+      );
+    }
+
+    final finalInvoice = state.draftInvoice!.copyWith(status: resolvedStatus);
     final result =
         await saveInvoiceUseCase(SaveInvoiceParams(invoice: finalInvoice));
 

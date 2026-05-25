@@ -35,7 +35,9 @@ class InvoiceCollection {
   @enumerated
   late InvoiceStatus status;
 
+  late String discountType; // 'amount' or 'percentage'
   late double discountAmount;
+  late double paidAmount;
 
   String? notes;
   String? currencyCode;

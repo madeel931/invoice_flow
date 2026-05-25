@@ -19,7 +19,9 @@ extension on InvoiceCollection {
       issueDate: issueDate,
       dueDate: dueDate,
       status: status,
+      discountType: discountType,
       discountAmount: discountAmount,
+      paidAmount: paidAmount,
       notes: notes,
       currencyCode: currencyCode,
       createdAt: createdAt,
@@ -46,7 +48,9 @@ extension on Invoice {
       ..issueDate = issueDate
       ..dueDate = dueDate
       ..status = status
+      ..discountType = discountType
       ..discountAmount = discountAmount
+      ..paidAmount = paidAmount
       ..notes = notes
       ..currencyCode = currencyCode
       ..createdAt = createdAt ?? DateTime.now()

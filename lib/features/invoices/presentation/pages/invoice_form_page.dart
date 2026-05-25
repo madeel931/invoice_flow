@@ -10,13 +10,12 @@ import '../../../../core/widgets/global_button.dart';
 import '../../../../core/widgets/global_card.dart';
 import '../../../customers/domain/entities/customer.dart';
 import '../../../customers/presentation/cubit/customer_list_cubit.dart';
-import '../../../customers/presentation/cubit/customer_list_state.dart';
 import '../../../products/presentation/cubit/product_list_cubit.dart';
-import '../../../products/presentation/cubit/product_list_state.dart';
 import '../../domain/entities/invoice_item.dart';
 import '../../domain/entities/invoice_status.dart';
 import '../cubit/invoice_form_cubit.dart';
 import '../cubit/invoice_form_state.dart';
+import '../../domain/services/invoice_calculator.dart';
 import '../widgets/invoice_item_sheet.dart';
 import '../../../../core/utils/app_input_formatters.dart';
 
@@ -52,12 +51,15 @@ class _InvoiceFormView extends StatefulWidget {
 
 class _InvoiceFormViewState extends State<_InvoiceFormView> {
   final _discountController = TextEditingController();
+  final _paidAmountController = TextEditingController();
   final _notesController = TextEditingController();
   final _dateFormat = DateFormat('MMM dd, yyyy');
+  bool _controllersInitialized = false;
 
   @override
   void dispose() {
     _discountController.dispose();
+    _paidAmountController.dispose();
     _notesController.dispose();
     super.dispose();
   }
@@ -72,8 +74,10 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
     );
     if (picked != null && mounted) {
       if (isIssueDate) {
+        if (!context.mounted) return;
         context.read<InvoiceFormCubit>().updateDates(issueDate: picked);
       } else {
+        if (!context.mounted) return;
         context.read<InvoiceFormCubit>().updateDates(dueDate: picked);
       }
     }
@@ -125,6 +129,19 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
             final invoice = invoiceState.draftInvoice!;
             final currencyCode = invoice.currencyCode?.trim().isNotEmpty == true ? invoice.currencyCode! : profileCurrency;
 
+            if (!_controllersInitialized) {
+              if (invoice.discountAmount > 0) {
+                _discountController.text = invoice.discountAmount.toString();
+              }
+              if (invoice.paidAmount > 0) {
+                _paidAmountController.text = invoice.paidAmount.toString();
+              }
+              if (invoice.notes != null) {
+                _notesController.text = invoice.notes!;
+              }
+              _controllersInitialized = true;
+            }
+
             return Scaffold(
               appBar: AppBar(
                 title: Text(invoice.invoiceNumber),
@@ -133,21 +150,13 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                     icon: const Icon(Icons.check_circle_outline),
                     onPressed: () => context
                         .read<InvoiceFormCubit>()
-                        .saveInvoice(InvoiceStatus.paid),
+                        .saveInvoice(InvoiceStatus.unpaid),
                   ),
                 ],
               ),
               // FIX: Wait for Products and Customers to finish loading from DB before showing form
               body: Builder(builder: (context) {
-                final prodState = context.watch<ProductListCubit>().state;
                 final custState = context.watch<CustomerListCubit>().state;
-
-                if (prodState.status == ProductListStatus.loading ||
-                    custState.status == CustomerListStatus.loading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                // FIX: Add Walk-In Customer to the list natively
                 final walkInCustomer =
                     const Customer(id: 0, name: 'Walk-in Customer');
                 final availableCustomers = [
@@ -296,6 +305,17 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                       GlobalCard(
                         child: Column(
                           children: [
+                            SegmentedButton<String>(
+                              segments: const [
+                                ButtonSegment(value: 'amount', label: Text('Amount')),
+                                ButtonSegment(value: 'percentage', label: Text('Percentage')),
+                              ],
+                              selected: {invoice.discountType},
+                              onSelectionChanged: (Set<String> newSelection) {
+                                context.read<InvoiceFormCubit>().updateDiscountType(newSelection.first);
+                              },
+                            ),
+                            const SizedBox(height: 16),
                             TextFormField(
                               controller: _discountController,
                               keyboardType:
@@ -303,9 +323,18 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                                       decimal: true),
                               maxLength: 12,
                               inputFormatters: [AppInputFormatters.amount],
-                              decoration: const InputDecoration(
-                                  labelText: 'Discount Amount (-)',
-                                  prefixIcon: Icon(Icons.money_off)),
+                              decoration: InputDecoration(
+                                  labelText: invoice.discountType == 'percentage' ? 'Discount Percentage (%)' : 'Discount Amount (-)',
+                                  prefixIcon: invoice.discountType == 'percentage' ? const Icon(Icons.percent) : const Icon(Icons.money_off)),
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              validator: (val) {
+                                final parsed = double.tryParse(val?.replaceAll(',', '.') ?? '') ?? 0.0;
+                                if (parsed < 0) return 'Cannot be negative';
+                                if (invoice.discountType == 'percentage' && parsed > 100) return 'Cannot exceed 100%';
+                                final calc = InvoiceCalculator.calculate(invoice);
+                                if (invoice.discountType == 'amount' && parsed > calc.subtotal) return 'Cannot exceed subtotal';
+                                return null;
+                              },
                               onChanged: (val) {
                                 final parsed =
                                     double.tryParse(val.replaceAll(',', '.')) ??
@@ -313,6 +342,34 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                                 context
                                     .read<InvoiceFormCubit>()
                                     .updateDiscount(parsed);
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                            TextFormField(
+                              controller: _paidAmountController,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
+                              maxLength: 12,
+                              inputFormatters: [AppInputFormatters.amount],
+                              decoration: const InputDecoration(
+                                  labelText: 'Paid Amount',
+                                  prefixIcon: Icon(Icons.payments)),
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              validator: (val) {
+                                final parsed = double.tryParse(val?.replaceAll(',', '.') ?? '') ?? 0.0;
+                                if (parsed < 0) return 'Cannot be negative';
+                                final calc = InvoiceCalculator.calculate(invoice);
+                                if (parsed > calc.grandTotal) return 'Cannot exceed grand total';
+                                return null;
+                              },
+                              onChanged: (val) {
+                                final parsed =
+                                    double.tryParse(val.replaceAll(',', '.')) ??
+                                        0.0;
+                                context
+                                    .read<InvoiceFormCubit>()
+                                    .updatePaidAmount(parsed);
                               },
                             ),
                             const SizedBox(height: 16),
@@ -336,76 +393,109 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
               }),
 
               bottomNavigationBar: SafeArea(
-                child: Container(
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, -5))
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('Subtotal:',
-                              style: TextStyle(color: Colors.grey)),
-                          Text(AppFormatters.formatCurrency(
-                              invoice.subtotal, currencyCode))
+                child: Builder(
+                  builder: (context) {
+                    final calc = InvoiceCalculator.calculate(invoice);
+                    return Container(
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 10,
+                              offset: const Offset(0, -5))
                         ],
                       ),
-                      const SizedBox(height: 4),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text('Total Tax:',
-                              style: TextStyle(color: Colors.grey)),
-                          Text(
-                              '+ ${AppFormatters.formatCurrency(invoice.totalTax, currencyCode)}')
-                        ],
-                      ),
-                      if (invoice.discountAmount > 0) ...[
-                        const SizedBox(height: 4),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Discount:',
-                                style: TextStyle(color: Colors.red)),
-                            Text(
-                                '- ${AppFormatters.formatCurrency(invoice.discountAmount, currencyCode)}',
-                                style: const TextStyle(color: Colors.red))
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('Subtotal:',
+                                  style: TextStyle(color: Colors.grey)),
+                              Text(AppFormatters.formatCurrency(
+                                  calc.subtotal, currencyCode))
+                            ],
+                          ),
+                          if (calc.discountValue > 0) ...[
+                            const SizedBox(height: 4),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(invoice.discountType == 'percentage' ? 'Discount (${invoice.discountAmount}%):' : 'Discount:',
+                                    style: const TextStyle(color: Colors.red)),
+                                Text(
+                                    '- ${AppFormatters.formatCurrency(calc.discountValue, currencyCode)}',
+                                    style: const TextStyle(color: Colors.red))
+                              ],
+                            ),
                           ],
-                        ),
-                      ],
-                      const Divider(height: 24),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('TOTAL',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18)),
-                          const SizedBox(width: 16),
-                          Flexible(
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                  AppFormatters.formatCurrency(
-                                      invoice.totalAmount, currencyCode),
+                          const SizedBox(height: 4),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('Total Tax:',
+                                  style: TextStyle(color: Colors.grey)),
+                              Text(
+                                  '+ ${AppFormatters.formatCurrency(calc.totalTax, currencyCode)}')
+                            ],
+                          ),
+                          const Divider(height: 24),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('TOTAL',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold, fontSize: 18)),
+                              const SizedBox(width: 16),
+                              Flexible(
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                      AppFormatters.formatCurrency(
+                                          calc.grandTotal, currencyCode),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 24,
+                                          color: Theme.of(context).colorScheme.primary)),
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (calc.paidAmount > 0) ...[
+                            const SizedBox(height: 8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text('Amount Paid:',
+                                    style: TextStyle(color: Colors.green)),
+                                Text(
+                                    '- ${AppFormatters.formatCurrency(calc.paidAmount, currencyCode)}',
+                                    style: const TextStyle(color: Colors.green))
+                              ],
+                            ),
+                          ],
+                          const SizedBox(height: 4),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Balance Due:',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 24,
-                                      color:
-                                          Theme.of(context).colorScheme.primary)),
-                            ),
+                                      fontSize: 18,
+                                      color: calc.balanceDue > 0 ? Colors.orange : null)),
+                              Text(
+                                  AppFormatters.formatCurrency(
+                                      calc.balanceDue, currencyCode),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color: calc.balanceDue > 0 ? Colors.orange : null))
+                            ],
                           ),
-                        ],
-                      ),
                       const SizedBox(height: 16),
                       GlobalButton(
                         text: 'Save as Draft',
@@ -419,11 +509,13 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                       ),
                     ],
                   ),
-                ),
-              ),
-            );
-          },
-        );
+                );
+              },
+            ),
+            ),
+          );
+        },
+      );
       },
     );
   }

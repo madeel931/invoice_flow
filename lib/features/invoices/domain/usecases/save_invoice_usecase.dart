@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../entities/invoice.dart';
+import '../services/invoice_calculator.dart';
 import '../repositories/invoice_repository.dart';
 
 class SaveInvoiceUseCase implements UseCase<Invoice, SaveInvoiceParams> {
@@ -29,9 +30,14 @@ class SaveInvoiceUseCase implements UseCase<Invoice, SaveInvoiceParams> {
       return const Left(ValidationFailure('Discount cannot be negative.'));
     }
 
-    if (inv.discountAmount > (inv.subtotal + inv.totalTax)) {
+    final calc = InvoiceCalculator.calculate(inv);
+    if (inv.discountType == 'amount' && inv.discountAmount > calc.subtotal) {
       return const Left(
-          ValidationFailure('Discount cannot exceed the invoice total.'));
+          ValidationFailure('Discount cannot exceed the invoice subtotal.'));
+    }
+    if (inv.discountType == 'percentage' && inv.discountAmount > 100) {
+      return const Left(
+          ValidationFailure('Discount percentage cannot exceed 100%.'));
     }
 
     return await repository.saveInvoice(inv);

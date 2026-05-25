@@ -10,6 +10,8 @@ import '../../../../core/widgets/global_card.dart';
 import '../../../../core/presentation/widgets/premium_drawer.dart';
 import '../../../../core/utils/app_directories.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../invoices/domain/services/invoice_calculator.dart';
+import '../../../invoices/domain/entities/invoice_status.dart';
 import '../../../invoices/presentation/cubit/invoice_list_cubit.dart';
 import '../../../invoices/presentation/cubit/invoice_list_state.dart';
 import '../../../settings/presentation/cubit/settings_cubit.dart';
@@ -38,6 +40,23 @@ class DashboardPage extends StatelessWidget {
 
 class _DashboardView extends StatelessWidget {
   const _DashboardView();
+
+  Color _getStatusColor(InvoiceStatus status) {
+    switch (status) {
+      case InvoiceStatus.paid:
+        return Colors.green;
+      case InvoiceStatus.partiallyPaid:
+        return Colors.blue;
+      case InvoiceStatus.unpaid:
+        return Colors.orange;
+      case InvoiceStatus.overdue:
+        return Colors.red;
+      case InvoiceStatus.draft:
+        return Colors.grey;
+      case InvoiceStatus.cancelled:
+        return Colors.grey.shade600;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -210,7 +229,7 @@ class _DashboardView extends StatelessWidget {
                                 fit: BoxFit.scaleDown,
                                 child: Text(
                                   AppFormatters.formatCurrency(
-                                      state.recentInvoice!.totalAmount, 
+                                      InvoiceCalculator.calculate(state.recentInvoice!).grandTotal, 
                                       state.recentInvoice!.currencyCode?.trim().isNotEmpty == true 
                                           ? state.recentInvoice!.currencyCode! 
                                           : currency),
@@ -220,14 +239,13 @@ class _DashboardView extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                state.recentInvoice!.status.name.toUpperCase(),
+                                state.recentInvoice!.status == InvoiceStatus.partiallyPaid 
+                                    ? 'PARTIALLY PAID' 
+                                    : state.recentInvoice!.status.name.toUpperCase(),
                                 style: TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
-                                  color:
-                                      state.recentInvoice!.status.name == 'paid'
-                                          ? Colors.green
-                                          : Colors.orange,
+                                  color: _getStatusColor(state.recentInvoice!.status),
                                 ),
                               ),
                             ],
@@ -236,8 +254,9 @@ class _DashboardView extends StatelessWidget {
                               .push(AppRoutes.invoiceDetail,
                                   extra: state.recentInvoice)
                               .then((_) {
-                            if (context.mounted)
+                            if (context.mounted) {
                               context.read<DashboardCubit>().loadDashboard();
+                            }
                           }),
                         ),
                       ),

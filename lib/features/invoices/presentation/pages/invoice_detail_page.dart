@@ -14,6 +14,7 @@ import '../../../../core/usecases/usecase.dart';
 import '../../../settings/domain/usecases/get_business_profile_usecase.dart';
 import '../../domain/entities/invoice.dart';
 import '../../domain/entities/invoice_status.dart';
+import '../../domain/services/invoice_calculator.dart';
 import '../../utils/invoice_pdf_generator.dart';
 import '../cubit/invoice_list_cubit.dart';
 import '../cubit/invoice_list_state.dart';
@@ -27,6 +28,8 @@ class InvoiceDetailPage extends StatelessWidget {
     switch (status) {
       case InvoiceStatus.paid:
         return Colors.green;
+      case InvoiceStatus.partiallyPaid:
+        return Colors.blue;
       case InvoiceStatus.unpaid:
         return Colors.orange;
       case InvoiceStatus.overdue:
@@ -65,10 +68,19 @@ class InvoiceDetailPage extends StatelessWidget {
         return BlocBuilder<InvoiceListCubit, InvoiceListState>(
           builder: (context, state) {
             final currentInvoice = state.allInvoices.firstWhere(
-              (i) => i.id == invoice.id,
-              orElse: () => invoice, // Fallback if not found
+              (inv) => inv.id == invoice.id,
+              orElse: () => invoice,
             );
-            final currencyCode = currentInvoice.currencyCode?.trim().isNotEmpty == true ? currentInvoice.currencyCode! : profileCurrency;
+            
+            final calc = InvoiceCalculator.calculate(currentInvoice);
+            final currencyCode = currentInvoice.currencyCode?.trim().isNotEmpty == true 
+                ? currentInvoice.currencyCode! 
+                : profileCurrency;
+
+            String statusLabel = currentInvoice.status.name.toUpperCase();
+            if (currentInvoice.status == InvoiceStatus.partiallyPaid) {
+              statusLabel = 'PARTIALLY PAID';
+            }
 
             return Scaffold(
               appBar: AppBar(
@@ -99,7 +111,7 @@ class InvoiceDetailPage extends StatelessWidget {
                                       fontSize: 16)),
                               Chip(
                                 label: Text(
-                                    currentInvoice.status.name.toUpperCase(),
+                                    statusLabel,
                                     style: const TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold)),
@@ -174,7 +186,8 @@ class InvoiceDetailPage extends StatelessWidget {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16)),
                           const Divider(height: 24),
-                          ...currentInvoice.items.map((item) {
+                          ...calc.itemBreakdowns.map((calcItem) {
+                            final item = calcItem.item;
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12.0),
                               child: Row(
@@ -208,7 +221,7 @@ class InvoiceDetailPage extends StatelessWidget {
                                       fit: BoxFit.scaleDown,
                                       child: Text(
                                           AppFormatters.formatCurrency(
-                                              item.total, currencyCode),
+                                              calcItem.itemTotal, currencyCode),
                                           style: const TextStyle(
                                               fontWeight: FontWeight.bold)),
                                     ),
@@ -232,38 +245,40 @@ class InvoiceDetailPage extends StatelessWidget {
                               const Text('Subtotal',
                                   style: TextStyle(color: Colors.grey)),
                               Text(AppFormatters.formatCurrency(
-                                  currentInvoice.subtotal, currencyCode)),
+                                  calc.subtotal, currencyCode)),
                             ],
                           ),
+                          if (calc.discountValue > 0) ...[
+                            const SizedBox(height: 8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(currentInvoice.discountType == 'percentage' 
+                                     ? 'Discount (${currentInvoice.discountAmount}%)' 
+                                     : 'Discount',
+                                    style: const TextStyle(color: Colors.red)),
+                                Text(
+                                    '-${AppFormatters.formatCurrency(calc.discountValue, currencyCode)}',
+                                    style:
+                                        const TextStyle(color: Colors.red)),
+                              ],
+                            ),
+                          ],
                           const SizedBox(height: 8),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Text('Tax',
                                   style: TextStyle(color: Colors.grey)),
-                              Text(AppFormatters.formatCurrency(
-                                  currentInvoice.totalTax, currencyCode)),
+                              Text('+${AppFormatters.formatCurrency(
+                                  calc.totalTax, currencyCode)}'),
                             ],
                           ),
-                          if (currentInvoice.discountAmount > 0) ...[
-                            const SizedBox(height: 8),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text('Discount',
-                                    style: TextStyle(color: Colors.grey)),
-                                Text(
-                                    '-${AppFormatters.formatCurrency(currentInvoice.discountAmount, currencyCode)}',
-                                    style:
-                                        const TextStyle(color: Colors.green)),
-                              ],
-                            ),
-                          ],
                           const Divider(height: 32),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('Total Amount',
+                              const Text('Grand Total',
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold)),
@@ -274,7 +289,7 @@ class InvoiceDetailPage extends StatelessWidget {
                                   alignment: Alignment.centerRight,
                                   child: Text(
                                       AppFormatters.formatCurrency(
-                                          currentInvoice.totalAmount, currencyCode),
+                                          calc.grandTotal, currencyCode),
                                       style: TextStyle(
                                           fontSize: 24,
                                           fontWeight: FontWeight.bold,
@@ -283,6 +298,31 @@ class InvoiceDetailPage extends StatelessWidget {
                                               .primary)),
                                 ),
                               ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('Amount Paid',
+                                  style: TextStyle(color: Colors.green)),
+                              Text(
+                                  '-${AppFormatters.formatCurrency(calc.paidAmount, currencyCode)}',
+                                  style:
+                                      const TextStyle(color: Colors.green)),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('Balance Due',
+                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                              Text(
+                                  calc.balanceDue > 0 ? AppFormatters.formatCurrency(calc.balanceDue, currencyCode) : 'Paid',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: calc.balanceDue > 0 ? Colors.orange : Colors.green)),
                             ],
                           ),
                         ],

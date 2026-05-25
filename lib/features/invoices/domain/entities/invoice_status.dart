@@ -1,1 +1,1 @@
-enum InvoiceStatus { draft, unpaid, paid, overdue, cancelled }
+enum InvoiceStatus { draft, unpaid, partiallyPaid, paid, overdue, cancelled }

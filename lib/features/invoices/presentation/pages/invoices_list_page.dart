@@ -15,10 +15,11 @@ import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../settings/presentation/cubit/settings_cubit.dart';
-import '../../../settings/presentation/cubit/settings_state.dart';
 import '../../domain/entities/invoice_status.dart';
+import '../../domain/services/invoice_calculator.dart';
 import '../cubit/invoice_list_cubit.dart';
 import '../cubit/invoice_list_state.dart';
+import '../../../settings/presentation/cubit/settings_state.dart';
 
 class InvoicesListPage extends StatelessWidget {
   final Customer? filterCustomer;
@@ -52,14 +53,16 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
     switch (status) {
       case InvoiceStatus.paid:
         return AppColors.success;
+      case InvoiceStatus.partiallyPaid:
+        return Theme.of(context).colorScheme.primary;
       case InvoiceStatus.unpaid:
         return AppColors.warning;
       case InvoiceStatus.overdue:
         return AppColors.error;
       case InvoiceStatus.draft:
-        return Theme.of(context).colorScheme.onSurfaceVariant;
+        return Colors.grey;
       case InvoiceStatus.cancelled:
-        return AppColors.error;
+        return Colors.grey.shade600;
     }
   }
 
@@ -117,7 +120,11 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                         return Padding(
                           padding: const EdgeInsets.only(right: AppSpacing.sm),
                           child: ChoiceChip(
-                            label: Text(status?.name.toUpperCase() ?? 'ALL'),
+                            label: Text(status == null 
+                                ? 'ALL' 
+                                : status == InvoiceStatus.partiallyPaid 
+                                    ? 'PARTIAL' 
+                                    : status.name.toUpperCase()),
                             selected: context.select((InvoiceListCubit c) =>
                                     c.state.filterStatus) ==
                                 status,
@@ -176,6 +183,10 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                   final theme = Theme.of(context);
                   final colorScheme = theme.colorScheme;
                   final textTheme = theme.textTheme;
+                  final calc = InvoiceCalculator.calculate(inv);
+                  final currencyCode = inv.currencyCode?.trim().isNotEmpty == true
+                      ? inv.currencyCode!
+                      : profileCurrency;
 
                   return Card(
                     key: ValueKey(
@@ -213,7 +224,9 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                                         AppSizes.radiusXl),
                                   ),
                                   child: Text(
-                                    inv.status.name.toUpperCase(),
+                                    inv.status == InvoiceStatus.partiallyPaid 
+                                        ? 'PARTIALLY PAID' 
+                                        : inv.status.name.toUpperCase(),
                                     style: TextStyle(
                                       fontSize: 10,
                                       fontWeight: FontWeight.bold,
@@ -243,20 +256,30 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      AppFormatters.formatCurrency(
-                                          inv.totalAmount,
-                                          inv.currencyCode?.trim().isNotEmpty ==
-                                                  true
-                                              ? inv.currencyCode!
-                                              : profileCurrency),
-                                      style: textTheme.titleLarge?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: colorScheme.onSurface),
-                                    ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          AppFormatters.formatCurrency(calc.grandTotal, currencyCode),
+                                          style: textTheme.titleLarge?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: colorScheme.onSurface),
+                                        ),
+                                      ),
+                                      if (calc.paidAmount > 0 && calc.balanceDue > 0) ...[
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          'Paid: ${AppFormatters.formatCurrency(calc.paidAmount, currencyCode)} • Due: ${AppFormatters.formatCurrency(calc.balanceDue, currencyCode)}',
+                                          style: textTheme.bodySmall?.copyWith(
+                                            color: colorScheme.onSurfaceVariant,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ],
                                   ),
                                 ),
                                 PopupMenuButton<String>(

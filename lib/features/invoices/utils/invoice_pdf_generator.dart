@@ -8,8 +8,32 @@ import '../../../../core/utils/app_directories.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../settings/domain/entities/business_profile.dart';
 import '../domain/entities/invoice.dart';
+import '../domain/entities/invoice_status.dart';
+import '../domain/services/invoice_calculator.dart';
 
 class InvoicePdfGenerator {
+  static String _getPdfStatusString(InvoiceStatus status) {
+    switch (status) {
+      case InvoiceStatus.draft: return 'DRAFT';
+      case InvoiceStatus.unpaid: return 'UNPAID';
+      case InvoiceStatus.partiallyPaid: return 'PARTIALLY PAID';
+      case InvoiceStatus.paid: return 'PAID';
+      case InvoiceStatus.overdue: return 'OVERDUE';
+      case InvoiceStatus.cancelled: return 'CANCELLED';
+    }
+  }
+
+  static PdfColor _getPdfStatusColor(InvoiceStatus status) {
+    switch (status) {
+      case InvoiceStatus.draft: return PdfColors.grey700;
+      case InvoiceStatus.unpaid: return PdfColors.orange700;
+      case InvoiceStatus.partiallyPaid: return PdfColors.blue700;
+      case InvoiceStatus.paid: return PdfColors.green700;
+      case InvoiceStatus.overdue: return PdfColors.red700;
+      case InvoiceStatus.cancelled: return PdfColors.grey700;
+    }
+  }
+
   // ---  Smart Memory Cache ---
   // Stores generated PDFs in RAM to prevent CPU-heavy rebuilds
   static final Map<String, Uint8List> _pdfCache = {};
@@ -30,6 +54,7 @@ class InvoicePdfGenerator {
       return _pdfCache[cacheKey]!; // Instantly return cached PDF!
     }
 
+    final calc = InvoiceCalculator.calculate(invoice);
     final pdf = pw.Document();
 
     // 3. Currency Formatter
@@ -108,12 +133,10 @@ class InvoicePdfGenerator {
                     pw.Text('Due Date: ${dateFormat.format(invoice.dueDate)}',
                         style: const pw.TextStyle(color: PdfColors.grey700)),
                     pw.SizedBox(height: 4),
-                    pw.Text('Status: ${invoice.status.name.toUpperCase()}',
+                    pw.Text('Status: ${_getPdfStatusString(invoice.status)}',
                         style: pw.TextStyle(
                           fontWeight: pw.FontWeight.bold,
-                          color: invoice.status.name == 'paid'
-                              ? PdfColors.green700
-                              : PdfColors.red700,
+                          color: _getPdfStatusColor(invoice.status),
                         )),
                   ],
                 ),
@@ -157,35 +180,31 @@ class InvoicePdfGenerator {
                       .toList(),
                 ),
                 // Data rows
-                ...invoice.items.map((item) {
-                  final unitPrice = AppFormatters.formatCurrencyPdf(item.unitPrice, displayCurrency);
-                  final total = AppFormatters.formatCurrencyPdf(item.total, displayCurrency);
+                ...calc.itemBreakdowns.map((calcItem) {
+                  final item = calcItem.item;
+                  final total = AppFormatters.formatCurrencyPdf(
+                      calcItem.itemTotal, displayCurrency);
+
                   final cells = [
-                    // Description - left aligned
+                    // Description
                     pw.Padding(
                       padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 6),
                       child: pw.Text(item.description, style: const pw.TextStyle(fontSize: 10)),
                     ),
-                    // Qty - right aligned
+                    // Qty
                     pw.Padding(
                       padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 6),
                       child: pw.Align(
                         alignment: pw.Alignment.centerRight,
-                        child: pw.Text(
-                            '${item.quantity.toStringAsFixed(2)}${item.unitType != null ? ' ${item.unitType!.toLowerCase()}' : ''}', 
-                            style: const pw.TextStyle(fontSize: 10)),
+                        child: pw.Text('${item.quantity}${item.unitType != null ? ' ${item.unitType!.toLowerCase()}' : ''}', style: const pw.TextStyle(fontSize: 10)),
                       ),
                     ),
-
-                    // Unit Price - right aligned with FittedBox
+                    // Price - right aligned
                     pw.Padding(
                       padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 6),
                       child: pw.Align(
                         alignment: pw.Alignment.centerRight,
-                        child: pw.FittedBox(
-                          fit: pw.BoxFit.scaleDown,
-                          child: pw.Text(unitPrice, style: const pw.TextStyle(fontSize: 10)),
-                        ),
+                        child: pw.Text(AppFormatters.formatCurrencyPdf(item.unitPrice, displayCurrency), style: const pw.TextStyle(fontSize: 10)),
                       ),
                     ),
                     // Tax % - right aligned
@@ -234,10 +253,29 @@ class InvoicePdfGenerator {
                                     color: PdfColors.grey700)),
                             pw.FittedBox(
                               fit: pw.BoxFit.scaleDown,
-                              child: pw.Text(AppFormatters.formatCurrencyPdf(invoice.subtotal, displayCurrency)),
+                              child: pw.Text(AppFormatters.formatCurrencyPdf(calc.subtotal, displayCurrency)),
                             ),
                           ],
                         ),
+                        if (calc.discountValue > 0) ...[
+                          pw.SizedBox(height: 4),
+                          pw.Row(
+                            mainAxisAlignment:
+                                pw.MainAxisAlignment.spaceBetween,
+                            children: [
+                              pw.Text(invoice.discountType == 'percentage' ? 'Discount (${invoice.discountAmount}%):' : 'Discount:',
+                                  style: const pw.TextStyle(
+                                      color: PdfColors.red700)),
+                              pw.FittedBox(
+                                fit: pw.BoxFit.scaleDown,
+                                child: pw.Text(
+                                    '- ${AppFormatters.formatCurrencyPdf(calc.discountValue, displayCurrency)}',
+                                    style: const pw.TextStyle(
+                                        color: PdfColors.red700)),
+                              ),
+                            ],
+                          ),
+                        ],
                         pw.SizedBox(height: 4),
                         pw.Row(
                           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
@@ -248,29 +286,10 @@ class InvoicePdfGenerator {
                             pw.FittedBox(
                               fit: pw.BoxFit.scaleDown,
                               child: pw.Text(
-                                  '+ ${AppFormatters.formatCurrencyPdf(invoice.totalTax, displayCurrency)}'),
+                                  '+ ${AppFormatters.formatCurrencyPdf(calc.totalTax, displayCurrency)}'),
                             ),
                           ],
                         ),
-                        if (invoice.discountAmount > 0) ...[
-                          pw.SizedBox(height: 4),
-                          pw.Row(
-                            mainAxisAlignment:
-                                pw.MainAxisAlignment.spaceBetween,
-                            children: [
-                              pw.Text('Discount:',
-                                  style: const pw.TextStyle(
-                                      color: PdfColors.red700)),
-                              pw.FittedBox(
-                                fit: pw.BoxFit.scaleDown,
-                                child: pw.Text(
-                                    '- ${AppFormatters.formatCurrencyPdf(invoice.discountAmount, displayCurrency)}',
-                                    style: const pw.TextStyle(
-                                        color: PdfColors.red700)),
-                              ),
-                            ],
-                          ),
-                        ],
                         pw.Divider(),
                         pw.Row(
                           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
@@ -281,11 +300,43 @@ class InvoicePdfGenerator {
                                     fontSize: 14)),
                             pw.FittedBox(
                               fit: pw.BoxFit.scaleDown,
-                              child: pw.Text(AppFormatters.formatCurrencyPdf(invoice.totalAmount, displayCurrency),
+                              child: pw.Text(AppFormatters.formatCurrencyPdf(calc.grandTotal, displayCurrency),
                                   style: pw.TextStyle(
                                       fontWeight: pw.FontWeight.bold,
                                       fontSize: 16,
                                       color: PdfColors.blue800)),
+                            ),
+                          ],
+                        ),
+                        if (calc.paidAmount > 0) ...[
+                          pw.SizedBox(height: 4),
+                          pw.Row(
+                            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                            children: [
+                              pw.Text('Paid Amount:',
+                                  style: const pw.TextStyle(
+                                      color: PdfColors.grey700)),
+                              pw.FittedBox(
+                                fit: pw.BoxFit.scaleDown,
+                                child: pw.Text(
+                                    AppFormatters.formatCurrencyPdf(calc.paidAmount, displayCurrency)),
+                              ),
+                            ],
+                          ),
+                        ],
+                        pw.SizedBox(height: 4),
+                        pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                          children: [
+                            pw.Text('Balance Due:',
+                                style: pw.TextStyle(
+                                    fontWeight: pw.FontWeight.bold,
+                                    color: PdfColors.black)),
+                            pw.FittedBox(
+                              fit: pw.BoxFit.scaleDown,
+                              child: pw.Text(
+                                  AppFormatters.formatCurrencyPdf(calc.balanceDue, displayCurrency),
+                                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                             ),
                           ],
                         ),

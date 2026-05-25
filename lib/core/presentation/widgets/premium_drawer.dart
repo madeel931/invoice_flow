@@ -52,8 +52,8 @@ class PremiumDrawer extends StatelessWidget {
                                       profile!.logoPath!)))
                               : null,
                           child: !hasLogo
-                              ? const Icon(Icons.storefront_rounded,
-                                  size: 36, color: Colors.white)
+                              ? Icon(Icons.storefront_rounded,
+                                  size: 36, color: Theme.of(context).colorScheme.onPrimary)
                               : null,
                         ),
                         const SizedBox(height: 12),
@@ -168,8 +168,8 @@ class PremiumDrawer extends StatelessWidget {
                       color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
-                  const Text('Version 1.0.0',
-                      style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  Text('Version 1.0.0',
+                      style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                 ],
               ),
             ),

@@ -131,13 +131,11 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
 
     return Padding(
       padding: EdgeInsets.only(
-        left: AppSpacing.lg,
-        right: AppSpacing.lg,
-        top: AppSpacing.lg,
-        bottom: bottomInset + AppSpacing.lg,
+        bottom: bottomInset,
       ),
       child: SafeArea(
         child: SingleChildScrollView(
+          padding: const EdgeInsets.all(AppSpacing.lg),
           child: Form(
             key: _formKey,
             child: Column(

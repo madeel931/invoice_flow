@@ -60,6 +60,7 @@ class GlobalTextField extends StatelessWidget {
         hintText: hint,
         prefixIcon: prefixIcon,
         counterText: hideCounter ? '' : null,
+        counter: hideCounter ? const SizedBox.shrink() : null,
       ),
     );
   }

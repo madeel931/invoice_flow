@@ -21,9 +21,16 @@ class SaveInvoiceUseCase implements UseCase<Invoice, SaveInvoiceParams> {
           ValidationFailure('An invoice must have at least one line item.'));
     }
 
-    if (inv.dueDate.isBefore(inv.issueDate)) {
+    DateTime dateOnly(DateTime date) {
+      return DateTime(date.year, date.month, date.day);
+    }
+
+    final dueOnly = dateOnly(inv.dueDate);
+    final issueOnly = dateOnly(inv.issueDate);
+
+    if (dueOnly.isBefore(issueOnly)) {
       return const Left(
-          ValidationFailure('Due date cannot be before the issue date.'));
+          ValidationFailure('Due date cannot be before issue date.'));
     }
 
     if (inv.discountAmount < 0) {

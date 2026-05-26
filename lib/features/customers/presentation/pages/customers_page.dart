@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../config/routes/route_constants.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/global_card.dart';
 import '../../domain/entities/customer.dart';
 import '../cubit/customer_list_cubit.dart';
@@ -87,20 +88,12 @@ class _CustomersListViewState extends State<_CustomersListView> {
           }
 
           if (state.filteredCustomers.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.people_outline,
-                      size: 64,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .primary
-                          .withValues(alpha: 0.5)),
-                  const SizedBox(height: AppSpacing.md),
-                  const Text('No customers found.'),
-                ],
-              ),
+            return EmptyStateWidget(
+              icon: Icons.people_outline,
+              title: 'No customers yet',
+              message: 'Add customers to create invoices faster.',
+              buttonText: 'Add Customer',
+              onButtonPressed: () => _openCustomerForm(context),
             );
           }
 

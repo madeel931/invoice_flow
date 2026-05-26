@@ -102,11 +102,18 @@ class ProductDetailPage extends StatelessWidget {
                           Text('Base Price',
                               style: theme.textTheme.titleMedium
                                   ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
-                          Text(
-                            '${AppFormatters.formatCurrency(product.price, currencyCode)} / ${product.unitType.toLowerCase()}',
-                            style: theme.textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: colorScheme.primary),
+                          const SizedBox(width: AppSpacing.md),
+                          Expanded(
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                '${AppFormatters.formatCurrency(product.price, currencyCode)} / ${product.unitType.toLowerCase()}',
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: colorScheme.primary),
+                              ),
+                            ),
                           ),
                         ],
                       ),

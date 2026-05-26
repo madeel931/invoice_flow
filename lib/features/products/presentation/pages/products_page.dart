@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../config/routes/route_constants.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/global_card.dart';
 import '../../../settings/presentation/cubit/settings_cubit.dart';
 import '../../domain/entities/product.dart';
@@ -96,20 +97,12 @@ class _ProductsListViewState extends State<_ProductsListView> {
           }
 
           if (state.filteredProducts.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.inventory_2_outlined,
-                      size: 64,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .primary
-                          .withValues(alpha: 0.5)),
-                  const SizedBox(height: AppSpacing.md),
-                  const Text('No items found.'),
-                ],
-              ),
+            return EmptyStateWidget(
+              icon: Icons.inventory_2_outlined,
+              title: 'No products yet',
+              message: 'Add your first product or service to speed up invoice creation.',
+              buttonText: 'Add Product',
+              onButtonPressed: () => _openProductForm(context),
             );
           }
 

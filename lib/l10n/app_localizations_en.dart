@@ -67,4 +67,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recentInvoice => 'Recent Invoice';
+
+  @override
+  String get systemDefault => 'System Default';
+
+  @override
+  String get languageSettings => 'Language Settings';
+
+  @override
+  String get chooseAppLanguage => 'Choose app language';
 }

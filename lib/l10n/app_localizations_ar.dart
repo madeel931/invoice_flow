@@ -67,4 +67,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get recentInvoice => 'فاتورة حديثة';
+
+  @override
+  String get systemDefault => 'لغة الجهاز';
+
+  @override
+  String get languageSettings => 'إعدادات اللغة';
+
+  @override
+  String get chooseAppLanguage => 'اختر لغة التطبيق';
 }

@@ -19,5 +19,8 @@
   "noRecentInvoices": "No recent invoices yet.",
   "totalRevenue": "Total Revenue",
   "outstandingBalance": "Outstanding Balance",
-  "recentInvoice": "Recent Invoice"
+  "recentInvoice": "Recent Invoice",
+  "systemDefault": "System Default",
+  "languageSettings": "Language Settings",
+  "chooseAppLanguage": "Choose app language"
 }

@@ -19,5 +19,8 @@
   "noRecentInvoices": "لا توجد فواتير حديثة بعد.",
   "totalRevenue": "إجمالي الإيرادات",
   "outstandingBalance": "الرصيد المستحق",
-  "recentInvoice": "فاتورة حديثة"
+  "recentInvoice": "فاتورة حديثة",
+  "systemDefault": "لغة الجهاز",
+  "languageSettings": "إعدادات اللغة",
+  "chooseAppLanguage": "اختر لغة التطبيق"
 }

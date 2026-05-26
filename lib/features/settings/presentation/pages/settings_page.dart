@@ -10,6 +10,8 @@ import '../../../../core/widgets/global_button.dart';
 import '../../../../core/widgets/global_card.dart';
 import '../../../../core/presentation/widgets/app_currency_picker_field.dart';
 import '../../../../core/widgets/global_text_field.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../../../core/locale/cubit/locale_cubit.dart';
 import '../../../../core/utils/app_directories.dart';
 import '../../../../core/utils/app_validators.dart';
 import '../../../../core/utils/app_input_formatters.dart';
@@ -208,6 +210,51 @@ class _SettingsViewState extends State<_SettingsView> {
                           ),
                         ),
                         const SizedBox(height: AppSpacing.md),
+                        
+                        // --- LANGUAGE SETTINGS ---
+                        Text(AppLocalizations.of(context)?.languageSettings ?? 'Language Settings',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold)),
+                        const SizedBox(height: AppSpacing.sm),
+                        GlobalCard(
+                          child: BlocBuilder<LocaleCubit, Locale?>(
+                            builder: (context, locale) {
+                              final currentCode = context.read<LocaleCubit>().currentCode;
+                              return DropdownButtonFormField<String>(
+                                key: ValueKey(currentCode),
+                                initialValue: currentCode,
+                                decoration: InputDecoration(
+                                  labelText: AppLocalizations.of(context)?.chooseAppLanguage ?? 'Choose app language',
+                                  prefixIcon: const Icon(Icons.language),
+                                  border: const OutlineInputBorder(),
+                                ),
+                                items: [
+                                  DropdownMenuItem(
+                                    value: 'system',
+                                    child: Text(AppLocalizations.of(context)?.systemDefault ?? 'System Default'),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: 'en',
+                                    child: Text(AppLocalizations.of(context)?.english ?? 'English'),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: 'ar',
+                                    child: Text(AppLocalizations.of(context)?.arabic ?? 'العربية'),
+                                  ),
+                                ],
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    context.read<LocaleCubit>().changeLocale(value);
+                                  }
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        
                         Text('Business Details',
                             style: Theme.of(context)
                                 .textTheme

@@ -217,6 +217,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recent Invoice'**
   String get recentInvoice;
+
+  /// No description provided for @systemDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'System Default'**
+  String get systemDefault;
+
+  /// No description provided for @languageSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Language Settings'**
+  String get languageSettings;
+
+  /// No description provided for @chooseAppLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose app language'**
+  String get chooseAppLanguage;
 }
 
 class _AppLocalizationsDelegate

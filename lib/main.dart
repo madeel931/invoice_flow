@@ -8,6 +8,7 @@ import 'core/theme/app_theme.dart';
 import 'features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'features/invoices/presentation/cubit/invoice_list_cubit.dart';
 import 'l10n/app_localizations.dart';
+import 'core/locale/cubit/locale_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,21 +28,27 @@ class InvoiceFlowApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => ThemeCubit()),
+        BlocProvider(create: (_) => LocaleCubit()),
         // LIFTING STATE UP: Now all tabs share these exact instances!
         BlocProvider(create: (_) => di.sl<DashboardCubit>()..loadDashboard()),
         BlocProvider(create: (_) => di.sl<InvoiceListCubit>()..loadInvoices()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeMode>(
         builder: (context, themeMode) {
-          return MaterialApp.router(
-            title: 'InvoiceFlow Pro',
-            debugShowCheckedModeBanner: false,
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            themeMode: themeMode,
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            routerConfig: AppRouter.router,
+          return BlocBuilder<LocaleCubit, Locale?>(
+            builder: (context, locale) {
+              return MaterialApp.router(
+                title: 'InvoiceFlow Pro',
+                debugShowCheckedModeBanner: false,
+                theme: AppTheme.lightTheme,
+                darkTheme: AppTheme.darkTheme,
+                themeMode: themeMode,
+                locale: locale,
+                localizationsDelegates: AppLocalizations.localizationsDelegates,
+                supportedLocales: AppLocalizations.supportedLocales,
+                routerConfig: AppRouter.router,
+              );
+            },
           );
         },
       ),

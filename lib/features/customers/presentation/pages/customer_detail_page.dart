@@ -6,23 +6,52 @@ import '../../../../config/routes/route_constants.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../../../../core/widgets/global_card.dart';
+import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../invoices/domain/usecases/get_invoices_usecase.dart';
 import '../../domain/entities/customer.dart';
+import '../../domain/usecases/get_customers_usecase.dart';
 
-class CustomerDetailPage extends StatelessWidget {
-  final Customer customer;
+class CustomerDetailPage extends StatefulWidget {
+  final String customerId;
 
-  const CustomerDetailPage({super.key, required this.customer});
+  const CustomerDetailPage({super.key, required this.customerId});
+
+  @override
+  State<CustomerDetailPage> createState() => _CustomerDetailPageState();
+}
+
+class _CustomerDetailPageState extends State<CustomerDetailPage> {
+  late Future<Customer> _customerFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _customerFuture = _loadCustomer();
+  }
+
+  Future<Customer> _loadCustomer() async {
+    final getCustomers = GetIt.instance<GetCustomersUseCase>();
+    final result = await getCustomers(NoParams());
+    
+    return result.fold(
+      (failure) => throw Exception(failure.message),
+      (customers) {
+        final index = customers.indexWhere((c) => c.id?.toString() == widget.customerId);
+        if (index == -1) throw Exception('Customer not found.');
+        return customers[index];
+      },
+    );
+  }
 
   // Dynamically fetch how many invoices this customer has
-  Future<int> _getInvoiceCount() async {
+  Future<int> _getInvoiceCount(Customer customer) async {
     try {
       final getInvoices = GetIt.instance<GetInvoicesUseCase>();
       final result = await getInvoices(NoParams());
       return result.fold(
         (failure) => 0,
         (invoices) =>
-            invoices.where((inv) => inv.customerName == customer.name).length,
+            invoices.where((inv) => inv.customerId == customer.id).length,
       );
     } catch (_) {
       return 0; // Fail gracefully
@@ -36,7 +65,7 @@ class CustomerDetailPage extends StatelessWidget {
     );
   }
 
-  Future<void> _showDeleteConfirmation(BuildContext context) async {
+  Future<void> _showDeleteConfirmation(BuildContext context, Customer customer) async {
     final bool? confirm = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -71,156 +100,181 @@ class CustomerDetailPage extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Customer Details'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit_outlined),
-            tooltip: 'Edit Customer',
-            onPressed: () =>
-                context.pop('edit'), // Return the edit intent to the list page
-          ),
-          IconButton(
-            icon: Icon(Icons.delete_outline, color: colorScheme.error),
-            tooltip: 'Delete Customer',
-            onPressed: () => _showDeleteConfirmation(context),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.md),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // --- HEADER AVATAR ---
-            CircleAvatar(
-              radius: 48,
-              backgroundColor: colorScheme.primaryContainer,
-              child: Text(
-                customer.name.isNotEmpty ? customer.name[0].toUpperCase() : '?',
-                style: TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.onPrimaryContainer),
+    return FutureBuilder<Customer>(
+      future: _customerFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Customer Details')),
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasError || !snapshot.hasData) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Customer Details')),
+            body: const EmptyStateWidget(
+              icon: Icons.error_outline,
+              title: 'Customer Not Found',
+              message: 'This customer may have been deleted or does not exist.',
+            ),
+          );
+        }
+
+        final customer = snapshot.data!;
+
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Customer Details'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.edit_outlined),
+                tooltip: 'Edit Customer',
+                onPressed: () =>
+                    context.pop('edit'), // Return the edit intent to the list page
               ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              customer.name,
-              style: theme.textTheme.headlineSmall
-                  ?.copyWith(fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-
-            // --- INVOICE COUNT METRIC ---
-            FutureBuilder<int>(
-              future: _getInvoiceCount(),
-              builder: (context, snapshot) {
-                final count = snapshot.data ?? 0;
-                final isLoading =
-                    snapshot.connectionState == ConnectionState.waiting;
-
-                return GlobalCard(
-                  padding: EdgeInsets.zero,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(16.0),
-                    onTap: () {
-                      context.push(AppRoutes.customerInvoices, extra: customer);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md, horizontal: AppSpacing.md),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.receipt_long_rounded,
-                              color: colorScheme.primary),
-                          const SizedBox(width: 12),
-                          isLoading
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                      strokeWidth: 2))
-                              : Text(
-                                  '$count Total Invoices',
-                                  style: theme.textTheme.titleMedium
-                                      ?.copyWith(fontWeight: FontWeight.w600),
-                                ),
-                          const Spacer(),
-                          Icon(Icons.chevron_right, color: theme.disabledColor),
-                        ],
-                      ),
-                    ),
+              IconButton(
+                icon: Icon(Icons.delete_outline, color: colorScheme.error),
+                tooltip: 'Delete Customer',
+                onPressed: () => _showDeleteConfirmation(context, customer),
+              ),
+            ],
+          ),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // --- HEADER AVATAR ---
+                CircleAvatar(
+                  radius: 48,
+                  backgroundColor: colorScheme.primaryContainer,
+                  child: Text(
+                    customer.name.isNotEmpty ? customer.name[0].toUpperCase() : '?',
+                    style: TextStyle(
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.onPrimaryContainer),
                   ),
-                );
-              },
-            ),
-            const SizedBox(height: AppSpacing.md),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                Text(
+                  customer.name,
+                  style: theme.textTheme.headlineSmall
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: AppSpacing.lg),
 
-            // --- CONTACT DETAILS ---
-            GlobalCard(
-              padding: EdgeInsets.zero,
-              child: Column(
-                children: [
-                  if (customer.email != null && customer.email!.isNotEmpty) ...[
-                    ListTile(
-                      leading: Icon(Icons.email_outlined,
-                          color: colorScheme.secondary),
-                      title: const Text('Email Address'),
-                      subtitle: Text(customer.email!),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.copy_rounded, size: 20),
-                        tooltip: 'Copy Email',
-                        onPressed: () => _copyToClipboard(context, customer.email!, 'Email'),
+                // --- INVOICE COUNT METRIC ---
+                FutureBuilder<int>(
+                  future: _getInvoiceCount(customer),
+                  builder: (context, snapshot) {
+                    final count = snapshot.data ?? 0;
+                    final isLoading =
+                        snapshot.connectionState == ConnectionState.waiting;
+
+                    return GlobalCard(
+                      padding: EdgeInsets.zero,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(16.0),
+                        onTap: () {
+                          context.push('${AppRoutes.customerInvoices}/${customer.id}');
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: AppSpacing.md, horizontal: AppSpacing.md),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.receipt_long_rounded,
+                                  color: colorScheme.primary),
+                              const SizedBox(width: 12),
+                              isLoading
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2))
+                                  : Text(
+                                      '$count Total Invoices',
+                                      style: theme.textTheme.titleMedium
+                                          ?.copyWith(fontWeight: FontWeight.w600),
+                                    ),
+                              const Spacer(),
+                              Icon(Icons.chevron_right, color: theme.disabledColor),
+                            ],
+                          ),
+                        ),
                       ),
-                      onTap: () => _copyToClipboard(context, customer.email!, 'Email'),
-                    ),
-                    if (customer.phone != null && customer.phone!.isNotEmpty)
-                      const Divider(height: 1),
-                  ],
-                  if (customer.phone != null && customer.phone!.isNotEmpty) ...[
-                    ListTile(
-                      leading: Icon(Icons.phone_outlined,
-                          color: colorScheme.secondary),
-                      title: const Text('Phone Number'),
-                      subtitle: Text(customer.phone!),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.copy_rounded, size: 20),
-                        tooltip: 'Copy Phone',
-                        onPressed: () => _copyToClipboard(context, customer.phone!, 'Phone'),
-                      ),
-                      onTap: () => _copyToClipboard(context, customer.phone!, 'Phone'),
-                    ),
-                    if (customer.billingAddress != null &&
-                        customer.billingAddress!.isNotEmpty)
-                      const Divider(height: 1),
-                  ],
-                  // FIX: Using billingAddress exactly as defined in your entity
-                  if (customer.billingAddress != null &&
-                      customer.billingAddress!.isNotEmpty)
-                    ListTile(
-                      leading: Icon(Icons.location_on_outlined,
-                          color: colorScheme.secondary),
-                      title: const Text('Billing Address'),
-                      subtitle: Text(customer.billingAddress!),
-                    ),
-                  // If all are empty, show a placeholder
-                  if ((customer.email == null || customer.email!.isEmpty) &&
-                      (customer.phone == null || customer.phone!.isEmpty) &&
-                      (customer.billingAddress == null ||
-                          customer.billingAddress!.isEmpty))
-                    ListTile(
-                      leading: Icon(Icons.info_outline, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                      title: const Text('No contact information provided.'),
-                    ),
-                ],
-              ),
+                    );
+                  },
+                ),
+                const SizedBox(height: AppSpacing.md),
+
+                // --- CONTACT DETAILS ---
+                GlobalCard(
+                  padding: EdgeInsets.zero,
+                  child: Column(
+                    children: [
+                      if (customer.email != null && customer.email!.isNotEmpty) ...[
+                        ListTile(
+                          leading: Icon(Icons.email_outlined,
+                              color: colorScheme.secondary),
+                          title: const Text('Email Address'),
+                          subtitle: Text(customer.email!),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.copy_rounded, size: 20),
+                            tooltip: 'Copy Email',
+                            onPressed: () => _copyToClipboard(context, customer.email!, 'Email'),
+                          ),
+                          onTap: () => _copyToClipboard(context, customer.email!, 'Email'),
+                        ),
+                        if (customer.phone != null && customer.phone!.isNotEmpty)
+                          const Divider(height: 1),
+                      ],
+                      if (customer.phone != null && customer.phone!.isNotEmpty) ...[
+                        ListTile(
+                          leading: Icon(Icons.phone_outlined,
+                              color: colorScheme.secondary),
+                          title: const Text('Phone Number'),
+                          subtitle: Text(customer.phone!),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.copy_rounded, size: 20),
+                            tooltip: 'Copy Phone',
+                            onPressed: () => _copyToClipboard(context, customer.phone!, 'Phone'),
+                          ),
+                          onTap: () => _copyToClipboard(context, customer.phone!, 'Phone'),
+                        ),
+                        if (customer.billingAddress != null &&
+                            customer.billingAddress!.isNotEmpty)
+                          const Divider(height: 1),
+                      ],
+                      // FIX: Using billingAddress exactly as defined in your entity
+                      if (customer.billingAddress != null &&
+                          customer.billingAddress!.isNotEmpty)
+                        ListTile(
+                          leading: Icon(Icons.location_on_outlined,
+                              color: colorScheme.secondary),
+                          title: const Text('Billing Address'),
+                          subtitle: Text(customer.billingAddress!),
+                        ),
+                      // If all are empty, show a placeholder
+                      if ((customer.email == null || customer.email!.isEmpty) &&
+                          (customer.phone == null || customer.phone!.isEmpty) &&
+                          (customer.billingAddress == null ||
+                              customer.billingAddress!.isEmpty))
+                        ListTile(
+                          leading: Icon(Icons.info_outline, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                          title: const Text('No contact information provided.'),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

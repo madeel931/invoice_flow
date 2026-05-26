@@ -133,8 +133,7 @@ class _ProductsListViewState extends State<_ProductsListView> {
 
                   // --- INTERACTION LOGIC ---
                   onTap: () async {
-                    final intent = await context.push(AppRoutes.productDetail,
-                        extra: product);
+                    final intent = await context.push('${AppRoutes.productDetail}/${product.id}');
 
                     if (!context.mounted) return;
 

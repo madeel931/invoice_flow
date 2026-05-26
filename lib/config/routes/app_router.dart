@@ -7,14 +7,12 @@ import 'package:invoice_flow_pro/features/settings/presentation/pages/backup_res
 
 import '../../core/data/local/local_database_service.dart';
 import '../../core/presentation/widgets/main_shell_page.dart';
-import '../../features/customers/domain/entities/customer.dart';
 import '../../features/customers/presentation/pages/customer_detail_page.dart';
 
 import '../../features/invoices/presentation/pages/invoice_detail_page.dart';
 import '../../features/invoices/presentation/pages/invoice_form_page.dart';
 import '../../features/invoices/presentation/pages/invoice_preview_page.dart';
 import '../../features/invoices/presentation/pages/invoices_list_page.dart';
-import '../../features/products/domain/entities/product.dart';
 import '../../features/products/presentation/pages/product_detail_page.dart';
 import '../../features/products/presentation/pages/products_page.dart';
 import 'route_constants.dart';
@@ -103,21 +101,21 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: AppRoutes.customerDetail,
+        path: '${AppRoutes.customerDetail}/:id',
         name: 'customer-detail',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
-          final customer = state.extra as Customer;
-          return CustomerDetailPage(customer: customer);
+          final customerId = state.pathParameters['id']!;
+          return CustomerDetailPage(customerId: customerId);
         },
       ),
       GoRoute(
-        path: AppRoutes.productDetail,
+        path: '${AppRoutes.productDetail}/:id',
         name: 'product-detail',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
-          final product = state.extra as Product;
-          return ProductDetailPage(product: product);
+          final productId = state.pathParameters['id']!;
+          return ProductDetailPage(productId: productId);
         },
       ),
       GoRoute(
@@ -131,12 +129,12 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: AppRoutes.customerInvoices,
+        path: '${AppRoutes.customerInvoices}/:id',
         name: 'customer-invoices',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
-          final customer = state.extra as Customer;
-          return InvoicesListPage(filterCustomer: customer);
+          final customerId = state.pathParameters['id']!;
+          return InvoicesListPage(filterCustomerId: customerId);
         },
       ),
 

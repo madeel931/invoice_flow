@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../../config/routes/route_constants.dart';
-import '../../../customers/domain/entities/customer.dart';
 import '../../domain/entities/invoice.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/constants/app_spacing.dart';
@@ -22,19 +21,19 @@ import '../cubit/invoice_list_state.dart';
 import '../../../settings/presentation/cubit/settings_state.dart';
 
 class InvoicesListPage extends StatelessWidget {
-  final Customer? filterCustomer;
+  final String? filterCustomerId;
 
-  const InvoicesListPage({super.key, this.filterCustomer});
+  const InvoicesListPage({super.key, this.filterCustomerId});
 
   @override
   Widget build(BuildContext context) {
-    return _InvoicesListView(filterCustomer: filterCustomer);
+    return _InvoicesListView(filterCustomerId: filterCustomerId);
   }
 }
 
 class _InvoicesListView extends StatefulWidget {
-  final Customer? filterCustomer;
-  const _InvoicesListView({this.filterCustomer});
+  final String? filterCustomerId;
+  const _InvoicesListView({this.filterCustomerId});
 
   @override
   State<_InvoicesListView> createState() => _InvoicesListViewState();
@@ -183,8 +182,8 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
 
         return Scaffold(
           appBar: AppBar(
-            title: Text(widget.filterCustomer != null
-                ? 'Invoices - ${widget.filterCustomer!.name}'
+            title: Text(widget.filterCustomerId != null
+                ? 'Customer Invoices'
                 : 'Invoices'),
             bottom: PreferredSize(
               preferredSize:
@@ -251,10 +250,10 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
             child: BlocBuilder<InvoiceListCubit, InvoiceListState>(
               builder: (context, state) {
               // Apply UI-level customer filtering
-              List<Invoice> displayInvoices = state.filteredInvoices;
-              if (widget.filterCustomer != null) {
+              var displayInvoices = state.filteredInvoices;
+              if (widget.filterCustomerId != null) {
                 displayInvoices = displayInvoices
-                    .where((inv) => inv.customerId == widget.filterCustomer!.id)
+                    .where((inv) => inv.customerId.toString() == widget.filterCustomerId)
                     .toList();
               }
 
@@ -272,9 +271,11 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
               if (displayInvoices.isEmpty) {
                 return EmptyStateWidget(
                   icon: Icons.receipt_long_outlined,
-                  message: widget.filterCustomer != null
-                      ? 'No invoices for this customer yet.'
-                      : 'You haven\'t created any invoices yet.',
+                  message: widget.filterCustomerId != null
+                      ? 'This customer has no invoices yet.'
+                      : (state.searchQuery.isNotEmpty
+                          ? 'No invoices match your search.'
+                          : 'You haven\'t created any invoices yet.'),
                 );
               }
 

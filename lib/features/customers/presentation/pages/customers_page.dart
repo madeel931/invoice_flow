@@ -128,8 +128,7 @@ class _CustomersListViewState extends State<_CustomersListView> {
                   // --- INTERACTION LOGIC ---
                   onTap: () async {
                     // Push to detail page and await the result
-                    final intent = await context.push(AppRoutes.customerDetail,
-                        extra: customer);
+                    final intent = await context.push('${AppRoutes.customerDetail}/${customer.id}');
 
                     if (!context.mounted) return;
 

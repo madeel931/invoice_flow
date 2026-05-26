@@ -6,6 +6,7 @@ import '../../../../config/routes/route_constants.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/global_card.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/customer.dart';
 import '../cubit/customer_list_cubit.dart';
 import '../cubit/customer_list_state.dart';
@@ -55,7 +56,7 @@ class _CustomersListViewState extends State<_CustomersListView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Customers'),
+        title: Text(AppLocalizations.of(context)?.customers ?? 'Customers'),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60),
           child: Padding(
@@ -65,7 +66,7 @@ class _CustomersListViewState extends State<_CustomersListView> {
               controller: _searchController,
               onChanged: (val) => context.read<CustomerListCubit>().search(val),
               decoration: InputDecoration(
-                hintText: 'Search customers...',
+                hintText: AppLocalizations.of(context)?.searchCustomers ?? 'Search customers...',
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
@@ -90,9 +91,9 @@ class _CustomersListViewState extends State<_CustomersListView> {
           if (state.filteredCustomers.isEmpty) {
             return EmptyStateWidget(
               icon: Icons.people_outline,
-              title: 'No customers yet',
-              message: 'Add customers to create invoices faster.',
-              buttonText: 'Add Customer',
+              title: AppLocalizations.of(context)?.noCustomersYet ?? 'No customers yet',
+              message: AppLocalizations.of(context)?.noCustomersSubtitle ?? 'Add customers to create invoices faster.',
+              buttonText: AppLocalizations.of(context)?.addCustomer ?? 'Add Customer',
               onButtonPressed: () => _openCustomerForm(context),
             );
           }
@@ -138,8 +139,8 @@ class _CustomersListViewState extends State<_CustomersListView> {
                           .read<CustomerListCubit>()
                           .removeCustomer(customer.id!);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Customer deleted successfully.')),
+                        SnackBar(
+                            content: Text(AppLocalizations.of(context)?.customerDeleted ?? 'Customer deleted successfully.')),
                       );
                     } else if (intent == 'edit') {
                       // Call the form opening method

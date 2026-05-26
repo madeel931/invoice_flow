@@ -8,6 +8,7 @@ import '../../../../core/constants/app_units.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/global_card.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../settings/presentation/cubit/settings_cubit.dart';
 import '../../domain/entities/product.dart';
 import '../cubit/product_list_cubit.dart';
@@ -65,7 +66,7 @@ class _ProductsListViewState extends State<_ProductsListView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Items & Services'),
+        title: Text(AppLocalizations.of(context)?.products ?? 'Items & Services'),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60),
           child: Padding(
@@ -75,7 +76,7 @@ class _ProductsListViewState extends State<_ProductsListView> {
               controller: _searchController,
               onChanged: (val) => context.read<ProductListCubit>().search(val),
               decoration: InputDecoration(
-                hintText: 'Search items...',
+                hintText: AppLocalizations.of(context)?.searchProducts ?? 'Search items...',
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
@@ -100,9 +101,9 @@ class _ProductsListViewState extends State<_ProductsListView> {
           if (state.filteredProducts.isEmpty) {
             return EmptyStateWidget(
               icon: Icons.inventory_2_outlined,
-              title: 'No products yet',
-              message: 'Add your first product or service to speed up invoice creation.',
-              buttonText: 'Add Product',
+              title: AppLocalizations.of(context)?.noProductsYet ?? 'No products yet',
+              message: AppLocalizations.of(context)?.noProductsSubtitle ?? 'Add your first product or service to speed up invoice creation.',
+              buttonText: AppLocalizations.of(context)?.addProduct ?? 'Add Product',
               onButtonPressed: () => _openProductForm(context),
             );
           }
@@ -143,8 +144,8 @@ class _ProductsListViewState extends State<_ProductsListView> {
                           .read<ProductListCubit>()
                           .removeProduct(product.id!);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Item deleted successfully.')),
+                        SnackBar(
+                            content: Text(AppLocalizations.of(context)?.productDeleted ?? 'Item deleted successfully.')),
                       );
                     } else if (intent == 'edit') {
                       _openProductForm(context, product: product);

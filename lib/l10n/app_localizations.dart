@@ -235,6 +235,204 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Choose app language'**
   String get chooseAppLanguage;
+
+  /// No description provided for @customersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Customers'**
+  String get customersTitle;
+
+  /// No description provided for @productsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Items & Services'**
+  String get productsTitle;
+
+  /// No description provided for @invoicesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoices'**
+  String get invoicesTitle;
+
+  /// No description provided for @noCustomersYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No customers yet'**
+  String get noCustomersYet;
+
+  /// No description provided for @noCustomersSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add customers to create invoices faster.'**
+  String get noCustomersSubtitle;
+
+  /// No description provided for @addCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Customer'**
+  String get addCustomer;
+
+  /// No description provided for @noProductsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No products yet'**
+  String get noProductsYet;
+
+  /// No description provided for @noProductsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first product or service to speed up invoice creation.'**
+  String get noProductsSubtitle;
+
+  /// No description provided for @addProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Product'**
+  String get addProduct;
+
+  /// No description provided for @noInvoicesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No invoices yet'**
+  String get noInvoicesYet;
+
+  /// No description provided for @noInvoicesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first invoice to start tracking your business.'**
+  String get noInvoicesSubtitle;
+
+  /// No description provided for @createInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Invoice'**
+  String get createInvoice;
+
+  /// No description provided for @searchCustomers.
+  ///
+  /// In en, this message translates to:
+  /// **'Search customers...'**
+  String get searchCustomers;
+
+  /// No description provided for @searchProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Search items...'**
+  String get searchProducts;
+
+  /// No description provided for @searchInvoices.
+  ///
+  /// In en, this message translates to:
+  /// **'Search invoice # or customer...'**
+  String get searchInvoices;
+
+  /// No description provided for @statusDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get statusDraft;
+
+  /// No description provided for @statusUnpaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpaid'**
+  String get statusUnpaid;
+
+  /// No description provided for @statusPartiallyPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Partially Paid'**
+  String get statusPartiallyPaid;
+
+  /// No description provided for @statusPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get statusPaid;
+
+  /// No description provided for @statusOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get statusOverdue;
+
+  /// No description provided for @statusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get statusCancelled;
+
+  /// No description provided for @filterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get filterAll;
+
+  /// No description provided for @filterPartial.
+  ///
+  /// In en, this message translates to:
+  /// **'Partial'**
+  String get filterPartial;
+
+  /// No description provided for @viewDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get viewDetails;
+
+  /// No description provided for @viewPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'View PDF'**
+  String get viewPdf;
+
+  /// No description provided for @editDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Draft'**
+  String get editDraft;
+
+  /// No description provided for @deleteDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Draft'**
+  String get deleteDraft;
+
+  /// No description provided for @deletePermanently.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Permanently'**
+  String get deletePermanently;
+
+  /// No description provided for @markAsPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Paid'**
+  String get markAsPaid;
+
+  /// No description provided for @markAsUnpaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Unpaid'**
+  String get markAsUnpaid;
+
+  /// No description provided for @cancelInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Invoice'**
+  String get cancelInvoice;
+
+  /// No description provided for @customerDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer deleted successfully.'**
+  String get customerDeleted;
+
+  /// No description provided for @productDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Item deleted successfully.'**
+  String get productDeleted;
 }
 
 class _AppLocalizationsDelegate

@@ -19,6 +19,7 @@ import '../../domain/services/invoice_calculator.dart';
 import '../cubit/invoice_list_cubit.dart';
 import '../cubit/invoice_list_state.dart';
 import '../../../settings/presentation/cubit/settings_state.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class InvoicesListPage extends StatelessWidget {
   final String? filterCustomerId;
@@ -62,6 +63,18 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
         return Colors.grey;
       case InvoiceStatus.cancelled:
         return Colors.grey.shade600;
+    }
+  }
+
+  String _getLocalizedStatusName(BuildContext context, InvoiceStatus status) {
+    final loc = AppLocalizations.of(context);
+    switch (status) {
+      case InvoiceStatus.draft: return loc?.statusDraft.toUpperCase() ?? 'DRAFT';
+      case InvoiceStatus.unpaid: return loc?.statusUnpaid.toUpperCase() ?? 'UNPAID';
+      case InvoiceStatus.partiallyPaid: return loc?.statusPartiallyPaid.toUpperCase() ?? 'PARTIALLY PAID';
+      case InvoiceStatus.paid: return loc?.statusPaid.toUpperCase() ?? 'PAID';
+      case InvoiceStatus.overdue: return loc?.statusOverdue.toUpperCase() ?? 'OVERDUE';
+      case InvoiceStatus.cancelled: return loc?.statusCancelled.toUpperCase() ?? 'CANCELLED';
     }
   }
 
@@ -184,7 +197,7 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
           appBar: AppBar(
             title: Text(widget.filterCustomerId != null
                 ? 'Customer Invoices'
-                : 'Invoices'),
+                : AppLocalizations.of(context)?.invoicesTitle ?? 'Invoices'),
             bottom: PreferredSize(
               preferredSize:
                   const Size.fromHeight(120), // Expanded to fit search + chips
@@ -199,7 +212,7 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                       onChanged: (val) =>
                           context.read<InvoiceListCubit>().search(val),
                       decoration: InputDecoration(
-                        hintText: 'Search invoice # or customer...',
+                        hintText: AppLocalizations.of(context)?.searchInvoices ?? 'Search invoice # or customer...',
                         prefixIcon: const Icon(Icons.search),
                         suffixIcon: _searchController.text.isNotEmpty
                             ? IconButton(
@@ -223,13 +236,15 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                     child: Row(
                       children: [null, ...InvoiceStatus.values].map((status) {
                         return Padding(
-                          padding: const EdgeInsets.only(right: AppSpacing.sm),
+                          padding: const EdgeInsetsDirectional.only(end: AppSpacing.sm),
                           child: ChoiceChip(
                             label: Text(status == null 
-                                ? 'ALL' 
+                                ? AppLocalizations.of(context)?.filterAll.toUpperCase() ?? 'ALL' 
                                 : status == InvoiceStatus.partiallyPaid 
-                                    ? 'PARTIAL' 
-                                    : status.name.toUpperCase()),
+                                    ? AppLocalizations.of(context)?.filterPartial.toUpperCase() ?? 'PARTIAL' 
+                                    : AppLocalizations.of(context) != null 
+                                        ? _getLocalizedStatusName(context, status) 
+                                        : status.name.toUpperCase()),
                             selected: context.select((InvoiceListCubit c) =>
                                     c.state.filterStatus) ==
                                 status,
@@ -271,11 +286,14 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
               if (displayInvoices.isEmpty) {
                 return EmptyStateWidget(
                   icon: Icons.receipt_long_outlined,
+                  title: widget.filterCustomerId == null && state.searchQuery.isEmpty
+                      ? AppLocalizations.of(context)?.noInvoicesYet ?? 'No invoices yet'
+                      : null,
                   message: widget.filterCustomerId != null
                       ? 'This customer has no invoices yet.'
                       : (state.searchQuery.isNotEmpty
                           ? 'No invoices match your search.'
-                          : 'You haven\'t created any invoices yet.'),
+                          : AppLocalizations.of(context)?.noInvoicesSubtitle ?? 'You haven\'t created any invoices yet.'),
                 );
               }
 
@@ -331,9 +349,7 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                                         AppSizes.radiusXl),
                                   ),
                                   child: Text(
-                                    inv.status == InvoiceStatus.partiallyPaid 
-                                        ? 'PARTIALLY PAID' 
-                                        : inv.status.name.toUpperCase(),
+                                    _getLocalizedStatusName(context, inv.status),
                                     style: TextStyle(
                                       fontSize: 10,
                                       fontWeight: FontWeight.bold,
@@ -395,12 +411,12 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                                   itemBuilder: (context) {
                                     final items = <PopupMenuEntry<String>>[];
                                     
-                                    items.add(const PopupMenuItem(
+                                    items.add(PopupMenuItem(
                                         value: 'view_pdf',
                                         child: Row(children: [
-                                          Icon(Icons.picture_as_pdf_rounded, size: 20),
-                                          SizedBox(width: 8),
-                                          Text('View PDF')
+                                          const Icon(Icons.picture_as_pdf_rounded, size: 20),
+                                          const SizedBox(width: 8),
+                                          Text(AppLocalizations.of(context)?.viewPdf ?? 'View PDF')
                                         ])));
                                         
                                     items.add(const PopupMenuDivider());
@@ -408,32 +424,32 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                                     if (inv.status == InvoiceStatus.draft) {
                                       items.add(PopupMenuItem(
                                         value: 'edit_draft',
-                                        child: Text('Edit Draft', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                                        child: Text(AppLocalizations.of(context)?.editDraft ?? 'Edit Draft', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
                                       ));
                                       items.add(PopupMenuItem(
                                         value: 'delete_draft',
-                                        child: Text('Delete Draft', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                                        child: Text(AppLocalizations.of(context)?.deleteDraft ?? 'Delete Draft', style: TextStyle(color: Theme.of(context).colorScheme.error)),
                                       ));
                                     } else if (inv.status == InvoiceStatus.cancelled) {
                                       items.add(PopupMenuItem(
                                         value: 'delete_cancelled',
-                                        child: Text('Delete Permanently', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                                        child: Text(AppLocalizations.of(context)?.deletePermanently ?? 'Delete Permanently', style: TextStyle(color: Theme.of(context).colorScheme.error)),
                                       ));
                                     } else {
                                       if (inv.status != InvoiceStatus.paid) {
-                                        items.add(const PopupMenuItem(
+                                        items.add(PopupMenuItem(
                                             value: 'paid',
-                                            child: Text('Mark as Paid')));
+                                            child: Text(AppLocalizations.of(context)?.markAsPaid ?? 'Mark as Paid')));
                                       }
                                       if (inv.status != InvoiceStatus.unpaid) {
-                                        items.add(const PopupMenuItem(
+                                        items.add(PopupMenuItem(
                                             value: 'unpaid',
-                                            child: Text('Mark as Unpaid')));
+                                            child: Text(AppLocalizations.of(context)?.markAsUnpaid ?? 'Mark as Unpaid')));
                                       }
                                       items.add(const PopupMenuDivider());
                                       items.add(PopupMenuItem(
                                           value: 'cancel_invoice',
-                                          child: Text('Cancel Invoice', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                                          child: Text(AppLocalizations.of(context)?.cancelInvoice ?? 'Cancel Invoice', style: TextStyle(color: Theme.of(context).colorScheme.error)),
                                       ));
                                     }
                                     

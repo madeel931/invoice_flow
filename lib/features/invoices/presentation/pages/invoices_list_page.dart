@@ -126,9 +126,9 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
     if (action == 'delete_draft') {
       // Drafts can be safely deleted as they are not finalized financial records.
       final confirm = await _showConfirmDialog(
-        title: 'Delete Draft?',
-        message: 'This draft invoice will be permanently deleted. This action cannot be undone.',
-        confirmText: 'Delete',
+        title: AppLocalizations.of(context)?.dialogDeleteDraftTitle ?? 'Delete Draft?',
+        message: AppLocalizations.of(context)?.dialogDeleteDraftMessage ?? 'This draft invoice will be permanently deleted. This action cannot be undone.',
+        confirmText: AppLocalizations.of(context)?.dialogDeleteDraftConfirm ?? 'Delete',
         isDestructive: true,
       );
       if (confirm == true && mounted) {
@@ -144,10 +144,10 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
 
     if (action == 'cancel_invoice') {
       final confirm = await _showConfirmDialog(
-        title: 'Cancel Invoice?',
-        message: 'This invoice will be marked as cancelled but kept for your records.',
-        confirmText: 'Cancel Invoice',
-        cancelText: 'Keep Invoice',
+        title: AppLocalizations.of(context)?.dialogCancelInvoiceTitle ?? 'Cancel Invoice?',
+        message: AppLocalizations.of(context)?.dialogCancelInvoiceMessage ?? 'This invoice will be marked as cancelled but kept for your records.',
+        confirmText: AppLocalizations.of(context)?.dialogCancelInvoiceConfirm ?? 'Cancel Invoice',
+        cancelText: AppLocalizations.of(context)?.dialogCancelInvoiceCancel ?? 'Keep Invoice',
         isDestructive: true,
       );
       if (confirm == true && mounted) {
@@ -162,9 +162,9 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
     if (action == 'delete_cancelled') {
       // Allow permanent deletion ONLY for cancelled invoices. Keep strict audit trail for active ones.
       final confirm = await _showConfirmDialog(
-        title: 'Delete Cancelled Invoice?',
-        message: 'This will permanently delete this cancelled invoice record. This action cannot be undone.',
-        confirmText: 'Delete Permanently',
+        title: AppLocalizations.of(context)?.dialogDeleteCancelledTitle ?? 'Delete Cancelled Invoice?',
+        message: AppLocalizations.of(context)?.dialogDeleteCancelledMessage ?? 'This will permanently delete this cancelled invoice record. This action cannot be undone.',
+        confirmText: AppLocalizations.of(context)?.dialogDeleteCancelledConfirm ?? 'Delete Permanently',
         isDestructive: true,
       );
       if (confirm == true && mounted) {

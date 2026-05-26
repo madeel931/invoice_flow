@@ -176,4 +176,139 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get productDeleted => 'تم حذف العنصر بنجاح.';
+
+  @override
+  String get customerName => 'اسم العميل';
+
+  @override
+  String get phoneNumber => 'رقم الهاتف';
+
+  @override
+  String get emailAddress => 'البريد الإلكتروني';
+
+  @override
+  String get address => 'العنوان';
+
+  @override
+  String get saveCustomer => 'حفظ العميل';
+
+  @override
+  String get updateCustomer => 'تحديث العميل';
+
+  @override
+  String get customerRequired => 'اسم العميل مطلوب';
+
+  @override
+  String get invalidEmail => 'أدخل عنوان بريد إلكتروني صالح';
+
+  @override
+  String get phoneTooLong => 'رقم الهاتف طويل جداً';
+
+  @override
+  String get addressTooLong => 'العنوان طويل جداً';
+
+  @override
+  String get productName => 'اسم العنصر';
+
+  @override
+  String get description => 'الوصف';
+
+  @override
+  String get basePrice => 'السعر الأساسي';
+
+  @override
+  String get billingUnit => 'وحدة الفوترة';
+
+  @override
+  String get taxRate => 'نسبة الضريبة (%)';
+
+  @override
+  String get saveProduct => 'حفظ المنتج';
+
+  @override
+  String get updateProduct => 'تحديث المنتج';
+
+  @override
+  String get productRequired => 'اسم العنصر مطلوب';
+
+  @override
+  String get priceRequired => 'السعر مطلوب';
+
+  @override
+  String get invalidPrice => 'أدخل سعراً صالحاً';
+
+  @override
+  String get taxCannotExceed100 => 'لا يمكن أن تتجاوز الضريبة 100%';
+
+  @override
+  String get addLineItem => 'إضافة عنصر';
+
+  @override
+  String get editLineItem => 'تعديل العنصر';
+
+  @override
+  String get itemDescription => 'وصف العنصر';
+
+  @override
+  String get quantity => 'الكمية';
+
+  @override
+  String get unitPrice => 'سعر الوحدة';
+
+  @override
+  String get tax => 'الضريبة';
+
+  @override
+  String get unit => 'الوحدة';
+
+  @override
+  String get saveItem => 'حفظ العنصر';
+
+  @override
+  String get updateItem => 'تحديث العنصر';
+
+  @override
+  String get selectSavedProduct => 'اختر منتجاً محفوظاً';
+
+  @override
+  String get searchSavedProducts => 'البحث في المنتجات المحفوظة...';
+
+  @override
+  String get noProductsFound => 'لا توجد منتجات';
+
+  @override
+  String get quantityRequired => 'الكمية مطلوبة';
+
+  @override
+  String get dialogDeleteDraftTitle => 'حذف المسودة؟';
+
+  @override
+  String get dialogDeleteDraftMessage =>
+      'سيتم حذف مسودة الفاتورة هذه نهائياً. لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get dialogDeleteDraftConfirm => 'حذف';
+
+  @override
+  String get dialogCancelInvoiceTitle => 'إلغاء الفاتورة؟';
+
+  @override
+  String get dialogCancelInvoiceMessage =>
+      'سيتم وضع علامة على هذه الفاتورة كملغاة ولكن سيتم الاحتفاظ بها في سجلاتك.';
+
+  @override
+  String get dialogCancelInvoiceConfirm => 'إلغاء الفاتورة';
+
+  @override
+  String get dialogCancelInvoiceCancel => 'الاحتفاظ بالفاتورة';
+
+  @override
+  String get dialogDeleteCancelledTitle => 'حذف الفاتورة الملغاة؟';
+
+  @override
+  String get dialogDeleteCancelledMessage =>
+      'سيؤدي هذا إلى حذف سجل الفاتورة الملغاة نهائياً. لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get dialogDeleteCancelledConfirm => 'حذف نهائي';
 }

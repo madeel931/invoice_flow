@@ -433,6 +433,270 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Item deleted successfully.'**
   String get productDeleted;
+
+  /// No description provided for @customerName.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer Name'**
+  String get customerName;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumber;
+
+  /// No description provided for @emailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
+  String get emailAddress;
+
+  /// No description provided for @address.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get address;
+
+  /// No description provided for @saveCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Customer'**
+  String get saveCustomer;
+
+  /// No description provided for @updateCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Customer'**
+  String get updateCustomer;
+
+  /// No description provided for @customerRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer Name is required'**
+  String get customerRequired;
+
+  /// No description provided for @invalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address'**
+  String get invalidEmail;
+
+  /// No description provided for @phoneTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number is too long'**
+  String get phoneTooLong;
+
+  /// No description provided for @addressTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Address is too long'**
+  String get addressTooLong;
+
+  /// No description provided for @productName.
+  ///
+  /// In en, this message translates to:
+  /// **'Item Name'**
+  String get productName;
+
+  /// No description provided for @description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// No description provided for @basePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Base Price'**
+  String get basePrice;
+
+  /// No description provided for @billingUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing Unit'**
+  String get billingUnit;
+
+  /// No description provided for @taxRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax Rate (%)'**
+  String get taxRate;
+
+  /// No description provided for @saveProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Product'**
+  String get saveProduct;
+
+  /// No description provided for @updateProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Product'**
+  String get updateProduct;
+
+  /// No description provided for @productRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Item Name is required'**
+  String get productRequired;
+
+  /// No description provided for @priceRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Price is required'**
+  String get priceRequired;
+
+  /// No description provided for @invalidPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid price'**
+  String get invalidPrice;
+
+  /// No description provided for @taxCannotExceed100.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax cannot exceed 100%'**
+  String get taxCannotExceed100;
+
+  /// No description provided for @addLineItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Line Item'**
+  String get addLineItem;
+
+  /// No description provided for @editLineItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Line Item'**
+  String get editLineItem;
+
+  /// No description provided for @itemDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Item Description'**
+  String get itemDescription;
+
+  /// No description provided for @quantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get quantity;
+
+  /// No description provided for @unitPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit Price'**
+  String get unitPrice;
+
+  /// No description provided for @tax.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax'**
+  String get tax;
+
+  /// No description provided for @unit.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit'**
+  String get unit;
+
+  /// No description provided for @saveItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Item'**
+  String get saveItem;
+
+  /// No description provided for @updateItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Item'**
+  String get updateItem;
+
+  /// No description provided for @selectSavedProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Saved Product'**
+  String get selectSavedProduct;
+
+  /// No description provided for @searchSavedProducts.
+  ///
+  /// In en, this message translates to:
+  /// **'Search saved products...'**
+  String get searchSavedProducts;
+
+  /// No description provided for @noProductsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No products found'**
+  String get noProductsFound;
+
+  /// No description provided for @quantityRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity is required'**
+  String get quantityRequired;
+
+  /// No description provided for @dialogDeleteDraftTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Draft?'**
+  String get dialogDeleteDraftTitle;
+
+  /// No description provided for @dialogDeleteDraftMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This draft invoice will be permanently deleted. This action cannot be undone.'**
+  String get dialogDeleteDraftMessage;
+
+  /// No description provided for @dialogDeleteDraftConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get dialogDeleteDraftConfirm;
+
+  /// No description provided for @dialogCancelInvoiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Invoice?'**
+  String get dialogCancelInvoiceTitle;
+
+  /// No description provided for @dialogCancelInvoiceMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This invoice will be marked as cancelled but kept for your records.'**
+  String get dialogCancelInvoiceMessage;
+
+  /// No description provided for @dialogCancelInvoiceConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Invoice'**
+  String get dialogCancelInvoiceConfirm;
+
+  /// No description provided for @dialogCancelInvoiceCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Invoice'**
+  String get dialogCancelInvoiceCancel;
+
+  /// No description provided for @dialogDeleteCancelledTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Cancelled Invoice?'**
+  String get dialogDeleteCancelledTitle;
+
+  /// No description provided for @dialogDeleteCancelledMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently delete this cancelled invoice record. This action cannot be undone.'**
+  String get dialogDeleteCancelledMessage;
+
+  /// No description provided for @dialogDeleteCancelledConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Permanently'**
+  String get dialogDeleteCancelledConfirm;
 }
 
 class _AppLocalizationsDelegate

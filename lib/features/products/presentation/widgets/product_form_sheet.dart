@@ -5,6 +5,7 @@ import '../../../../core/widgets/global_text_field.dart';
 import '../../../../core/utils/app_validators.dart';
 import '../../../../core/utils/app_input_formatters.dart';
 import '../../../../core/constants/app_units.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/product.dart';
 
 class ProductFormSheet extends StatefulWidget {
@@ -87,7 +88,7 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
 
       if (parsedPrice == null || parsedPrice < 0) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please enter a valid price.')),
+          SnackBar(content: Text(AppLocalizations.of(context)?.invalidPrice ?? 'Please enter a valid price.')),
         );
         return;
       }
@@ -127,8 +128,8 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
           children: [
             Text(
               widget.existingProduct == null
-                  ? 'Add Item / Service'
-                  : 'Edit Item / Service',
+                  ? AppLocalizations.of(context)?.addProduct ?? 'Add Item / Service'
+                  : AppLocalizations.of(context)?.updateProduct ?? 'Edit Item / Service',
               style: Theme.of(context)
                   .textTheme
                   .titleLarge
@@ -138,10 +139,15 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
             GlobalTextField(
               controller: _nameController,
               textInputAction: TextInputAction.next,
-              label: 'Item Name *',
+              label: '${AppLocalizations.of(context)?.productName ?? "Item Name"} *',
               prefixIcon: const Icon(Icons.inventory_2_outlined),
               maxLength: 100,
-              validator: (val) => AppValidators.requiredText(val, min: 2, max: 100, fieldName: 'Item Name'),
+              validator: (val) => AppValidators.requiredText(
+                val, 
+                min: 2, 
+                max: 100, 
+                errorRequired: AppLocalizations.of(context)?.productRequired
+              ),
             ),
             const SizedBox(height: AppSpacing.md),
             Row(
@@ -153,11 +159,16 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
                     textInputAction: TextInputAction.next,
-                    label: 'Base Price *',
+                    label: '${AppLocalizations.of(context)?.basePrice ?? "Base Price"} *',
                     prefixIcon: const Icon(Icons.attach_money),
                     maxLength: 12,
                     inputFormatters: [AppInputFormatters.amount],
-                    validator: (val) => AppValidators.amount(val, fieldName: 'Price', max: 99999999.99),
+                    validator: (val) => AppValidators.amount(
+                      val, 
+                      max: 99999999.99, 
+                      errorRequired: AppLocalizations.of(context)?.priceRequired,
+                      errorInvalid: AppLocalizations.of(context)?.invalidPrice
+                    ),
                   ),
                 ),
                 const SizedBox(width: AppSpacing.md),
@@ -168,7 +179,7 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
                     isExpanded:
                         true, // <--- THE FIX: Prevents RenderFlex overflow
                     initialValue: _selectedUnit,
-                    decoration: const InputDecoration(labelText: 'Unit'),
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)?.billingUnit ?? 'Unit'),
                     items: AppUnits.all
                         .map((u) => DropdownMenuItem(
                               value: u.value,
@@ -187,24 +198,29 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
               textInputAction: TextInputAction.next,
-              label: 'Default Tax Rate (%)',
+              label: AppLocalizations.of(context)?.taxRate ?? 'Default Tax Rate (%)',
               prefixIcon: const Icon(Icons.percent),
               maxLength: 5,
               inputFormatters: [AppInputFormatters.percentage],
-              validator: (val) => AppValidators.percentage(val, fieldName: 'Tax Rate'),
+              validator: (val) => AppValidators.percentage(
+                val, 
+                errorMax: AppLocalizations.of(context)?.taxCannotExceed100
+              ),
             ),
             const SizedBox(height: AppSpacing.md),
             GlobalTextField(
               controller: _descriptionController,
               textInputAction: TextInputAction.done,
               maxLines: 2,
-              label: 'Description (Optional)',
+              label: AppLocalizations.of(context)?.description ?? 'Description (Optional)',
               maxLength: 300,
-              validator: (val) => AppValidators.optionalText(val, max: 300, fieldName: 'Description'),
+              validator: (val) => AppValidators.optionalText(val, max: 300),
             ),
             const SizedBox(height: AppSpacing.xl),
             GlobalButton(
-              text: 'Save Item',
+              text: widget.existingProduct == null
+                  ? AppLocalizations.of(context)?.saveProduct ?? 'Save Item'
+                  : AppLocalizations.of(context)?.updateProduct ?? 'Update Item',
               onPressed: _submit,
             ),
           ],

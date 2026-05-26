@@ -7,6 +7,7 @@ import '../../../../core/widgets/global_text_field.dart';
 import '../../../../core/utils/app_validators.dart';
 import '../../../../core/utils/app_input_formatters.dart';
 import '../../../../core/constants/app_units.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../products/domain/entities/product.dart';
 import '../../domain/entities/invoice_item.dart';
 
@@ -138,7 +139,9 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              widget.existingItem == null ? 'Add Line Item' : 'Edit Line Item',
+              widget.existingItem == null 
+                  ? AppLocalizations.of(context)?.addLineItem ?? 'Add Line Item' 
+                  : AppLocalizations.of(context)?.editLineItem ?? 'Edit Line Item',
               style: Theme.of(context)
                   .textTheme
                   .titleLarge
@@ -169,9 +172,9 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
                   return GlobalTextField(
                     controller: controller,
                     focusNode: focusNode,
-                    label: 'Search Catalog for Item',
+                    label: AppLocalizations.of(context)?.selectSavedProduct ?? 'Search Catalog for Item',
                     prefixIcon: const Icon(Icons.search_rounded),
-                    hint: 'Type product name...',
+                    hint: AppLocalizations.of(context)?.searchSavedProducts ?? 'Type product name...',
                   );
                 },
               ),
@@ -182,9 +185,14 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
 
             GlobalTextField(
               controller: _descController,
-              label: 'Description *',
+              label: '${AppLocalizations.of(context)?.itemDescription ?? "Description"} *',
               maxLength: 100,
-              validator: (val) => AppValidators.requiredText(val, min: 2, max: 100, fieldName: 'Item Name'),
+              validator: (val) => AppValidators.requiredText(
+                val, 
+                min: 2, 
+                max: 100, 
+                errorRequired: AppLocalizations.of(context)?.productRequired
+              ),
             ),
             const SizedBox(height: AppSpacing.md),
             Row(
@@ -194,14 +202,14 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
                     controller: _qtyController,
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
-                    label: 'Quantity *',
+                    label: '${AppLocalizations.of(context)?.quantity ?? "Quantity"} *',
                     maxLength: 6,
                     inputFormatters: [AppInputFormatters.amount],
                     validator: (val) {
-                      if (val == null || val.trim().isEmpty) return 'Required';
+                      if (val == null || val.trim().isEmpty) return AppLocalizations.of(context)?.quantityRequired ?? 'Required';
                       final parsed = double.tryParse(val.replaceAll(',', '.').trim());
-                      if (parsed == null) return 'Enter a valid quantity';
-                      if (parsed <= 0) return 'Quantity must be greater than zero';
+                      if (parsed == null) return AppLocalizations.of(context)?.invalidPrice ?? 'Enter a valid quantity';
+                      if (parsed <= 0) return AppLocalizations.of(context)?.quantityRequired ?? 'Quantity must be greater than zero';
                       if (parsed > 999999) return 'Quantity is too large';
                       return null;
                     },
@@ -213,7 +221,7 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
                   child: DropdownButtonFormField<String>(
                     isExpanded: true,
                     initialValue: _selectedUnit,
-                    decoration: const InputDecoration(labelText: 'Unit'),
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)?.unit ?? 'Unit'),
                     items: AppUnits.all
                         .map((u) => DropdownMenuItem(
                               value: u.value,
@@ -234,10 +242,15 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
                     controller: _priceController,
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
-                    label: 'Unit Price *',
+                    label: '${AppLocalizations.of(context)?.unitPrice ?? "Unit Price"} *',
                     maxLength: 12,
                     inputFormatters: [AppInputFormatters.amount],
-                    validator: (val) => AppValidators.amount(val, fieldName: 'Unit Price', max: 99999999.99),
+                    validator: (val) => AppValidators.amount(
+                      val, 
+                      max: 99999999.99, 
+                      errorRequired: AppLocalizations.of(context)?.priceRequired,
+                      errorInvalid: AppLocalizations.of(context)?.invalidPrice
+                    ),
                   ),
                 ),
               ],
@@ -247,13 +260,21 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
               controller: _taxController,
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
-              label: 'Tax Rate (%)',
+              label: AppLocalizations.of(context)?.taxRate ?? 'Tax Rate (%)',
               maxLength: 5,
               inputFormatters: [AppInputFormatters.percentage],
-              validator: (val) => AppValidators.percentage(val, fieldName: 'Tax Rate'),
+              validator: (val) => AppValidators.percentage(
+                val, 
+                errorMax: AppLocalizations.of(context)?.taxCannotExceed100
+              ),
             ),
             const SizedBox(height: AppSpacing.xl),
-            GlobalButton(text: 'Save Item', onPressed: _submit),
+            GlobalButton(
+              text: widget.existingItem == null
+                  ? AppLocalizations.of(context)?.saveItem ?? 'Save Item'
+                  : AppLocalizations.of(context)?.updateItem ?? 'Update Item', 
+              onPressed: _submit
+            ),
           ],
         ),
       ),

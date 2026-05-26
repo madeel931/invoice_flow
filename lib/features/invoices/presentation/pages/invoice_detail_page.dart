@@ -14,6 +14,7 @@ import '../../../../core/usecases/usecase.dart';
 import '../../../settings/domain/usecases/get_business_profile_usecase.dart';
 import '../../domain/usecases/get_invoices_usecase.dart';
 import '../../domain/entities/invoice.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/invoice_status.dart';
 import '../../domain/services/invoice_calculator.dart';
 import '../../utils/invoice_pdf_generator.dart';
@@ -150,10 +151,10 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
     if (action == 'cancel_invoice') {
       // Cancelling an invoice preserves it for accounting records instead of deleting it entirely.
       final confirm = await _showConfirmDialog(
-        title: 'Cancel Invoice?',
-        message: 'This invoice will be marked as cancelled but kept for your records.',
-        confirmText: 'Cancel Invoice',
-        cancelText: 'Keep Invoice',
+        title: AppLocalizations.of(context)?.dialogCancelInvoiceTitle ?? 'Cancel Invoice?',
+        message: AppLocalizations.of(context)?.dialogCancelInvoiceMessage ?? 'This invoice will be marked as cancelled but kept for your records.',
+        confirmText: AppLocalizations.of(context)?.dialogCancelInvoiceConfirm ?? 'Cancel Invoice',
+        cancelText: AppLocalizations.of(context)?.dialogCancelInvoiceCancel ?? 'Keep Invoice',
         isDestructive: true,
       );
       if (confirm == true && mounted) {

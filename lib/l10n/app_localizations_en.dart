@@ -177,4 +177,139 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get productDeleted => 'Item deleted successfully.';
+
+  @override
+  String get customerName => 'Customer Name';
+
+  @override
+  String get phoneNumber => 'Phone Number';
+
+  @override
+  String get emailAddress => 'Email Address';
+
+  @override
+  String get address => 'Address';
+
+  @override
+  String get saveCustomer => 'Save Customer';
+
+  @override
+  String get updateCustomer => 'Update Customer';
+
+  @override
+  String get customerRequired => 'Customer Name is required';
+
+  @override
+  String get invalidEmail => 'Enter a valid email address';
+
+  @override
+  String get phoneTooLong => 'Phone number is too long';
+
+  @override
+  String get addressTooLong => 'Address is too long';
+
+  @override
+  String get productName => 'Item Name';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get basePrice => 'Base Price';
+
+  @override
+  String get billingUnit => 'Billing Unit';
+
+  @override
+  String get taxRate => 'Tax Rate (%)';
+
+  @override
+  String get saveProduct => 'Save Product';
+
+  @override
+  String get updateProduct => 'Update Product';
+
+  @override
+  String get productRequired => 'Item Name is required';
+
+  @override
+  String get priceRequired => 'Price is required';
+
+  @override
+  String get invalidPrice => 'Enter a valid price';
+
+  @override
+  String get taxCannotExceed100 => 'Tax cannot exceed 100%';
+
+  @override
+  String get addLineItem => 'Add Line Item';
+
+  @override
+  String get editLineItem => 'Edit Line Item';
+
+  @override
+  String get itemDescription => 'Item Description';
+
+  @override
+  String get quantity => 'Quantity';
+
+  @override
+  String get unitPrice => 'Unit Price';
+
+  @override
+  String get tax => 'Tax';
+
+  @override
+  String get unit => 'Unit';
+
+  @override
+  String get saveItem => 'Save Item';
+
+  @override
+  String get updateItem => 'Update Item';
+
+  @override
+  String get selectSavedProduct => 'Select Saved Product';
+
+  @override
+  String get searchSavedProducts => 'Search saved products...';
+
+  @override
+  String get noProductsFound => 'No products found';
+
+  @override
+  String get quantityRequired => 'Quantity is required';
+
+  @override
+  String get dialogDeleteDraftTitle => 'Delete Draft?';
+
+  @override
+  String get dialogDeleteDraftMessage =>
+      'This draft invoice will be permanently deleted. This action cannot be undone.';
+
+  @override
+  String get dialogDeleteDraftConfirm => 'Delete';
+
+  @override
+  String get dialogCancelInvoiceTitle => 'Cancel Invoice?';
+
+  @override
+  String get dialogCancelInvoiceMessage =>
+      'This invoice will be marked as cancelled but kept for your records.';
+
+  @override
+  String get dialogCancelInvoiceConfirm => 'Cancel Invoice';
+
+  @override
+  String get dialogCancelInvoiceCancel => 'Keep Invoice';
+
+  @override
+  String get dialogDeleteCancelledTitle => 'Delete Cancelled Invoice?';
+
+  @override
+  String get dialogDeleteCancelledMessage =>
+      'This will permanently delete this cancelled invoice record. This action cannot be undone.';
+
+  @override
+  String get dialogDeleteCancelledConfirm => 'Delete Permanently';
 }

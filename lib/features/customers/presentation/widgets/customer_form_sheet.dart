@@ -4,6 +4,7 @@ import '../../../../core/widgets/global_button.dart';
 import '../../../../core/widgets/global_text_field.dart';
 import '../../../../core/utils/app_validators.dart';
 import '../../../../core/utils/app_input_formatters.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/customer.dart';
 
 class CustomerFormSheet extends StatefulWidget {
@@ -95,8 +96,8 @@ class _CustomerFormSheetState extends State<CustomerFormSheet> {
           children: [
             Text(
               widget.existingCustomer == null
-                  ? 'Add Customer'
-                  : 'Edit Customer',
+                  ? AppLocalizations.of(context)?.addCustomer ?? 'Add Customer'
+                  : AppLocalizations.of(context)?.updateCustomer ?? 'Edit Customer',
               style: Theme.of(context)
                   .textTheme
                   .titleLarge
@@ -106,45 +107,64 @@ class _CustomerFormSheetState extends State<CustomerFormSheet> {
             GlobalTextField(
               controller: _nameController,
               textInputAction: TextInputAction.next,
-              label: 'Client / Company Name *',
+              label: '${AppLocalizations.of(context)?.customerName ?? "Customer Name"} *',
               prefixIcon: const Icon(Icons.person),
               maxLength: 80,
-              validator: (val) => AppValidators.requiredText(val, min: 2, max: 80, fieldName: 'Name'),
+              validator: (val) => AppValidators.requiredText(
+                val, 
+                min: 2, 
+                max: 80, 
+                errorRequired: AppLocalizations.of(context)?.customerRequired
+              ),
             ),
             const SizedBox(height: AppSpacing.md),
             GlobalTextField(
               controller: _emailController,
               textInputAction: TextInputAction.next,
               keyboardType: TextInputType.emailAddress,
-              label: 'Email Address',
+              label: AppLocalizations.of(context)?.emailAddress ?? 'Email Address',
               prefixIcon: const Icon(Icons.email),
               maxLength: 120,
-              validator: (val) => AppValidators.email(val, max: 120),
+              validator: (val) => AppValidators.email(
+                val, 
+                max: 120, 
+                errorInvalid: AppLocalizations.of(context)?.invalidEmail
+              ),
             ),
             const SizedBox(height: AppSpacing.md),
             GlobalTextField(
               controller: _phoneController,
               textInputAction: TextInputAction.next,
               keyboardType: TextInputType.phone,
-              label: 'Phone Number',
+              label: AppLocalizations.of(context)?.phoneNumber ?? 'Phone Number',
               prefixIcon: const Icon(Icons.phone),
               maxLength: 20,
               inputFormatters: [AppInputFormatters.phone],
-              validator: (val) => AppValidators.phone(val, max: 20),
+              validator: (val) => AppValidators.phone(
+                val, 
+                max: 20, 
+                errorMaxLength: AppLocalizations.of(context)?.phoneTooLong
+              ),
             ),
             const SizedBox(height: AppSpacing.md),
             GlobalTextField(
               controller: _addressController,
               textInputAction: TextInputAction.done,
               maxLines: 2,
-              label: 'Billing Address',
+              label: AppLocalizations.of(context)?.address ?? 'Billing Address',
               prefixIcon: const Icon(Icons.location_city),
               maxLength: 250,
-              validator: (val) => AppValidators.optionalText(val, max: 250, fieldName: 'Address'),
+              validator: (val) => AppValidators.optionalText(
+                val, 
+                max: 250, 
+                errorMaxLength: AppLocalizations.of(context)?.addressTooLong
+              ),
             ),
             const SizedBox(height: AppSpacing.xl),
             GlobalButton(
-              text: 'Save Customer',
+              text: widget.existingCustomer == null
+                  ? AppLocalizations.of(context)?.saveCustomer ?? 'Save Customer'
+                  : AppLocalizations.of(context)?.updateCustomer ?? 'Update Customer',
               onPressed: _submit,
             ),
           ],

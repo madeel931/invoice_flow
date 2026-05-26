@@ -10,6 +10,8 @@ import '../../../features/settings/presentation/cubit/settings_state.dart';
 import '../../utils/app_directories.dart';
 import '../../theme/cubit/theme_cubit.dart';
 
+import '../../../l10n/app_localizations.dart';
+
 class PremiumDrawer extends StatelessWidget {
   const PremiumDrawer({super.key});
 
@@ -94,7 +96,7 @@ class PremiumDrawer extends StatelessWidget {
                 children: [
                   _DrawerItem(
                     icon: Icons.business_center_outlined,
-                    title: 'Business Profile',
+                    title: AppLocalizations.of(context)!.businessProfile,
                     isSelected: currentLocation == AppRoutes.settings,
                     onTap: () {
                       context.pop(); // Close drawer
@@ -104,7 +106,7 @@ class PremiumDrawer extends StatelessWidget {
                   const SizedBox(height: 4),
                   _DrawerItem(
                     icon: Icons.cloud_upload_outlined,
-                    title: 'Backup & Restore',
+                    title: AppLocalizations.of(context)!.backupRestore,
                     isSelected: currentLocation == AppRoutes.backupRestore,
                     onTap: () {
                       context.pop();
@@ -146,7 +148,7 @@ class PremiumDrawer extends StatelessWidget {
                   const SizedBox(height: 4),
                   _DrawerItem(
                     icon: Icons.language_rounded,
-                    title: 'Language',
+                    title: AppLocalizations.of(context)!.language,
                     isSelected: false,
                     onTap: () {
                       context.pop();

@@ -7,6 +7,7 @@ import 'config/routes/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'features/invoices/presentation/cubit/invoice_list_cubit.dart';
+import 'l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +39,8 @@ class InvoiceFlowApp extends StatelessWidget {
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: themeMode,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             routerConfig: AppRouter.router,
           );
         },

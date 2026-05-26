@@ -1,0 +1,23 @@
+{
+  "@@locale": "ar",
+  "appName": "إنفويس فلو برو",
+  "dashboard": "لوحة القيادة",
+  "invoices": "الفواتير",
+  "customers": "العملاء",
+  "products": "المنتجات والخدمات",
+  "settings": "الإعدادات",
+  "businessProfile": "ملف النشاط التجاري",
+  "backupRestore": "النسخ الاحتياطي والاستعادة",
+  "language": "اللغة",
+  "english": "الإنجليزية",
+  "arabic": "العربية",
+  "save": "حفظ",
+  "cancel": "إلغاء",
+  "create": "إنشاء",
+  "edit": "تعديل",
+  "delete": "حذف",
+  "noRecentInvoices": "لا توجد فواتير حديثة بعد.",
+  "totalRevenue": "إجمالي الإيرادات",
+  "outstandingBalance": "الرصيد المستحق",
+  "recentInvoice": "فاتورة حديثة"
+}

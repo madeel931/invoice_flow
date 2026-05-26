@@ -20,6 +20,8 @@ import '../cubit/dashboard_cubit.dart';
 import '../cubit/dashboard_state.dart';
 import '../widgets/metric_card.dart';
 
+import '../../../../l10n/app_localizations.dart';
+
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
 
@@ -92,7 +94,7 @@ class _DashboardView extends StatelessWidget {
         title: BlocBuilder<SettingsCubit, SettingsState>(
           bloc: GetIt.instance<SettingsCubit>(),
           builder: (context, settingsState) {
-            final name = settingsState.profile?.businessName ?? 'Dashboard';
+            final name = settingsState.profile?.businessName ?? AppLocalizations.of(context)!.dashboard;
             return Text(name,
                 style: const TextStyle(fontWeight: FontWeight.bold));
           },
@@ -124,7 +126,7 @@ class _DashboardView extends StatelessWidget {
                   children: [
                     // 1. HERO METRICS
                     MetricCard(
-                      title: 'Total Revenue',
+                      title: AppLocalizations.of(context)!.totalRevenue,
                       amount: AppFormatters.formatCurrencyCompact(
                           metrics.totalRevenue, currency),
                       icon: Icons.account_balance_wallet_rounded,
@@ -135,7 +137,7 @@ class _DashboardView extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     MetricCard(
-                      title: 'Outstanding Balance',
+                      title: AppLocalizations.of(context)!.outstandingBalance,
                       amount: AppFormatters.formatCurrencyCompact(
                           metrics.outstandingBalance, currency),
                       icon: Icons.hourglass_empty_rounded,
@@ -186,7 +188,7 @@ class _DashboardView extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Recent Invoice',
+                        Text(AppLocalizations.of(context)!.recentInvoice,
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
@@ -203,7 +205,7 @@ class _DashboardView extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Center(
-                            child: Text('No recent invoices yet.',
+                            child: Text(AppLocalizations.of(context)!.noRecentInvoices,
                                 style: TextStyle(color: Colors.grey[600])),
                           ),
                         ),

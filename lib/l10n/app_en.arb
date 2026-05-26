@@ -1,0 +1,23 @@
+{
+  "@@locale": "en",
+  "appName": "InvoiceFlow Pro",
+  "dashboard": "Dashboard",
+  "invoices": "Invoices",
+  "customers": "Customers",
+  "products": "Products & Services",
+  "settings": "Settings",
+  "businessProfile": "Business Profile",
+  "backupRestore": "Backup & Restore",
+  "language": "Language",
+  "english": "English",
+  "arabic": "Arabic",
+  "save": "Save",
+  "cancel": "Cancel",
+  "create": "Create",
+  "edit": "Edit",
+  "delete": "Delete",
+  "noRecentInvoices": "No recent invoices yet.",
+  "totalRevenue": "Total Revenue",
+  "outstandingBalance": "Outstanding Balance",
+  "recentInvoice": "Recent Invoice"
+}

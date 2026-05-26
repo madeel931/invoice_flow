@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../config/routes/route_constants.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/constants/app_units.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/global_card.dart';
@@ -119,7 +120,7 @@ class _ProductsListViewState extends State<_ProductsListView> {
                   leading: CircleAvatar(
                     backgroundColor:
                         Theme.of(context).colorScheme.secondaryContainer,
-                    child: Icon(Icons.sell_outlined,
+                    child: Icon(AppUnits.iconOf(product.unitType),
                         color:
                             Theme.of(context).colorScheme.onSecondaryContainer,
                         size: 20),

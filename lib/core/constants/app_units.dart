@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class AppUnit {
   final String value;
   final String label;
@@ -48,5 +50,36 @@ class AppUnits {
   static String labelOf(String? value) {
     final normalized = normalize(value);
     return all.firstWhere((unit) => unit.value == normalized).label;
+  }
+
+  static IconData iconOf(String? value) {
+    final normalized = normalize(value);
+
+    switch (normalized) {
+      case 'kg':
+      case 'gram':
+        return Icons.scale_outlined;
+      case 'liter':
+        return Icons.water_drop_outlined;
+      case 'meter':
+      case 'km':
+        return Icons.straighten_outlined;
+      case 'hour':
+        return Icons.schedule_outlined;
+      case 'day':
+        return Icons.calendar_today_outlined;
+      case 'project':
+        return Icons.assignment_outlined;
+      case 'service':
+        return Icons.handyman_outlined;
+      case 'box':
+      case 'pack':
+        return Icons.inventory_2_outlined;
+      case 'set':
+        return Icons.category_outlined;
+      case 'piece':
+      default:
+        return Icons.inventory_outlined;
+    }
   }
 }

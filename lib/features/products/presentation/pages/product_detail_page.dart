@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_spacing.dart';
+import '../../../../core/constants/app_units.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/global_card.dart';
 import '../../../settings/presentation/cubit/settings_cubit.dart';
@@ -79,7 +80,7 @@ class ProductDetailPage extends StatelessWidget {
                 CircleAvatar(
                   radius: 48,
                   backgroundColor: colorScheme.secondaryContainer,
-                  child: Icon(Icons.inventory_2_rounded,
+                  child: Icon(AppUnits.iconOf(product.unitType),
                       size: 48, color: colorScheme.onSecondaryContainer),
                 ),
                 const SizedBox(height: AppSpacing.md),

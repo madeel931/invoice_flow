@@ -64,9 +64,10 @@ class _DashboardView extends StatelessWidget {
       drawer: const PremiumDrawer(),
       appBar: AppBar(
         // REPLACE HAMBURGER WITH LOGO
-        leading: BlocBuilder<DashboardCubit, DashboardState>(
-          builder: (context, state) {
-            final hasLogo = state.profile?.logoPath != null;
+        leading: BlocBuilder<SettingsCubit, SettingsState>(
+          bloc: GetIt.instance<SettingsCubit>(),
+          builder: (context, settingsState) {
+            final hasLogo = settingsState.profile?.logoPath != null;
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: GestureDetector(
@@ -76,7 +77,7 @@ class _DashboardView extends StatelessWidget {
                       Theme.of(context).colorScheme.primaryContainer,
                   backgroundImage: hasLogo
                       ? FileImage(File(AppDirectories.constructImagePath(
-                          state.profile!.logoPath!)))
+                          settingsState.profile!.logoPath!)))
                       : null,
                   child: !hasLogo
                       ? Icon(Icons.storefront_rounded,
@@ -88,9 +89,10 @@ class _DashboardView extends StatelessWidget {
             );
           },
         ),
-        title: BlocBuilder<DashboardCubit, DashboardState>(
-          builder: (context, state) {
-            final name = state.profile?.businessName ?? 'Dashboard';
+        title: BlocBuilder<SettingsCubit, SettingsState>(
+          bloc: GetIt.instance<SettingsCubit>(),
+          builder: (context, settingsState) {
+            final name = settingsState.profile?.businessName ?? 'Dashboard';
             return Text(name,
                 style: const TextStyle(fontWeight: FontWeight.bold));
           },
@@ -221,34 +223,40 @@ class _DashboardView extends StatelessWidget {
                                   const TextStyle(fontWeight: FontWeight.bold)),
                           subtitle: Text(
                               '${state.recentInvoice!.invoiceNumber} • ${DateFormat('MMM dd').format(state.recentInvoice!.issueDate)}'),
-                          trailing: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text(
-                                  AppFormatters.formatCurrency(
-                                      InvoiceCalculator.calculate(state.recentInvoice!).grandTotal, 
-                                      state.recentInvoice!.currencyCode?.trim().isNotEmpty == true 
-                                          ? state.recentInvoice!.currencyCode! 
-                                          : currency),
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold, fontSize: 16),
+                          trailing: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 120),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Flexible(
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                      AppFormatters.formatCurrency(
+                                          InvoiceCalculator.calculate(state.recentInvoice!).grandTotal, 
+                                          state.recentInvoice!.currencyCode?.trim().isNotEmpty == true 
+                                              ? state.recentInvoice!.currencyCode! 
+                                              : currency),
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold, fontSize: 16),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                state.recentInvoice!.status == InvoiceStatus.partiallyPaid 
-                                    ? 'PARTIALLY PAID' 
-                                    : state.recentInvoice!.status.name.toUpperCase(),
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                  color: _getStatusColor(state.recentInvoice!.status),
+                                const SizedBox(height: 4),
+                                Text(
+                                  state.recentInvoice!.status == InvoiceStatus.partiallyPaid 
+                                      ? 'PARTIALLY PAID' 
+                                      : state.recentInvoice!.status.name.toUpperCase(),
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: _getStatusColor(state.recentInvoice!.status),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                           onTap: () => context
                               .push('${AppRoutes.invoiceDetail}/${state.recentInvoice!.id}')
@@ -259,7 +267,7 @@ class _DashboardView extends StatelessWidget {
                           }),
                         ),
                       ),
-                    const SizedBox(height: 48), // Padding for FAB
+                    const SizedBox(height: 100), // Padding for FAB
                   ],
                 ),
               );

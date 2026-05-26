@@ -89,7 +89,7 @@ class AppRouter {
         path: AppRoutes.invoiceForm,
         name: 'invoice-form',
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const InvoiceFormPage(),
+        builder: (context, state) => InvoiceFormPage(existingInvoiceId: state.uri.queryParameters['id']),
       ),
       GoRoute(
         path: '${AppRoutes.invoicePreview}/:id',

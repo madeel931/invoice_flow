@@ -100,6 +100,16 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
       context.push('${AppRoutes.invoiceDetail}/${inv.id}');
       return;
     }
+
+    if (action == 'edit_draft') {
+      final listCubit = context.read<InvoiceListCubit>();
+      context.push('${AppRoutes.invoiceForm}?id=${inv.id}').then((_) {
+        if (mounted) {
+          listCubit.loadInvoices();
+        }
+      });
+      return;
+    }
     
     if (action == 'delete_draft') {
       // Drafts can be safely deleted as they are not finalized financial records.
@@ -395,6 +405,10 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                                     items.add(const PopupMenuDivider());
 
                                     if (inv.status == InvoiceStatus.draft) {
+                                      items.add(PopupMenuItem(
+                                        value: 'edit_draft',
+                                        child: Text('Edit Draft', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                                      ));
                                       items.add(PopupMenuItem(
                                         value: 'delete_draft',
                                         child: Text('Delete Draft', style: TextStyle(color: Theme.of(context).colorScheme.error)),

@@ -47,10 +47,10 @@ class DashboardCubit extends Cubit<DashboardState> {
       recent = r;
     });
 
-    emit(state.copyWith(
+    emit(DashboardState(
       status: DashboardStatus.loaded,
-      metrics: metrics,
-      profile: profile,
+      metrics: metrics ?? state.metrics,
+      profile: profile ?? state.profile,
       recentInvoice: recent,
     ));
   }

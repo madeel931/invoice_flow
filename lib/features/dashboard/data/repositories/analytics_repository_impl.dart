@@ -131,7 +131,11 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
       final isar = localDb.db;
       final collection = await isar.invoiceCollections
           .where()
-          .sortByIssueDateDesc()
+          .filter()
+          .not().statusEqualTo(InvoiceStatus.draft)
+          .and()
+          .not().statusEqualTo(InvoiceStatus.cancelled)
+          .sortByCreatedAtDesc()
           .findFirst();
       
       return Right(collection?.toEntity());

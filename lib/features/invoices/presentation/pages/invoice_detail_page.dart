@@ -116,6 +116,18 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
   }
 
   Future<void> _handleInvoiceAction(Invoice inv, String action) async {
+    if (action == 'edit_draft') {
+      final listCubit = context.read<InvoiceListCubit>();
+      final nav = GoRouter.of(context);
+      context.push('${AppRoutes.invoiceForm}?id=${inv.id}').then((_) {
+        if (mounted) {
+          listCubit.loadInvoices();
+          nav.pop();
+        }
+      });
+      return;
+    }
+
     if (action == 'delete_draft') {
       final confirm = await _showConfirmDialog(
         title: 'Delete Draft?',
@@ -234,6 +246,10 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                       final items = <PopupMenuEntry<String>>[];
                       
                       if (currentInvoice.status == InvoiceStatus.draft) {
+                        items.add(PopupMenuItem(
+                          value: 'edit_draft',
+                          child: Text('Edit Draft', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                        ));
                         items.add(PopupMenuItem(
                           value: 'delete_draft',
                           child: Text('Delete Draft', style: TextStyle(color: Theme.of(context).colorScheme.error)),
@@ -521,31 +537,29 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                         ),
                       ),
                       const SizedBox(width: 16),
-                      if (currentInvoice.status != InvoiceStatus.paid)
+                      if (currentInvoice.status != InvoiceStatus.draft && currentInvoice.status != InvoiceStatus.cancelled)
                         Expanded(
-                          child: FilledButton.icon(
-                            style: FilledButton.styleFrom(
-                                backgroundColor: Colors.green),
-                            icon: const Icon(Icons.check_circle_outline),
-                            label: const Text('Mark Paid'),
-                            onPressed: () {
-                              context.read<InvoiceListCubit>().updateStatus(
-                                  currentInvoice, InvoiceStatus.paid);
-                            },
-                          ),
-                        )
-                      else
-                        Expanded(
-                          child: FilledButton.icon(
-                            style: FilledButton.styleFrom(
-                                backgroundColor: Colors.orange),
-                            icon: const Icon(Icons.undo),
-                            label: const Text('Mark Unpaid'),
-                            onPressed: () {
-                              context.read<InvoiceListCubit>().updateStatus(
-                                  currentInvoice, InvoiceStatus.unpaid);
-                            },
-                          ),
+                          child: currentInvoice.status != InvoiceStatus.paid
+                              ? FilledButton.icon(
+                                  style: FilledButton.styleFrom(
+                                      backgroundColor: Colors.green),
+                                  icon: const Icon(Icons.check_circle_outline),
+                                  label: const Text('Mark Paid'),
+                                  onPressed: () {
+                                    context.read<InvoiceListCubit>().updateStatus(
+                                        currentInvoice, InvoiceStatus.paid);
+                                  },
+                                )
+                              : FilledButton.icon(
+                                  style: FilledButton.styleFrom(
+                                      backgroundColor: Colors.orange),
+                                  icon: const Icon(Icons.undo),
+                                  label: const Text('Mark Unpaid'),
+                                  onPressed: () {
+                                    context.read<InvoiceListCubit>().updateStatus(
+                                        currentInvoice, InvoiceStatus.unpaid);
+                                  },
+                                ),
                         ),
                     ],
                   ),

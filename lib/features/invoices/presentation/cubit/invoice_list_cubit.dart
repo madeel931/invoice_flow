@@ -76,6 +76,20 @@ class InvoiceListCubit extends Cubit<InvoiceListState> {
 
   // ADDED: Instantly update invoice status
   Future<void> updateStatus(Invoice invoice, InvoiceStatus newStatus) async {
+    if (invoice.status == InvoiceStatus.draft && newStatus != InvoiceStatus.draft) {
+      emit(state.copyWith(
+          status: InvoiceListStatus.error,
+          errorMessage: "Open the draft and create the invoice before changing its payment status."));
+      return;
+    }
+
+    if (invoice.status == InvoiceStatus.cancelled && newStatus != InvoiceStatus.cancelled) {
+      emit(state.copyWith(
+          status: InvoiceListStatus.error,
+          errorMessage: "Cancelled invoices cannot change status."));
+      return;
+    }
+
     final updatedInvoice = invoice.copyWith(status: newStatus);
     final result =
         await saveInvoice(SaveInvoiceParams(invoice: updatedInvoice));

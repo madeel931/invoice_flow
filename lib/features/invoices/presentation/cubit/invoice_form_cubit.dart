@@ -7,6 +7,8 @@ import '../../domain/entities/invoice_status.dart';
 import '../../domain/usecases/get_next_invoice_number_usecase.dart';
 import '../../domain/usecases/save_invoice_usecase.dart';
 import '../../domain/services/invoice_calculator.dart';
+import 'package:get_it/get_it.dart';
+import '../../domain/usecases/get_invoices_usecase.dart';
 import 'invoice_form_state.dart';
 
 class InvoiceFormCubit extends Cubit<InvoiceFormState> {
@@ -18,19 +20,36 @@ class InvoiceFormCubit extends Cubit<InvoiceFormState> {
     required this.saveInvoiceUseCase,
   }) : super(const InvoiceFormState());
 
-  Future<void> initForm({String? defaultCurrencyCode, Invoice? existingInvoice}) async {
+  Future<void> initForm({String? defaultCurrencyCode, String? existingInvoiceId}) async {
     emit(state.copyWith(status: InvoiceFormStatus.loading));
 
-    if (existingInvoice != null) {
-      final resolvedCurrencyCode =
-          existingInvoice.currencyCode?.trim().isNotEmpty == true
-              ? existingInvoice.currencyCode
-              : defaultCurrencyCode;
+    if (existingInvoiceId != null) {
+      final getInvoices = GetIt.instance<GetInvoicesUseCase>();
+      final result = await getInvoices(NoParams());
+      
+      result.fold(
+        (failure) => emit(state.copyWith(
+            status: InvoiceFormStatus.error, errorMessage: failure.message)),
+        (invoices) {
+          try {
+            final existingInvoice = invoices.firstWhere(
+                (i) => i.id?.toString() == existingInvoiceId);
+            
+            final resolvedCurrencyCode =
+                existingInvoice.currencyCode?.trim().isNotEmpty == true
+                    ? existingInvoice.currencyCode
+                    : defaultCurrencyCode;
 
-      final updatedInvoice = existingInvoice.copyWith(currencyCode: resolvedCurrencyCode);
+            final updatedInvoice = existingInvoice.copyWith(currencyCode: resolvedCurrencyCode);
 
-      emit(state.copyWith(
-          status: InvoiceFormStatus.ready, draftInvoice: updatedInvoice));
+            emit(state.copyWith(
+                status: InvoiceFormStatus.ready, draftInvoice: updatedInvoice));
+          } catch (_) {
+            emit(state.copyWith(
+                status: InvoiceFormStatus.error, errorMessage: "Invoice not found"));
+          }
+        },
+      );
       return;
     }
 
@@ -46,7 +65,7 @@ class InvoiceFormCubit extends Cubit<InvoiceFormState> {
           customerId: 0,
           customerName: 'Walk-in Customer', // FIX: Default to Walk-in
           issueDate: now,
-          dueDate: now.add(const Duration(days: 14)),
+          dueDate: now,
           items: const [],
           currencyCode: defaultCurrencyCode?.trim().isNotEmpty == true 
               ? defaultCurrencyCode!.trim().toUpperCase() 
@@ -131,33 +150,56 @@ class InvoiceFormCubit extends Cubit<InvoiceFormState> {
         draftInvoice: state.draftInvoice!.copyWith(notes: notes)));
   }
 
-  Future<void> saveInvoice(InvoiceStatus statusToSave) async {
+  Future<void> saveDraft() async {
     if (state.draftInvoice == null) return;
 
-    // FIX: Removed the customerId == 0 block. Walk-in customers are now allowed!
     emit(state.copyWith(status: InvoiceFormStatus.saving));
 
-    InvoiceStatus resolvedStatus = statusToSave;
-    if (statusToSave != InvoiceStatus.draft) {
-      final calc = InvoiceCalculator.calculate(state.draftInvoice!);
-      resolvedStatus = InvoiceCalculator.resolveStatus(
-        currentStatus: state.draftInvoice!.status,
-        dueDate: state.draftInvoice!.dueDate,
-        grandTotal: calc.grandTotal,
-        paidAmount: calc.paidAmount,
-        balanceDue: calc.balanceDue,
-      );
-    }
-
-    final finalInvoice = state.draftInvoice!.copyWith(status: resolvedStatus);
-    final result =
-        await saveInvoiceUseCase(SaveInvoiceParams(invoice: finalInvoice));
+    final finalInvoice = state.draftInvoice!.copyWith(status: InvoiceStatus.draft);
+    final result = await saveInvoiceUseCase(SaveInvoiceParams(invoice: finalInvoice));
 
     result.fold(
       (failure) => emit(state.copyWith(
           status: InvoiceFormStatus.error, errorMessage: failure.message)),
       (savedInvoice) => emit(state.copyWith(
           status: InvoiceFormStatus.success, draftInvoice: savedInvoice)),
+    );
+  }
+
+  Future<void> saveIssuedInvoice() async {
+    if (state.draftInvoice == null) return;
+
+    if (state.draftInvoice!.status == InvoiceStatus.cancelled) {
+      emit(state.copyWith(
+          status: InvoiceFormStatus.error, errorMessage: "Cannot issue a cancelled invoice."));
+      return;
+    }
+
+    emit(state.copyWith(status: InvoiceFormStatus.saving));
+
+    const normalizedStatus = InvoiceStatus.unpaid;
+
+    final calc = InvoiceCalculator.calculate(state.draftInvoice!);
+    final resolvedStatus = InvoiceCalculator.resolveStatus(
+      currentStatus: normalizedStatus,
+      dueDate: state.draftInvoice!.dueDate,
+      grandTotal: calc.grandTotal,
+      paidAmount: calc.paidAmount,
+      balanceDue: calc.balanceDue,
+    );
+
+    final finalInvoice = state.draftInvoice!.copyWith(status: resolvedStatus);
+    final result = await saveInvoiceUseCase(SaveInvoiceParams(invoice: finalInvoice));
+
+    result.fold(
+      (failure) {
+        emit(state.copyWith(
+          status: InvoiceFormStatus.error, errorMessage: failure.message));
+      },
+      (savedInvoice) {
+        emit(state.copyWith(
+          status: InvoiceFormStatus.success, draftInvoice: savedInvoice));
+      },
     );
   }
 }

@@ -11,8 +11,8 @@ import '../../../../core/widgets/global_card.dart';
 import '../../../customers/domain/entities/customer.dart';
 import '../../../customers/presentation/cubit/customer_list_cubit.dart';
 import '../../../products/presentation/cubit/product_list_cubit.dart';
+import '../../../products/presentation/cubit/product_list_state.dart';
 import '../../domain/entities/invoice_item.dart';
-import '../../domain/entities/invoice_status.dart';
 import '../cubit/invoice_form_cubit.dart';
 import '../cubit/invoice_form_state.dart';
 import '../../domain/services/invoice_calculator.dart';
@@ -20,7 +20,8 @@ import '../widgets/invoice_item_sheet.dart';
 import '../../../../core/utils/app_input_formatters.dart';
 
 class InvoiceFormPage extends StatelessWidget {
-  const InvoiceFormPage({super.key});
+  final String? existingInvoiceId;
+  const InvoiceFormPage({super.key, this.existingInvoiceId});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,7 @@ class InvoiceFormPage extends StatelessWidget {
               GetIt.instance<SettingsCubit>().state.profile?.currencyCode ??
                   'AED';
           return GetIt.instance<InvoiceFormCubit>()
-            ..initForm(defaultCurrencyCode: profileCurrency);
+            ..initForm(defaultCurrencyCode: profileCurrency, existingInvoiceId: existingInvoiceId);
         }),
         BlocProvider(
             create: (_) =>
@@ -57,6 +58,8 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
   final _notesController = TextEditingController();
   final _dateFormat = DateFormat('MMM dd, yyyy');
   bool _controllersInitialized = false;
+  bool _isWalkIn = false;
+  bool _hasUserSelectedDueDate = false;
 
   @override
   void dispose() {
@@ -74,24 +77,37 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
-    if (picked != null && mounted) {
+    if (picked != null) {
+      if (!context.mounted) return;
       if (isIssueDate) {
-        if (!context.mounted) return;
-        context.read<InvoiceFormCubit>().updateDates(issueDate: picked);
+        DateTime newDueDate = context.read<InvoiceFormCubit>().state.draftInvoice!.dueDate;
+        if (!_hasUserSelectedDueDate || newDueDate.isBefore(picked)) {
+          newDueDate = picked;
+        }
+        context.read<InvoiceFormCubit>().updateDates(issueDate: picked, dueDate: newDueDate);
       } else {
-        if (!context.mounted) return;
+        _hasUserSelectedDueDate = true;
         context.read<InvoiceFormCubit>().updateDates(dueDate: picked);
       }
     }
   }
 
   Future<void> _openItemSheet([InvoiceItem? existingItem, int? index]) async {
-    // FIX: Get the catalog directly. By the time they click this, the builder guarantees it's loaded.
-    final catalog = context.read<ProductListCubit>().state.allProducts;
+    final productCubit = context.read<ProductListCubit>();
+    if (productCubit.state.status != ProductListStatus.loaded) {
+      showDialog(context: context, barrierDismissible: false, builder: (_) => const Center(child: CircularProgressIndicator()));
+      await productCubit.loadProducts();
+      if (!mounted) return;
+      Navigator.pop(context);
+    }
+    if (!mounted) return;
+    
+    final catalog = productCubit.state.allProducts;
     final result = await InvoiceItemSheet.show(context,
         item: existingItem, catalog: catalog);
 
-    if (result != null && mounted) {
+    if (result != null) {
+      if (!mounted) return;
       if (index != null) {
         context.read<InvoiceFormCubit>().updateLineItem(index, result);
       } else {
@@ -147,6 +163,7 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
               if (invoice.notes != null) {
                 _notesController.text = invoice.notes!;
               }
+              _isWalkIn = invoice.customerId == 0;
               _controllersInitialized = true;
             }
 
@@ -154,21 +171,33 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
               appBar: AppBar(
                 title: Text(invoice.invoiceNumber),
                 actions: [
-                  IconButton(
-                    icon: const Icon(Icons.check_circle_outline),
-                    onPressed: () {
-                      if (invoice.items.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text(
-                                  'Add at least one item before creating invoice.')),
-                        );
-                        return;
-                      }
-                      context
-                          .read<InvoiceFormCubit>()
-                          .saveInvoice(InvoiceStatus.unpaid);
-                    },
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: TextButton.icon(
+                      icon: const Icon(Icons.check_circle_outline),
+                      label: Text(invoice.id == null ? 'Create' : 'Save'),
+                      onPressed: () {
+                        if (!_isWalkIn && invoice.customerId == 0) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text(
+                                    'Please select a saved customer or switch to Walk-in.')),
+                          );
+                          return;
+                        }
+                        if (invoice.items.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text(
+                                    'Add at least one item before creating invoice.')),
+                          );
+                          return;
+                        }
+                        context
+                            .read<InvoiceFormCubit>()
+                            .saveIssuedInvoice();
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -190,43 +219,66 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                       GlobalCard(
                         child: Column(
                           children: [
-                            Autocomplete<Customer>(
-                              initialValue:
-                                  TextEditingValue(text: invoice.customerName),
-                              displayStringForOption: (Customer option) =>
-                                  option.name,
-                              optionsBuilder:
-                                  (TextEditingValue textEditingValue) {
-                                if (textEditingValue.text.isEmpty) {
-                                  return availableCustomers;
-                                }
-                                return availableCustomers
-                                    .where((Customer option) {
-                                  return option.name.toLowerCase().contains(
-                                      textEditingValue.text.toLowerCase());
+                            SegmentedButton<bool>(
+                              segments: const [
+                                ButtonSegment(
+                                    value: false, label: Text('Saved Customer')),
+                                ButtonSegment(
+                                    value: true, label: Text('Walk-in Customer')),
+                              ],
+                              selected: {_isWalkIn},
+                              onSelectionChanged: (Set<bool> newSelection) {
+                                setState(() {
+                                  _isWalkIn = newSelection.first;
                                 });
-                              },
-                              onSelected: (Customer selection) {
-                                context
-                                    .read<InvoiceFormCubit>()
-                                    .updateCustomer(selection);
-                                FocusScope.of(context)
-                                    .unfocus(); // Dismiss keyboard
-                              },
-                              fieldViewBuilder: (context, controller, focusNode,
-                                  onFieldSubmitted) {
-                                return TextFormField(
-                                  controller: controller,
-                                  focusNode: focusNode,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Search & Select Customer',
-                                    prefixIcon:
-                                        Icon(Icons.person_search_rounded),
-                                    hintText: 'Type to search...',
-                                  ),
-                                );
+                                if (_isWalkIn) {
+                                  context.read<InvoiceFormCubit>().updateCustomer(const Customer(id: 0, name: 'Walk-in Customer'));
+                                } else {
+                                  context.read<InvoiceFormCubit>().updateCustomer(const Customer(id: 0, name: ''));
+                                }
                               },
                             ),
+                            if (!_isWalkIn) ...[
+                              const SizedBox(height: 16),
+                              Autocomplete<Customer>(
+                                initialValue:
+                                    TextEditingValue(text: invoice.customerName == 'Walk-in Customer' ? '' : invoice.customerName),
+                                displayStringForOption: (Customer option) =>
+                                    option.name,
+                                optionsBuilder:
+                                    (TextEditingValue textEditingValue) {
+                                  if (textEditingValue.text.isEmpty) {
+                                    return availableCustomers.where((c) => c.id != 0);
+                                  }
+                                  return availableCustomers
+                                      .where((c) => c.id != 0)
+                                      .where((Customer option) {
+                                    return option.name.toLowerCase().contains(
+                                        textEditingValue.text.toLowerCase());
+                                  });
+                                },
+                                onSelected: (Customer selection) {
+                                  context
+                                      .read<InvoiceFormCubit>()
+                                      .updateCustomer(selection);
+                                  FocusScope.of(context)
+                                      .unfocus(); // Dismiss keyboard
+                                },
+                                fieldViewBuilder: (context, controller, focusNode,
+                                    onFieldSubmitted) {
+                                  return TextFormField(
+                                    controller: controller,
+                                    focusNode: focusNode,
+                                    decoration: const InputDecoration(
+                                      labelText: 'Search & Select Customer',
+                                      prefixIcon:
+                                          Icon(Icons.person_search_rounded),
+                                      hintText: 'Type to search...',
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
                             const SizedBox(height: 16),
                             Row(
                               children: [
@@ -562,7 +614,7 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                                 ? null
                                 : () => context
                                     .read<InvoiceFormCubit>()
-                                    .saveInvoice(InvoiceStatus.draft),
+                                    .saveDraft(),
                           ),
                         ],
                       ),

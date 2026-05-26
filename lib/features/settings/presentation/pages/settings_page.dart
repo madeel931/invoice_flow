@@ -129,8 +129,8 @@ class _SettingsViewState extends State<_SettingsView> {
                 content: Text(state.errorMessage!),
                 backgroundColor: AppColors.error));
           } else if (state.status == SettingsStatus.success) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('Settings saved!'),
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(AppLocalizations.of(context)?.profileSaved ?? 'Settings saved!'),
                 backgroundColor: AppColors.success));
           }
         },
@@ -204,7 +204,7 @@ class _SettingsViewState extends State<_SettingsView> {
                                 ),
                               ),
                               const SizedBox(height: AppSpacing.md),
-                              Text('Tap to upload logo',
+                              Text(AppLocalizations.of(context)?.selectLogo ?? 'Tap to upload logo',
                                   style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                             ],
                           ),
@@ -255,7 +255,7 @@ class _SettingsViewState extends State<_SettingsView> {
                         ),
                         const SizedBox(height: AppSpacing.md),
                         
-                        Text('Business Details',
+                        Text(AppLocalizations.of(context)?.businessDetails ?? 'Business Details',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
@@ -266,20 +266,20 @@ class _SettingsViewState extends State<_SettingsView> {
                             children: [
                               GlobalTextField(
                                   controller: _nameController,
-                                  label: 'Business Name',
+                                  label: AppLocalizations.of(context)?.businessName ?? 'Business Name',
                                   prefixIcon: const Icon(Icons.storefront),
                                   maxLength: 100,
-                                  validator: (val) => AppValidators.requiredText(val, min: 2, max: 100, fieldName: 'Business Name')),
+                                  validator: (val) => AppValidators.requiredText(val, min: 2, max: 100, fieldName: 'Business Name', errorRequired: AppLocalizations.of(context)?.businessNameRequired)),
                               const SizedBox(height: AppSpacing.md),
                               GlobalTextField(
                                   controller: _taxIdController,
-                                  label: 'Tax ID / VAT Number',
+                                  label: AppLocalizations.of(context)?.taxId ?? 'Tax ID / VAT Number',
                                   prefixIcon: const Icon(Icons.receipt_long),
                                   maxLength: 40,
                                   validator: (val) => AppValidators.optionalText(val, max: 40, fieldName: 'Tax ID')),
                               const SizedBox(height: AppSpacing.md),
                               AppCurrencyPickerField(
-                                label: 'Base Currency',
+                                label: AppLocalizations.of(context)?.baseCurrency ?? 'Base Currency',
                                 selectedCurrencyCode: _selectedCurrency,
                                 onChanged: (val) =>
                                     setState(() => _selectedCurrency = val),
@@ -299,14 +299,14 @@ class _SettingsViewState extends State<_SettingsView> {
                             children: [
                               GlobalTextField(
                                   controller: _emailController,
-                                  label: 'Email Address',
+                                  label: AppLocalizations.of(context)?.businessEmail ?? 'Email Address',
                                   prefixIcon: const Icon(Icons.email_outlined),
                                   maxLength: 120,
-                                  validator: (val) => AppValidators.email(val, max: 120)),
+                                  validator: (val) => AppValidators.email(val, max: 120, errorInvalid: AppLocalizations.of(context)?.invalidBusinessEmail)),
                               const SizedBox(height: AppSpacing.md),
                               GlobalTextField(
                                   controller: _phoneController,
-                                  label: 'Phone Number',
+                                  label: AppLocalizations.of(context)?.businessPhone ?? 'Phone Number',
                                   prefixIcon: const Icon(Icons.phone_outlined),
                                   maxLength: 20,
                                   inputFormatters: [AppInputFormatters.phone],
@@ -322,7 +322,7 @@ class _SettingsViewState extends State<_SettingsView> {
                               const SizedBox(height: AppSpacing.md),
                               GlobalTextField(
                                   controller: _addressController,
-                                  label: 'Registered Address',
+                                  label: AppLocalizations.of(context)?.businessAddress ?? 'Registered Address',
                                   prefixIcon: const Icon(Icons.location_on),
                                   maxLines: 3,
                                   maxLength: 250,
@@ -332,7 +332,7 @@ class _SettingsViewState extends State<_SettingsView> {
                         ),
                         const SizedBox(height: AppSpacing.lg),
                         GlobalButton(
-                            text: 'Save Profile',
+                            text: AppLocalizations.of(context)?.saveProfile ?? 'Save Profile',
                             isLoading: state.status == SettingsStatus.saving,
                             onPressed: () => _saveProfile(state.profile!)),
                       ],

@@ -697,6 +697,234 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete Permanently'**
   String get dialogDeleteCancelledConfirm;
+
+  /// No description provided for @editInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Invoice'**
+  String get editInvoice;
+
+  /// No description provided for @saveInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Invoice'**
+  String get saveInvoice;
+
+  /// No description provided for @saveAsDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Save as Draft'**
+  String get saveAsDraft;
+
+  /// No description provided for @savedCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved Customer'**
+  String get savedCustomer;
+
+  /// No description provided for @walkInCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk-in Customer'**
+  String get walkInCustomer;
+
+  /// No description provided for @selectCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Customer'**
+  String get selectCustomer;
+
+  /// No description provided for @searchCustomer.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Customer'**
+  String get searchCustomer;
+
+  /// No description provided for @issueDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue Date'**
+  String get issueDate;
+
+  /// No description provided for @dueDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Due Date'**
+  String get dueDate;
+
+  /// No description provided for @discount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount'**
+  String get discount;
+
+  /// No description provided for @discountAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount Amount'**
+  String get discountAmount;
+
+  /// No description provided for @discountPercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount (%)'**
+  String get discountPercentage;
+
+  /// No description provided for @paidAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid Amount'**
+  String get paidAmount;
+
+  /// No description provided for @invoiceItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice Items'**
+  String get invoiceItems;
+
+  /// No description provided for @subtotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtotal'**
+  String get subtotal;
+
+  /// No description provided for @grandTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Grand Total'**
+  String get grandTotal;
+
+  /// No description provided for @balanceDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance Due'**
+  String get balanceDue;
+
+  /// No description provided for @amountPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount Paid'**
+  String get amountPaid;
+
+  /// No description provided for @noItemsAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'No items added yet.'**
+  String get noItemsAdded;
+
+  /// No description provided for @selectCustomerOrWalkIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a customer or use walk-in'**
+  String get selectCustomerOrWalkIn;
+
+  /// No description provided for @invoiceSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice saved successfully.'**
+  String get invoiceSaved;
+
+  /// No description provided for @draftSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft saved successfully.'**
+  String get draftSaved;
+
+  /// No description provided for @invoiceUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice updated successfully.'**
+  String get invoiceUpdated;
+
+  /// No description provided for @cannotSaveInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot save invoice. Please check your inputs.'**
+  String get cannotSaveInvoice;
+
+  /// No description provided for @businessDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Details'**
+  String get businessDetails;
+
+  /// No description provided for @businessName.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Name'**
+  String get businessName;
+
+  /// No description provided for @businessEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Email'**
+  String get businessEmail;
+
+  /// No description provided for @businessPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Phone'**
+  String get businessPhone;
+
+  /// No description provided for @businessAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Address'**
+  String get businessAddress;
+
+  /// No description provided for @taxId.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax ID'**
+  String get taxId;
+
+  /// No description provided for @baseCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Base Currency'**
+  String get baseCurrency;
+
+  /// No description provided for @saveProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Profile'**
+  String get saveProfile;
+
+  /// No description provided for @profileSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Business profile saved successfully.'**
+  String get profileSaved;
+
+  /// No description provided for @selectLogo.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Logo'**
+  String get selectLogo;
+
+  /// No description provided for @changeLogo.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Logo'**
+  String get changeLogo;
+
+  /// No description provided for @removeLogo.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Logo'**
+  String get removeLogo;
+
+  /// No description provided for @businessNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Business name is required'**
+  String get businessNameRequired;
+
+  /// No description provided for @invalidBusinessEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid business email'**
+  String get invalidBusinessEmail;
 }
 
 class _AppLocalizationsDelegate

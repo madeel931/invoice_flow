@@ -18,6 +18,7 @@ import '../cubit/invoice_form_state.dart';
 import '../../domain/services/invoice_calculator.dart';
 import '../widgets/invoice_item_sheet.dart';
 import '../../../../core/utils/app_input_formatters.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class InvoiceFormPage extends StatelessWidget {
   final String? existingInvoiceId;
@@ -131,8 +132,8 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                   backgroundColor: Theme.of(context).colorScheme.error));
             }
             if (state.status == InvoiceFormStatus.success) {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Invoice saved!'),
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(AppLocalizations.of(context)?.invoiceSaved ?? 'Invoice saved!'),
                   backgroundColor: Colors.green));
               context.pop();
             }
@@ -175,21 +176,23 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                     padding: const EdgeInsets.only(right: 8.0),
                     child: TextButton.icon(
                       icon: const Icon(Icons.check_circle_outline),
-                      label: Text(invoice.id == null ? 'Create' : 'Save'),
+                      label: Text(invoice.id == null 
+                          ? AppLocalizations.of(context)?.create ?? 'Create' 
+                          : AppLocalizations.of(context)?.save ?? 'Save'),
                       onPressed: () {
                         if (!_isWalkIn && invoice.customerId == 0) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
+                            SnackBar(
                                 content: Text(
-                                    'Please select a saved customer or switch to Walk-in.')),
+                                    AppLocalizations.of(context)?.selectCustomerOrWalkIn ?? 'Please select a saved customer or switch to Walk-in.')),
                           );
                           return;
                         }
                         if (invoice.items.isEmpty) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
+                            SnackBar(
                                 content: Text(
-                                    'Add at least one item before creating invoice.')),
+                                    AppLocalizations.of(context)?.cannotSaveInvoice ?? 'Add at least one item before creating invoice.')),
                           );
                           return;
                         }
@@ -220,11 +223,11 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                         child: Column(
                           children: [
                             SegmentedButton<bool>(
-                              segments: const [
+                              segments: [
                                 ButtonSegment(
-                                    value: false, label: Text('Saved Customer')),
+                                    value: false, label: Text(AppLocalizations.of(context)?.savedCustomer ?? 'Saved Customer')),
                                 ButtonSegment(
-                                    value: true, label: Text('Walk-in Customer')),
+                                    value: true, label: Text(AppLocalizations.of(context)?.walkInCustomer ?? 'Walk-in Customer')),
                               ],
                               selected: {_isWalkIn},
                               onSelectionChanged: (Set<bool> newSelection) {
@@ -269,11 +272,11 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                                   return TextFormField(
                                     controller: controller,
                                     focusNode: focusNode,
-                                    decoration: const InputDecoration(
-                                      labelText: 'Search & Select Customer',
+                                    decoration: InputDecoration(
+                                      labelText: AppLocalizations.of(context)?.selectCustomer ?? 'Search & Select Customer',
                                       prefixIcon:
-                                          Icon(Icons.person_search_rounded),
-                                      hintText: 'Type to search...',
+                                          const Icon(Icons.person_search_rounded),
+                                      hintText: AppLocalizations.of(context)?.searchCustomer ?? 'Type to search...',
                                     ),
                                   );
                                 },
@@ -284,8 +287,8 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                               children: [
                                 Expanded(
                                   child: ListTile(
-                                    title: const Text('Issue Date',
-                                        style: TextStyle(
+                                    title: Text(AppLocalizations.of(context)?.issueDate ?? 'Issue Date',
+                                        style: const TextStyle(
                                             fontSize: 12, color: Colors.grey)),
                                     subtitle: Text(
                                         _dateFormat.format(invoice.issueDate),
@@ -297,8 +300,8 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                                 ),
                                 Expanded(
                                   child: ListTile(
-                                    title: const Text('Due Date',
-                                        style: TextStyle(
+                                    title: Text(AppLocalizations.of(context)?.dueDate ?? 'Due Date',
+                                        style: const TextStyle(
                                             fontSize: 12, color: Colors.grey)),
                                     subtitle: Text(
                                         _dateFormat.format(invoice.dueDate),
@@ -314,7 +317,7 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      Text('Line Items',
+                      Text(AppLocalizations.of(context)?.invoiceItems ?? 'Line Items',
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium
@@ -324,7 +327,7 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                         GlobalCard(
                           padding: const EdgeInsets.all(24),
                           child: Center(
-                              child: Text('No items added yet.',
+                              child: Text(AppLocalizations.of(context)?.noItemsAdded ?? 'No items added yet.',
                                   style: TextStyle(
                                       color: Theme.of(context)
                                           .colorScheme
@@ -370,19 +373,19 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                       TextButton.icon(
                         onPressed: _openItemSheet,
                         icon: const Icon(Icons.add_circle_outline),
-                        label: const Text('Add Line Item'),
+                        label: Text(AppLocalizations.of(context)?.addLineItem ?? 'Add Line Item'),
                       ),
                       const SizedBox(height: 24),
                       GlobalCard(
                         child: Column(
                           children: [
                             SegmentedButton<String>(
-                              segments: const [
+                              segments: [
                                 ButtonSegment(
-                                    value: 'amount', label: Text('Amount')),
+                                    value: 'amount', label: Text(AppLocalizations.of(context)?.discountAmount ?? 'Amount')),
                                 ButtonSegment(
                                     value: 'percentage',
-                                    label: Text('Percentage')),
+                                    label: Text(AppLocalizations.of(context)?.discountPercentage ?? 'Percentage')),
                               ],
                               selected: {invoice.discountType},
                               onSelectionChanged: (Set<String> newSelection) {
@@ -402,8 +405,8 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                               decoration: InputDecoration(
                                   labelText:
                                       invoice.discountType == 'percentage'
-                                          ? 'Discount Percentage (%)'
-                                          : 'Discount Amount (-)',
+                                          ? AppLocalizations.of(context)?.discountPercentage ?? 'Discount Percentage (%)'
+                                          : AppLocalizations.of(context)?.discountAmount ?? 'Discount Amount (-)',
                                   prefixIcon:
                                       invoice.discountType == 'percentage'
                                           ? const Icon(Icons.percent)
@@ -444,9 +447,9 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                                       decimal: true),
                               maxLength: 12,
                               inputFormatters: [AppInputFormatters.amount],
-                              decoration: const InputDecoration(
-                                  labelText: 'Paid Amount',
-                                  prefixIcon: Icon(Icons.payments)),
+                              decoration: InputDecoration(
+                                  labelText: AppLocalizations.of(context)?.paidAmount ?? 'Paid Amount',
+                                  prefixIcon: const Icon(Icons.payments)),
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
                               validator: (val) {
@@ -512,8 +515,8 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('Subtotal:',
-                                  style: TextStyle(color: Colors.grey)),
+                              Text('${AppLocalizations.of(context)?.subtotal ?? "Subtotal"}:',
+                                  style: const TextStyle(color: Colors.grey)),
                               Text(AppFormatters.formatCurrency(
                                   calc.subtotal, currencyCode))
                             ],
@@ -525,8 +528,8 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                               children: [
                                 Text(
                                     invoice.discountType == 'percentage'
-                                        ? 'Discount (${invoice.discountAmount}%):'
-                                        : 'Discount:',
+                                        ? '${AppLocalizations.of(context)?.discount ?? "Discount"} (${invoice.discountAmount}%):'
+                                        : '${AppLocalizations.of(context)?.discount ?? "Discount"}:',
                                     style: const TextStyle(color: Colors.red)),
                                 Text(
                                     '- ${AppFormatters.formatCurrency(calc.discountValue, currencyCode)}',
@@ -538,8 +541,8 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('Total Tax:',
-                                  style: TextStyle(color: Colors.grey)),
+                              Text('${AppLocalizations.of(context)?.tax ?? "Total Tax"}:',
+                                  style: const TextStyle(color: Colors.grey)),
                               Text(
                                   '+ ${AppFormatters.formatCurrency(calc.totalTax, currencyCode)}')
                             ],
@@ -548,8 +551,8 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('TOTAL',
-                                  style: TextStyle(
+                              Text((AppLocalizations.of(context)?.grandTotal ?? 'TOTAL').toUpperCase(),
+                                  style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18)),
                               const SizedBox(width: 16),
@@ -575,8 +578,8 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text('Amount Paid:',
-                                    style: TextStyle(color: Colors.green)),
+                                Text('${AppLocalizations.of(context)?.amountPaid ?? "Amount Paid"}:',
+                                    style: const TextStyle(color: Colors.green)),
                                 Text(
                                     '- ${AppFormatters.formatCurrency(calc.paidAmount, currencyCode)}',
                                     style: const TextStyle(color: Colors.green))
@@ -587,7 +590,7 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Balance Due:',
+                              Text('${AppLocalizations.of(context)?.balanceDue ?? "Balance Due"}:',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18,
@@ -607,7 +610,7 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                           ),
                           const SizedBox(height: 16),
                           GlobalButton(
-                            text: 'Save as Draft',
+                            text: AppLocalizations.of(context)?.saveAsDraft ?? 'Save as Draft',
                             isLoading:
                                 invoiceState.status == InvoiceFormStatus.saving,
                             onPressed: invoice.items.isEmpty

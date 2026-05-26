@@ -311,4 +311,119 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get dialogDeleteCancelledConfirm => 'حذف نهائي';
+
+  @override
+  String get editInvoice => 'تعديل الفاتورة';
+
+  @override
+  String get saveInvoice => 'حفظ الفاتورة';
+
+  @override
+  String get saveAsDraft => 'حفظ كمسودة';
+
+  @override
+  String get savedCustomer => 'عميل محفوظ';
+
+  @override
+  String get walkInCustomer => 'عميل نقدي';
+
+  @override
+  String get selectCustomer => 'اختيار العميل';
+
+  @override
+  String get searchCustomer => 'البحث عن عميل';
+
+  @override
+  String get issueDate => 'تاريخ الإصدار';
+
+  @override
+  String get dueDate => 'تاريخ الاستحقاق';
+
+  @override
+  String get discount => 'الخصم';
+
+  @override
+  String get discountAmount => 'مبلغ الخصم';
+
+  @override
+  String get discountPercentage => 'نسبة الخصم (%)';
+
+  @override
+  String get paidAmount => 'المبلغ المدفوع';
+
+  @override
+  String get invoiceItems => 'عناصر الفاتورة';
+
+  @override
+  String get subtotal => 'المجموع الفرعي';
+
+  @override
+  String get grandTotal => 'المجموع الإجمالي';
+
+  @override
+  String get balanceDue => 'الرصيد المستحق';
+
+  @override
+  String get amountPaid => 'المبلغ المدفوع';
+
+  @override
+  String get noItemsAdded => 'لم تتم إضافة أي عناصر بعد.';
+
+  @override
+  String get selectCustomerOrWalkIn => 'اختر عميلاً أو استخدم عميل نقدي';
+
+  @override
+  String get invoiceSaved => 'تم حفظ الفاتورة بنجاح.';
+
+  @override
+  String get draftSaved => 'تم حفظ المسودة بنجاح.';
+
+  @override
+  String get invoiceUpdated => 'تم تحديث الفاتورة بنجاح.';
+
+  @override
+  String get cannotSaveInvoice =>
+      'لا يمكن حفظ الفاتورة. يرجى التحقق من مدخلاتك.';
+
+  @override
+  String get businessDetails => 'تفاصيل العمل';
+
+  @override
+  String get businessName => 'اسم العمل';
+
+  @override
+  String get businessEmail => 'البريد الإلكتروني للعمل';
+
+  @override
+  String get businessPhone => 'هاتف العمل';
+
+  @override
+  String get businessAddress => 'عنوان العمل';
+
+  @override
+  String get taxId => 'الرقم الضريبي';
+
+  @override
+  String get baseCurrency => 'العملة الأساسية';
+
+  @override
+  String get saveProfile => 'حفظ الملف الشخصي';
+
+  @override
+  String get profileSaved => 'تم حفظ ملف العمل بنجاح.';
+
+  @override
+  String get selectLogo => 'اختر الشعار';
+
+  @override
+  String get changeLogo => 'تغيير الشعار';
+
+  @override
+  String get removeLogo => 'إزالة الشعار';
+
+  @override
+  String get businessNameRequired => 'اسم العمل مطلوب';
+
+  @override
+  String get invalidBusinessEmail => 'أدخل بريد إلكتروني صالح للعمل';
 }

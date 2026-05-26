@@ -312,4 +312,119 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dialogDeleteCancelledConfirm => 'Delete Permanently';
+
+  @override
+  String get editInvoice => 'Edit Invoice';
+
+  @override
+  String get saveInvoice => 'Save Invoice';
+
+  @override
+  String get saveAsDraft => 'Save as Draft';
+
+  @override
+  String get savedCustomer => 'Saved Customer';
+
+  @override
+  String get walkInCustomer => 'Walk-in Customer';
+
+  @override
+  String get selectCustomer => 'Select Customer';
+
+  @override
+  String get searchCustomer => 'Search Customer';
+
+  @override
+  String get issueDate => 'Issue Date';
+
+  @override
+  String get dueDate => 'Due Date';
+
+  @override
+  String get discount => 'Discount';
+
+  @override
+  String get discountAmount => 'Discount Amount';
+
+  @override
+  String get discountPercentage => 'Discount (%)';
+
+  @override
+  String get paidAmount => 'Paid Amount';
+
+  @override
+  String get invoiceItems => 'Invoice Items';
+
+  @override
+  String get subtotal => 'Subtotal';
+
+  @override
+  String get grandTotal => 'Grand Total';
+
+  @override
+  String get balanceDue => 'Balance Due';
+
+  @override
+  String get amountPaid => 'Amount Paid';
+
+  @override
+  String get noItemsAdded => 'No items added yet.';
+
+  @override
+  String get selectCustomerOrWalkIn => 'Select a customer or use walk-in';
+
+  @override
+  String get invoiceSaved => 'Invoice saved successfully.';
+
+  @override
+  String get draftSaved => 'Draft saved successfully.';
+
+  @override
+  String get invoiceUpdated => 'Invoice updated successfully.';
+
+  @override
+  String get cannotSaveInvoice =>
+      'Cannot save invoice. Please check your inputs.';
+
+  @override
+  String get businessDetails => 'Business Details';
+
+  @override
+  String get businessName => 'Business Name';
+
+  @override
+  String get businessEmail => 'Business Email';
+
+  @override
+  String get businessPhone => 'Business Phone';
+
+  @override
+  String get businessAddress => 'Business Address';
+
+  @override
+  String get taxId => 'Tax ID';
+
+  @override
+  String get baseCurrency => 'Base Currency';
+
+  @override
+  String get saveProfile => 'Save Profile';
+
+  @override
+  String get profileSaved => 'Business profile saved successfully.';
+
+  @override
+  String get selectLogo => 'Select Logo';
+
+  @override
+  String get changeLogo => 'Change Logo';
+
+  @override
+  String get removeLogo => 'Remove Logo';
+
+  @override
+  String get businessNameRequired => 'Business name is required';
+
+  @override
+  String get invalidBusinessEmail => 'Enter a valid business email';
 }

@@ -11,6 +11,7 @@ import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../../../settings/domain/usecases/get_business_profile_usecase.dart';
 import '../../utils/invoice_pdf_generator.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../cubit/invoice_list_cubit.dart';
 
 class InvoicePreviewPage extends StatefulWidget {
@@ -63,7 +64,7 @@ class _InvoicePreviewPageState extends State<InvoicePreviewPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Invoice PDF'),
+        title: Text(AppLocalizations.of(context)?.invoicePdf ?? 'Invoice PDF'),
       ),
       body: FutureBuilder<Uint8List>(
         future: _pdfFuture,
@@ -104,7 +105,7 @@ class _InvoicePreviewPageState extends State<InvoicePreviewPage> {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'PDF Ready',
+                  AppLocalizations.of(context)?.pdfReady ?? 'PDF Ready',
                   textAlign: TextAlign.center,
                   style: theme.textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
@@ -112,7 +113,7 @@ class _InvoicePreviewPageState extends State<InvoicePreviewPage> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Invoice ${invoice.invoiceNumber} for ${invoice.customerName} has been generated successfully.',
+                  AppLocalizations.of(context)?.pdfGenerated(invoice.invoiceNumber, invoice.customerName) ?? 'Invoice ${invoice.invoiceNumber} for ${invoice.customerName} has been generated successfully.',
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
@@ -127,7 +128,7 @@ class _InvoicePreviewPageState extends State<InvoicePreviewPage> {
                     );
                   },
                   icon: const Icon(Icons.print),
-                  label: const Text('Print PDF'),
+                  label: Text(AppLocalizations.of(context)?.printPdf ?? 'Print PDF'),
                   style: FilledButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
@@ -141,7 +142,7 @@ class _InvoicePreviewPageState extends State<InvoicePreviewPage> {
                     );
                   },
                   icon: const Icon(Icons.share),
-                  label: const Text('Share PDF'),
+                  label: Text(AppLocalizations.of(context)?.sharePdf ?? 'Share PDF'),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),

@@ -9,7 +9,6 @@ import '../../../features/settings/presentation/cubit/settings_cubit.dart';
 import '../../../features/settings/presentation/cubit/settings_state.dart';
 import '../../utils/app_directories.dart';
 import '../../theme/cubit/theme_cubit.dart';
-
 import '../../../l10n/app_localizations.dart';
 
 class PremiumDrawer extends StatelessWidget {
@@ -124,18 +123,18 @@ class PremiumDrawer extends StatelessWidget {
                       leading: Icon(Icons.palette_outlined,
                           color:
                               Theme.of(context).colorScheme.onSurfaceVariant),
-                      title: const Text('Theme',
-                          style: TextStyle(fontWeight: FontWeight.w500)),
+                      title: Text(AppLocalizations.of(context)?.theme ?? 'Theme',
+                          style: const TextStyle(fontWeight: FontWeight.w500)),
                       trailing: DropdownButton<ThemeMode>(
                         value: currentTheme,
                         underline: const SizedBox(), // hide default line
-                        items: const [
+                        items: [
                           DropdownMenuItem(
-                              value: ThemeMode.system, child: Text('System')),
+                              value: ThemeMode.system, child: Text(AppLocalizations.of(context)?.system ?? 'System')),
                           DropdownMenuItem(
-                              value: ThemeMode.light, child: Text('Light')),
+                              value: ThemeMode.light, child: Text(AppLocalizations.of(context)?.light ?? 'Light')),
                           DropdownMenuItem(
-                              value: ThemeMode.dark, child: Text('Dark')),
+                              value: ThemeMode.dark, child: Text(AppLocalizations.of(context)?.dark ?? 'Dark')),
                         ],
                         onChanged: (mode) {
                           if (mode != null) {
@@ -170,7 +169,7 @@ class PremiumDrawer extends StatelessWidget {
                       color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
-                  Text('Version 1.0.0',
+                  Text(AppLocalizations.of(context)?.appVersion("1.0.0") ?? 'Version 1.0.0',
                       style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                 ],
               ),

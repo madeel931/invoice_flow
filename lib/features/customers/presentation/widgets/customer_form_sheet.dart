@@ -143,7 +143,8 @@ class _CustomerFormSheetState extends State<CustomerFormSheet> {
               validator: (val) => AppValidators.phone(
                 val, 
                 max: 20, 
-                errorMaxLength: AppLocalizations.of(context)?.phoneTooLong
+                errorMaxLength: AppLocalizations.of(context)?.phoneTooLong,
+                errorMinLength: AppLocalizations.of(context)?.phoneTooShort,
               ),
             ),
             const SizedBox(height: AppSpacing.md),

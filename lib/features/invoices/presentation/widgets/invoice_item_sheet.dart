@@ -225,7 +225,7 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
                     items: AppUnits.all
                         .map((u) => DropdownMenuItem(
                               value: u.value,
-                              child: Text(u.label, overflow: TextOverflow.ellipsis),
+                              child: Text(AppUnits.localizedLabelOf(context, u.value), overflow: TextOverflow.ellipsis),
                             ))
                         .toList(),
                     onChanged: (val) => setState(() => _selectedUnit = val ?? AppUnits.defaultUnit),
@@ -249,7 +249,8 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
                       val, 
                       max: 99999999.99, 
                       errorRequired: AppLocalizations.of(context)?.priceRequired,
-                      errorInvalid: AppLocalizations.of(context)?.invalidPrice
+                      errorInvalid: AppLocalizations.of(context)?.invalidPrice,
+                      errorMax: AppLocalizations.of(context)?.amountTooLarge,
                     ),
                   ),
                 ),

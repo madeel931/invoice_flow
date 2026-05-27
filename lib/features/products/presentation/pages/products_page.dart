@@ -129,7 +129,7 @@ class _ProductsListViewState extends State<_ProductsListView> {
                   title: Text(product.name,
                       style: const TextStyle(fontWeight: FontWeight.bold)),
                   subtitle: Text(
-                      '${AppFormatters.formatCurrency(product.price, currencyCode)} / ${product.unitType.toLowerCase()}'),
+                      '${AppFormatters.formatCurrency(product.price, currencyCode)} / ${AppUnits.localizedLabelOf(context, product.unitType)}'),
                   trailing: const Icon(Icons.chevron_right_rounded),
 
                   // --- INTERACTION LOGIC ---

@@ -9,6 +9,7 @@ import 'features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'features/invoices/presentation/cubit/invoice_list_cubit.dart';
 import 'l10n/app_localizations.dart';
 import 'core/locale/cubit/locale_cubit.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +17,7 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  await initializeDateFormatting();
   await di.init();
   runApp(const InvoiceFlowApp());
 }

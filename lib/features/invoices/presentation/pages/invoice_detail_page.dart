@@ -9,12 +9,13 @@ import 'package:printing/printing.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../../config/routes/route_constants.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../core/widgets/global_card.dart';
+import '../../../../core/constants/app_units.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../../../settings/domain/usecases/get_business_profile_usecase.dart';
 import '../../domain/usecases/get_invoices_usecase.dart';
 import '../../domain/entities/invoice.dart';
-import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/invoice_status.dart';
 import '../../domain/services/invoice_calculator.dart';
 import '../../utils/invoice_pdf_generator.dart';
@@ -70,13 +71,25 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
     }
   }
 
+  String _getLocalizedStatusName(BuildContext context, InvoiceStatus status) {
+    final loc = AppLocalizations.of(context);
+    switch (status) {
+      case InvoiceStatus.draft: return loc?.statusDraft.toUpperCase() ?? 'DRAFT';
+      case InvoiceStatus.unpaid: return loc?.statusUnpaid.toUpperCase() ?? 'UNPAID';
+      case InvoiceStatus.partiallyPaid: return loc?.statusPartiallyPaid.toUpperCase() ?? 'PARTIALLY PAID';
+      case InvoiceStatus.paid: return loc?.statusPaid.toUpperCase() ?? 'PAID';
+      case InvoiceStatus.overdue: return loc?.statusOverdue.toUpperCase() ?? 'OVERDUE';
+      case InvoiceStatus.cancelled: return loc?.statusCancelled.toUpperCase() ?? 'CANCELLED';
+    }
+  }
+
   Future<void> _sharePdf(BuildContext context, Invoice currentInvoice) async {
     final getProfile = GetIt.instance<GetBusinessProfileUseCase>();
     final result = await getProfile(NoParams());
 
     result.fold(
         (l) => ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Failed to load profile for PDF.'))),
+            SnackBar(content: Text(AppLocalizations.of(context)?.failedToLoadProfile ?? 'Failed to load profile for PDF.'))),
         (profile) async {
       final bytes = await InvoicePdfGenerator.generate(currentInvoice, profile);
       final fileName =
@@ -91,7 +104,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
     required String title,
     required String message,
     required String confirmText,
-    String cancelText = 'Cancel',
+    String? cancelText,
     bool isDestructive = false,
   }) {
     return showDialog<bool>(
@@ -102,7 +115,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text(cancelText),
+            child: Text(cancelText ?? AppLocalizations.of(context)?.cancel ?? 'Cancel'),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
@@ -131,16 +144,16 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
 
     if (action == 'delete_draft') {
       final confirm = await _showConfirmDialog(
-        title: 'Delete Draft?',
-        message: 'This draft invoice will be permanently deleted. This action cannot be undone.',
-        confirmText: 'Delete',
+        title: AppLocalizations.of(context)?.deleteDraftTitle ?? 'Delete Draft?',
+        message: AppLocalizations.of(context)?.deleteDraftMessage ?? 'This draft invoice will be permanently deleted. This action cannot be undone.',
+        confirmText: AppLocalizations.of(context)?.delete ?? 'Delete',
         isDestructive: true,
       );
       if (confirm == true && mounted) {
         if (inv.id != null) {
           await context.read<InvoiceListCubit>().delete(inv.id!);
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Draft deleted successfully.')));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)?.draftDeleted ?? 'Draft deleted successfully.')));
             context.pop();
           }
         }
@@ -160,7 +173,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
       if (confirm == true && mounted) {
         await context.read<InvoiceListCubit>().updateStatus(inv, InvoiceStatus.cancelled);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Invoice cancelled.')));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)?.invoiceCancelled ?? 'Invoice cancelled.')));
         }
       }
       return;
@@ -168,16 +181,16 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
 
     if (action == 'delete_cancelled') {
       final confirm = await _showConfirmDialog(
-        title: 'Delete Cancelled Invoice?',
-        message: 'This will permanently delete this cancelled invoice record. This action cannot be undone.',
-        confirmText: 'Delete Permanently',
+        title: AppLocalizations.of(context)?.deleteCancelledTitle ?? 'Delete Cancelled Invoice?',
+        message: AppLocalizations.of(context)?.deleteCancelledMessage ?? 'This will permanently delete this cancelled invoice record. This action cannot be undone.',
+        confirmText: AppLocalizations.of(context)?.deletePermanently ?? 'Delete Permanently',
         isDestructive: true,
       );
       if (confirm == true && mounted) {
         if (inv.id != null) {
           await context.read<InvoiceListCubit>().delete(inv.id!);
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cancelled invoice deleted.')));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)?.cancelledInvoiceDeleted ?? 'Cancelled invoice deleted.')));
             context.pop();
           }
         }
@@ -202,7 +215,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
         
         if (snapshot.hasError || !snapshot.hasData) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Error')),
+            appBar: AppBar(title: Text(AppLocalizations.of(context)?.error ?? 'Error')),
             body: Center(child: Text(snapshot.error?.toString() ?? 'Invoice not found')),
           );
         }
@@ -226,10 +239,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                 ? currentInvoice.currencyCode! 
                 : profileCurrency;
 
-            String statusLabel = currentInvoice.status.name.toUpperCase();
-            if (currentInvoice.status == InvoiceStatus.partiallyPaid) {
-              statusLabel = 'PARTIALLY PAID';
-            }
+            String statusLabel = _getLocalizedStatusName(context, currentInvoice.status);
 
             return Scaffold(
               appBar: AppBar(
@@ -237,7 +247,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                 actions: [
                   IconButton(
                     icon: const Icon(Icons.share_rounded),
-                    tooltip: 'Share PDF',
+                    tooltip: AppLocalizations.of(context)?.sharePdf ?? 'Share PDF',
                     onPressed: () => _sharePdf(context, currentInvoice),
                   ),
                   PopupMenuButton<String>(
@@ -249,32 +259,32 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                       if (currentInvoice.status == InvoiceStatus.draft) {
                         items.add(PopupMenuItem(
                           value: 'edit_draft',
-                          child: Text('Edit Draft', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                          child: Text(AppLocalizations.of(context)?.editDraft ?? 'Edit Draft', style: TextStyle(color: Theme.of(context).colorScheme.primary)),
                         ));
                         items.add(PopupMenuItem(
                           value: 'delete_draft',
-                          child: Text('Delete Draft', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                          child: Text(AppLocalizations.of(context)?.deleteDraft ?? 'Delete Draft', style: TextStyle(color: Theme.of(context).colorScheme.error)),
                         ));
                       } else if (currentInvoice.status == InvoiceStatus.cancelled) {
                         items.add(PopupMenuItem(
                           value: 'delete_cancelled',
-                          child: Text('Delete Permanently', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                          child: Text(AppLocalizations.of(context)?.deletePermanently ?? 'Delete Permanently', style: TextStyle(color: Theme.of(context).colorScheme.error)),
                         ));
                       } else {
                         if (currentInvoice.status != InvoiceStatus.paid) {
-                          items.add(const PopupMenuItem(
+                          items.add(PopupMenuItem(
                               value: 'paid',
-                              child: Text('Mark as Paid')));
+                              child: Text(AppLocalizations.of(context)?.markAsPaid ?? 'Mark as Paid')));
                         }
                         if (currentInvoice.status != InvoiceStatus.unpaid) {
-                          items.add(const PopupMenuItem(
+                          items.add(PopupMenuItem(
                               value: 'unpaid',
-                              child: Text('Mark as Unpaid')));
+                              child: Text(AppLocalizations.of(context)?.markAsUnpaid ?? 'Mark as Unpaid')));
                         }
                         items.add(const PopupMenuDivider());
                         items.add(PopupMenuItem(
                             value: 'cancel_invoice',
-                            child: Text('Cancel Invoice', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                            child: Text(AppLocalizations.of(context)?.cancelInvoice ?? 'Cancel Invoice', style: TextStyle(color: Theme.of(context).colorScheme.error)),
                         ));
                       }
                       
@@ -295,8 +305,8 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('Status',
-                                  style: TextStyle(
+                              Text(AppLocalizations.of(context)?.status ?? 'Status',
+                                  style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16)),
                               Chip(
@@ -317,8 +327,8 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('Issue Date',
-                                      style: TextStyle(color: Colors.grey)),
+                                  Text(AppLocalizations.of(context)?.issueDate ?? 'Issue Date',
+                                      style: const TextStyle(color: Colors.grey)),
                                   const SizedBox(height: 4),
                                   Text(
                                       DateFormat('MMM dd, yyyy')
@@ -330,8 +340,8 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  const Text('Due Date',
-                                      style: TextStyle(color: Colors.grey)),
+                                  Text(AppLocalizations.of(context)?.dueDate ?? 'Due Date',
+                                      style: const TextStyle(color: Colors.grey)),
                                   const SizedBox(height: 4),
                                   Text(
                                       DateFormat('MMM dd, yyyy')
@@ -356,8 +366,8 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                               Theme.of(context).colorScheme.primaryContainer,
                           child: const Icon(Icons.person),
                         ),
-                        title: const Text('Billed To',
-                            style: TextStyle(color: Colors.grey, fontSize: 12)),
+                        title: Text(AppLocalizations.of(context)?.billedTo ?? 'Billed To',
+                            style: const TextStyle(color: Colors.grey, fontSize: 12)),
                         subtitle: Text(currentInvoice.customerName,
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold,
@@ -372,8 +382,8 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const Text('Line Items',
-                              style: TextStyle(
+                          Text(AppLocalizations.of(context)?.lineItems ?? 'Line Items',
+                              style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16)),
                           const Divider(height: 24),
                           ...calc.itemBreakdowns.map((calcItem) {
@@ -393,7 +403,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                                                 fontWeight: FontWeight.bold)),
                                         const SizedBox(height: 4),
                                         Text(
-                                            '${item.quantity} x ${AppFormatters.formatCurrency(item.unitPrice, currencyCode)}${item.unitType != null ? ' / ${item.unitType!.toLowerCase()}' : ''}',
+                                            '${item.quantity} x ${AppFormatters.formatCurrency(item.unitPrice, currencyCode)}${item.unitType != null ? ' / ${AppUnits.localizedLabelOf(context, item.unitType)}' : ''}',
                                             style: const TextStyle(
                                                 color: Colors.grey,
                                                 fontSize: 13)),
@@ -432,8 +442,8 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('Subtotal',
-                                  style: TextStyle(color: Colors.grey)),
+                              Text(AppLocalizations.of(context)?.subtotal ?? 'Subtotal',
+                                  style: const TextStyle(color: Colors.grey)),
                               Text(AppFormatters.formatCurrency(
                                   calc.subtotal, currencyCode)),
                             ],
@@ -458,8 +468,8 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('Tax',
-                                  style: TextStyle(color: Colors.grey)),
+                              Text(AppLocalizations.of(context)?.tax ?? 'Tax',
+                                  style: const TextStyle(color: Colors.grey)),
                               Text('+${AppFormatters.formatCurrency(
                                   calc.totalTax, currencyCode)}'),
                             ],
@@ -468,8 +478,8 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('Grand Total',
-                                  style: TextStyle(
+                              Text(AppLocalizations.of(context)?.grandTotal ?? 'Grand Total',
+                                  style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold)),
                               const SizedBox(width: 16),
@@ -494,8 +504,8 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('Amount Paid',
-                                  style: TextStyle(color: Colors.green)),
+                              Text(AppLocalizations.of(context)?.amountPaid ?? 'Amount Paid',
+                                  style: const TextStyle(color: Colors.green)),
                               Text(
                                   '-${AppFormatters.formatCurrency(calc.paidAmount, currencyCode)}',
                                   style:
@@ -506,8 +516,8 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('Balance Due',
-                                  style: TextStyle(fontWeight: FontWeight.bold)),
+                              Text(AppLocalizations.of(context)?.balanceDue ?? 'Balance Due',
+                                  style: const TextStyle(fontWeight: FontWeight.bold)),
                               Text(
                                   calc.balanceDue > 0 ? AppFormatters.formatCurrency(calc.balanceDue, currencyCode) : 'Paid',
                                   style: TextStyle(
@@ -532,7 +542,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                       Expanded(
                         child: OutlinedButton.icon(
                           icon: const Icon(Icons.picture_as_pdf),
-                          label: const Text('Preview PDF'),
+                          label: Text(AppLocalizations.of(context)?.previewPdf ?? 'Preview PDF'),
                           // Navigate via GoRouter ID to avoid passing massive Invoice objects in the route state
                           onPressed: () => context.push('${AppRoutes.invoicePreview}/${currentInvoice.id}'),
                         ),
@@ -545,7 +555,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                                   style: FilledButton.styleFrom(
                                       backgroundColor: Colors.green),
                                   icon: const Icon(Icons.check_circle_outline),
-                                  label: const Text('Mark Paid'),
+                                  label: Text(AppLocalizations.of(context)?.markPaid ?? 'Mark Paid'),
                                   onPressed: () {
                                     context.read<InvoiceListCubit>().updateStatus(
                                         currentInvoice, InvoiceStatus.paid);
@@ -555,7 +565,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                                   style: FilledButton.styleFrom(
                                       backgroundColor: Colors.orange),
                                   icon: const Icon(Icons.undo),
-                                  label: const Text('Mark Unpaid'),
+                                  label: Text(AppLocalizations.of(context)?.markUnpaid ?? 'Mark Unpaid'),
                                   onPressed: () {
                                     context.read<InvoiceListCubit>().updateStatus(
                                         currentInvoice, InvoiceStatus.unpaid);

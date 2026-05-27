@@ -217,7 +217,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get basePrice => 'السعر الأساسي';
 
   @override
-  String get billingUnit => 'وحدة الفوترة';
+  String get billingUnit => 'وحدة القياس';
 
   @override
   String get taxRate => 'نسبة الضريبة (%)';
@@ -426,4 +426,297 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get invalidBusinessEmail => 'أدخل بريد إلكتروني صالح للعمل';
+
+  @override
+  String get invoiceSummary => 'ملخص الفواتير';
+
+  @override
+  String get viewAll => 'عرض الكل';
+
+  @override
+  String get newInvoice => 'فاتورة جديدة';
+
+  @override
+  String get theme => 'المظهر';
+
+  @override
+  String get system => 'النظام';
+
+  @override
+  String get light => 'فاتح';
+
+  @override
+  String get dark => 'داكن';
+
+  @override
+  String appVersion(String version) {
+    return 'الإصدار $version';
+  }
+
+  @override
+  String get createBackupTitle => 'إنشاء نسخة احتياطية؟';
+
+  @override
+  String get createBackup => 'إنشاء نسخة احتياطية';
+
+  @override
+  String get restoreBackupTitle => 'استعادة نسخة احتياطية؟';
+
+  @override
+  String get restoreBackup => 'استعادة النسخة';
+
+  @override
+  String get chooseBackup => 'اختيار النسخة الاحتياطية';
+
+  @override
+  String get confirmRestore => 'تأكيد الاستعادة';
+
+  @override
+  String get restoreNow => 'استعادة الآن';
+
+  @override
+  String get backupAndRestore => 'النسخ الاحتياطي والاستعادة';
+
+  @override
+  String get dataManagement => 'إدارة البيانات';
+
+  @override
+  String get exportBackup => 'تصدير نسخة احتياطية';
+
+  @override
+  String get exportBackupSubtitle => 'احفظ قاعدة بياناتك بشكل آمن.';
+
+  @override
+  String get restoreBackupSubtitle => 'استبدل البيانات الحالية بنسخة احتياطية.';
+
+  @override
+  String get backupCreatedSuccess => 'تم إنشاء النسخة الاحتياطية بنجاح.';
+
+  @override
+  String get backupCreatedMissingPath =>
+      'تم إنشاء النسخة الاحتياطية ولكن مسار الملف مفقود.';
+
+  @override
+  String get createBackupContent =>
+      'سيؤدي هذا إلى تصدير بياناتك المحلية في تطبيق InvoiceFlow Pro إلى ملف نسخة احتياطية يمكنك تخزينه بأمان.';
+
+  @override
+  String get restoreWarningContent =>
+      'قد تؤدي استعادة النسخة الاحتياطية إلى استبدال بياناتك المحلية الحالية. قم بإنشاء نسخة احتياطية جديدة قبل المتابعة.';
+
+  @override
+  String restoreSelectedContent(Object fileName) {
+    return 'تم تحديد ملف النسخة الاحتياطية: $fileName\n\nستؤدي الاستعادة إلى استبدال قاعدة بياناتك المحلية الحالية. لا يمكن التراجع عن هذا الإجراء.';
+  }
+
+  @override
+  String get restoreCompleted => 'اكتملت الاستعادة';
+
+  @override
+  String get restoreSuccessMessage =>
+      'تمت استعادة النسخة الاحتياطية بنجاح. يرجى إعادة تشغيل التطبيق لتحميل البيانات المستعادة بأمان.';
+
+  @override
+  String get closeAppIOS =>
+      'أغلق تطبيق InvoiceFlow Pro من مبدل التطبيقات وأعد فتحه.';
+
+  @override
+  String get closeApp => 'إغلاق التطبيق';
+
+  @override
+  String get backupCreatedSharingFailed =>
+      'تم إنشاء النسخة الاحتياطية ولكن فشلت عملية المشاركة.';
+
+  @override
+  String get invalidBackupFile => 'يرجى تحديد ملف نسخة احتياطية صالح للتطبيق.';
+
+  @override
+  String get couldNotAccessBackup =>
+      'تعذر الوصول إلى ملف النسخة الاحتياطية المحدد.';
+
+  @override
+  String get itemDetails => 'تفاصيل العنصر';
+
+  @override
+  String get defaultTaxRate => 'نسبة الضريبة الافتراضية';
+
+  @override
+  String get deleteItemTitle => 'حذف العنصر؟';
+
+  @override
+  String get deleteCustomerTitle => 'حذف العميل؟';
+
+  @override
+  String get customerDetails => 'تفاصيل العميل';
+
+  @override
+  String get billingAddress => 'عنوان الفوترة';
+
+  @override
+  String get noContactInfo => 'لم يتم توفير معلومات اتصال.';
+
+  @override
+  String copiedToClipboard(String label) {
+    return 'تم نسخ $label إلى الحافظة';
+  }
+
+  @override
+  String get failedToLoadProfile => 'فشل تحميل ملف العمل لإنشاء ملف PDF.';
+
+  @override
+  String get draftDeleted => 'تم حذف المسودة بنجاح.';
+
+  @override
+  String get invoiceCancelled => 'تم إلغاء الفاتورة.';
+
+  @override
+  String get cancelledInvoiceDeleted => 'تم حذف الفاتورة الملغاة.';
+
+  @override
+  String get error => 'خطأ';
+
+  @override
+  String get status => 'الحالة';
+
+  @override
+  String get billedTo => 'فاتورة إلى';
+
+  @override
+  String get lineItems => 'عناصر الفاتورة';
+
+  @override
+  String get previewPdf => 'معاينة PDF';
+
+  @override
+  String get unitPiece => 'قطعة';
+
+  @override
+  String get unitHour => 'ساعة';
+
+  @override
+  String get unitDay => 'يوم';
+
+  @override
+  String get unitProject => 'مشروع';
+
+  @override
+  String get unitService => 'خدمة';
+
+  @override
+  String get unitKg => 'كجم';
+
+  @override
+  String get unitGram => 'جرام';
+
+  @override
+  String get unitLiter => 'لتر';
+
+  @override
+  String get unitMeter => 'متر';
+
+  @override
+  String get unitKm => 'كيلومتر';
+
+  @override
+  String get unitBox => 'صندوق';
+
+  @override
+  String get unitPack => 'عبوة';
+
+  @override
+  String get unitSet => 'مجموعة';
+
+  @override
+  String deleteCustomerContent(Object customerName) {
+    return 'هل أنت متأكد أنك تريد حذف $customerName؟ لا يمكن التراجع عن هذا الإجراء.';
+  }
+
+  @override
+  String deleteItemContent(Object productName) {
+    return 'هل أنت متأكد أنك تريد حذف \"$productName\"؟ لا يمكن التراجع عن هذا الإجراء.';
+  }
+
+  @override
+  String get deleteDraftTitle => 'حذف المسودة؟';
+
+  @override
+  String get deleteDraftMessage =>
+      'سيتم حذف مسودة الفاتورة هذه نهائيًا. لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get deleteCancelledTitle => 'حذف الفاتورة الملغاة؟';
+
+  @override
+  String get deleteCancelledMessage =>
+      'سيؤدي هذا إلى حذف سجل الفاتورة الملغاة هذا نهائيًا. لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get contactInformation => 'معلومات الاتصال';
+
+  @override
+  String get pdfReady => 'ملف PDF جاهز';
+
+  @override
+  String pdfGenerated(Object customerName, Object invoiceNumber) {
+    return 'تم إنشاء فاتورة $invoiceNumber للعميل $customerName بنجاح.';
+  }
+
+  @override
+  String get markPaid => 'مدفوعة';
+
+  @override
+  String get markUnpaid => 'غير مدفوعة';
+
+  @override
+  String get invoicePdf => 'فاتورة PDF';
+
+  @override
+  String get printPdf => 'طباعة PDF';
+
+  @override
+  String get sharePdf => 'مشاركة PDF';
+
+  @override
+  String get website => 'الموقع الإلكتروني';
+
+  @override
+  String get websiteHint => 'أدخل رابط الموقع الإلكتروني';
+
+  @override
+  String get phoneTooShort => 'رقم الهاتف قصير جدًا';
+
+  @override
+  String get amountTooLarge => 'المبلغ كبير جدًا';
+
+  @override
+  String get contactPhone => 'رقم التواصل';
+
+  @override
+  String get totalInvoice => 'إجمالي الفاتورة';
+
+  @override
+  String get totalInvoices => 'إجمالي الفواتير';
+
+  @override
+  String get notesPaymentTerms => 'الملاحظات / شروط الدفع';
+
+  @override
+  String get welcomeTitle => 'مرحبًا بك في InvoiceFlow Pro';
+
+  @override
+  String get welcomeSubtitle =>
+      'قم بإعداد ملف نشاطك التجاري للبدء في إنشاء فواتير احترافية.';
+
+  @override
+  String get completeSetup => 'إكمال الإعداد';
+
+  @override
+  String get customerInvoicesTitle => 'فواتير العميل';
+
+  @override
+  String get noCustomerInvoicesYet => 'لا توجد فواتير لهذا العميل بعد.';
+
+  @override
+  String get noCustomerInvoicesSubtitle =>
+      'أنشئ فاتورة لهذا العميل لبدء تتبع سجل الفوترة الخاص به.';
 }

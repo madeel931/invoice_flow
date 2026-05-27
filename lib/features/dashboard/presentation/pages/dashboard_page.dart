@@ -149,7 +149,7 @@ class _DashboardView extends StatelessWidget {
                     const SizedBox(height: 24),
 
                     // 2. INVOICE LIFECYCLE SUMMARY
-                    Text('Invoice Summary',
+                    Text(AppLocalizations.of(context)?.invoiceSummary ?? 'Invoice Summary',
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium
@@ -159,25 +159,25 @@ class _DashboardView extends StatelessWidget {
                       children: [
                         Expanded(
                             child: _StatBox(
-                                title: 'Drafts',
+                                title: AppLocalizations.of(context)?.statusDraft ?? 'Drafts',
                                 count: metrics.draftInvoicesCount,
                                 color: Colors.grey)),
                         const SizedBox(width: 12),
                         Expanded(
                             child: _StatBox(
-                                title: 'Unpaid',
+                                title: AppLocalizations.of(context)?.statusUnpaid ?? 'Unpaid',
                                 count: metrics.unpaidInvoicesCount,
                                 color: Colors.orange)),
                         const SizedBox(width: 12),
                         Expanded(
                             child: _StatBox(
-                                title: 'Overdue',
+                                title: AppLocalizations.of(context)?.statusOverdue ?? 'Overdue',
                                 count: metrics.overdueInvoicesCount,
                                 color: Colors.red)),
                         const SizedBox(width: 12),
                         Expanded(
                             child: _StatBox(
-                                title: 'Paid',
+                                title: AppLocalizations.of(context)?.statusPaid ?? 'Paid',
                                 count: metrics.paidInvoicesCount,
                                 color: Colors.green)),
                       ],
@@ -195,7 +195,7 @@ class _DashboardView extends StatelessWidget {
                                 ?.copyWith(fontWeight: FontWeight.bold)),
                         TextButton(
                           onPressed: () => context.go(AppRoutes.invoicesList),
-                          child: const Text('View All'),
+                          child: Text(AppLocalizations.of(context)?.viewAll ?? 'View All'),
                         )
                       ],
                     ),
@@ -285,7 +285,7 @@ class _DashboardView extends StatelessWidget {
           }
         }),
         icon: const Icon(Icons.add),
-        label: const Text('New Invoice'),
+        label: Text(AppLocalizations.of(context)?.newInvoice ?? 'New Invoice'),
       ),
     );
   }

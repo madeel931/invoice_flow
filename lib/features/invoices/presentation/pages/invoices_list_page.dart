@@ -196,7 +196,7 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
         return Scaffold(
           appBar: AppBar(
             title: Text(widget.filterCustomerId != null
-                ? 'Customer Invoices'
+                ? AppLocalizations.of(context)?.customerInvoicesTitle ?? 'Customer Invoices'
                 : AppLocalizations.of(context)?.invoicesTitle ?? 'Invoices'),
             bottom: PreferredSize(
               preferredSize:
@@ -288,9 +288,11 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                   icon: Icons.receipt_long_outlined,
                   title: widget.filterCustomerId == null && state.searchQuery.isEmpty
                       ? AppLocalizations.of(context)?.noInvoicesYet ?? 'No invoices yet'
-                      : null,
+                      : widget.filterCustomerId != null && state.searchQuery.isEmpty
+                          ? AppLocalizations.of(context)?.noCustomerInvoicesYet ?? 'No invoices for this customer yet.'
+                          : null,
                   message: widget.filterCustomerId != null
-                      ? 'This customer has no invoices yet.'
+                      ? AppLocalizations.of(context)?.noCustomerInvoicesSubtitle ?? 'Create an invoice for this customer to start tracking their billing history.'
                       : (state.searchQuery.isNotEmpty
                           ? 'No invoices match your search.'
                           : AppLocalizations.of(context)?.noInvoicesSubtitle ?? 'You haven\'t created any invoices yet.'),
@@ -367,7 +369,7 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                                 )),
                             const SizedBox(height: 2),
                             Text(
-                                'Issue Date: ${DateFormat('MMM dd, yyyy').format(inv.issueDate)}',
+                                '${AppLocalizations.of(context)?.issueDate ?? "Issue Date"}: ${DateFormat('MMM dd, yyyy').format(inv.issueDate)}',
                                 style: textTheme.bodySmall?.copyWith(
                                   color: colorScheme.onSurfaceVariant,
                                 )),

@@ -925,6 +925,546 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter a valid business email'**
   String get invalidBusinessEmail;
+
+  /// No description provided for @invoiceSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice Summary'**
+  String get invoiceSummary;
+
+  /// No description provided for @viewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get viewAll;
+
+  /// No description provided for @newInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'New Invoice'**
+  String get newInvoice;
+
+  /// No description provided for @theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get theme;
+
+  /// No description provided for @system.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get system;
+
+  /// No description provided for @light.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get light;
+
+  /// No description provided for @dark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get dark;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}'**
+  String appVersion(String version);
+
+  /// No description provided for @createBackupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Backup?'**
+  String get createBackupTitle;
+
+  /// No description provided for @createBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Backup'**
+  String get createBackup;
+
+  /// No description provided for @restoreBackupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Backup?'**
+  String get restoreBackupTitle;
+
+  /// No description provided for @restoreBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Backup'**
+  String get restoreBackup;
+
+  /// No description provided for @chooseBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Backup'**
+  String get chooseBackup;
+
+  /// No description provided for @confirmRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Restore'**
+  String get confirmRestore;
+
+  /// No description provided for @restoreNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Now'**
+  String get restoreNow;
+
+  /// No description provided for @backupAndRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup & Restore'**
+  String get backupAndRestore;
+
+  /// No description provided for @dataManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Management'**
+  String get dataManagement;
+
+  /// No description provided for @exportBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Backup'**
+  String get exportBackup;
+
+  /// No description provided for @exportBackupSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save your database securely.'**
+  String get exportBackupSubtitle;
+
+  /// No description provided for @restoreBackupSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace current data with backup.'**
+  String get restoreBackupSubtitle;
+
+  /// No description provided for @backupCreatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup created successfully.'**
+  String get backupCreatedSuccess;
+
+  /// No description provided for @backupCreatedMissingPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup created but file path is missing.'**
+  String get backupCreatedMissingPath;
+
+  /// No description provided for @createBackupContent.
+  ///
+  /// In en, this message translates to:
+  /// **'This will export your local InvoiceFlow Pro data into a backup file that you can store safely.'**
+  String get createBackupContent;
+
+  /// No description provided for @restoreWarningContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring a backup may replace your current local data. Create a fresh backup before continuing.'**
+  String get restoreWarningContent;
+
+  /// No description provided for @restoreSelectedContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup file selected: {fileName}\n\nRestoring will replace your current local database. This action cannot be undone.'**
+  String restoreSelectedContent(Object fileName);
+
+  /// No description provided for @restoreCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Completed'**
+  String get restoreCompleted;
+
+  /// No description provided for @restoreSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your backup was restored successfully. Please restart the app to load restored data safely.'**
+  String get restoreSuccessMessage;
+
+  /// No description provided for @closeAppIOS.
+  ///
+  /// In en, this message translates to:
+  /// **'Close InvoiceFlow Pro from the app switcher and reopen it.'**
+  String get closeAppIOS;
+
+  /// No description provided for @closeApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Close App'**
+  String get closeApp;
+
+  /// No description provided for @backupCreatedSharingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup created but sharing failed.'**
+  String get backupCreatedSharingFailed;
+
+  /// No description provided for @invalidBackupFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a valid InvoiceFlow Pro backup file.'**
+  String get invalidBackupFile;
+
+  /// No description provided for @couldNotAccessBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not access the selected backup file.'**
+  String get couldNotAccessBackup;
+
+  /// No description provided for @itemDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Item Details'**
+  String get itemDetails;
+
+  /// No description provided for @defaultTaxRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Tax Rate'**
+  String get defaultTaxRate;
+
+  /// No description provided for @deleteItemTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Item?'**
+  String get deleteItemTitle;
+
+  /// No description provided for @deleteCustomerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Customer?'**
+  String get deleteCustomerTitle;
+
+  /// No description provided for @customerDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer Details'**
+  String get customerDetails;
+
+  /// No description provided for @billingAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing Address'**
+  String get billingAddress;
+
+  /// No description provided for @noContactInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'No contact information provided.'**
+  String get noContactInfo;
+
+  /// No description provided for @copiedToClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'{label} copied to clipboard'**
+  String copiedToClipboard(String label);
+
+  /// No description provided for @failedToLoadProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load profile for PDF.'**
+  String get failedToLoadProfile;
+
+  /// No description provided for @draftDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft deleted successfully.'**
+  String get draftDeleted;
+
+  /// No description provided for @invoiceCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice cancelled.'**
+  String get invoiceCancelled;
+
+  /// No description provided for @cancelledInvoiceDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled invoice deleted.'**
+  String get cancelledInvoiceDeleted;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
+
+  /// No description provided for @status.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get status;
+
+  /// No description provided for @billedTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Billed To'**
+  String get billedTo;
+
+  /// No description provided for @lineItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Line Items'**
+  String get lineItems;
+
+  /// No description provided for @previewPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview PDF'**
+  String get previewPdf;
+
+  /// No description provided for @unitPiece.
+  ///
+  /// In en, this message translates to:
+  /// **'Piece'**
+  String get unitPiece;
+
+  /// No description provided for @unitHour.
+  ///
+  /// In en, this message translates to:
+  /// **'Hour'**
+  String get unitHour;
+
+  /// No description provided for @unitDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get unitDay;
+
+  /// No description provided for @unitProject.
+  ///
+  /// In en, this message translates to:
+  /// **'Project'**
+  String get unitProject;
+
+  /// No description provided for @unitService.
+  ///
+  /// In en, this message translates to:
+  /// **'Service'**
+  String get unitService;
+
+  /// No description provided for @unitKg.
+  ///
+  /// In en, this message translates to:
+  /// **'Kilogram'**
+  String get unitKg;
+
+  /// No description provided for @unitGram.
+  ///
+  /// In en, this message translates to:
+  /// **'Gram'**
+  String get unitGram;
+
+  /// No description provided for @unitLiter.
+  ///
+  /// In en, this message translates to:
+  /// **'Liter'**
+  String get unitLiter;
+
+  /// No description provided for @unitMeter.
+  ///
+  /// In en, this message translates to:
+  /// **'Meter'**
+  String get unitMeter;
+
+  /// No description provided for @unitKm.
+  ///
+  /// In en, this message translates to:
+  /// **'Kilometer'**
+  String get unitKm;
+
+  /// No description provided for @unitBox.
+  ///
+  /// In en, this message translates to:
+  /// **'Box'**
+  String get unitBox;
+
+  /// No description provided for @unitPack.
+  ///
+  /// In en, this message translates to:
+  /// **'Pack'**
+  String get unitPack;
+
+  /// No description provided for @unitSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Set'**
+  String get unitSet;
+
+  /// No description provided for @deleteCustomerContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete {customerName}? This action cannot be undone.'**
+  String deleteCustomerContent(Object customerName);
+
+  /// No description provided for @deleteItemContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete \"{productName}\"? This action cannot be undone.'**
+  String deleteItemContent(Object productName);
+
+  /// No description provided for @deleteDraftTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Draft?'**
+  String get deleteDraftTitle;
+
+  /// No description provided for @deleteDraftMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This draft invoice will be permanently deleted. This action cannot be undone.'**
+  String get deleteDraftMessage;
+
+  /// No description provided for @deleteCancelledTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Cancelled Invoice?'**
+  String get deleteCancelledTitle;
+
+  /// No description provided for @deleteCancelledMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently delete this cancelled invoice record. This action cannot be undone.'**
+  String get deleteCancelledMessage;
+
+  /// No description provided for @contactInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Information'**
+  String get contactInformation;
+
+  /// No description provided for @pdfReady.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF Ready'**
+  String get pdfReady;
+
+  /// No description provided for @pdfGenerated.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice {invoiceNumber} for {customerName} has been generated successfully.'**
+  String pdfGenerated(Object customerName, Object invoiceNumber);
+
+  /// No description provided for @markPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Paid'**
+  String get markPaid;
+
+  /// No description provided for @markUnpaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Unpaid'**
+  String get markUnpaid;
+
+  /// No description provided for @invoicePdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice PDF'**
+  String get invoicePdf;
+
+  /// No description provided for @printPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Print PDF'**
+  String get printPdf;
+
+  /// No description provided for @sharePdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Share PDF'**
+  String get sharePdf;
+
+  /// No description provided for @website.
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get website;
+
+  /// No description provided for @websiteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter website URL'**
+  String get websiteHint;
+
+  /// No description provided for @phoneTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number is too short'**
+  String get phoneTooShort;
+
+  /// No description provided for @amountTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount is too large'**
+  String get amountTooLarge;
+
+  /// No description provided for @contactPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Phone'**
+  String get contactPhone;
+
+  /// No description provided for @totalInvoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Invoice'**
+  String get totalInvoice;
+
+  /// No description provided for @totalInvoices.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Invoices'**
+  String get totalInvoices;
+
+  /// No description provided for @notesPaymentTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes / Payment Terms'**
+  String get notesPaymentTerms;
+
+  /// No description provided for @welcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to InvoiceFlow Pro'**
+  String get welcomeTitle;
+
+  /// No description provided for @welcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up your business profile to start generating professional invoices.'**
+  String get welcomeSubtitle;
+
+  /// No description provided for @completeSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Setup'**
+  String get completeSetup;
+
+  /// No description provided for @customerInvoicesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer Invoices'**
+  String get customerInvoicesTitle;
+
+  /// No description provided for @noCustomerInvoicesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No invoices for this customer yet.'**
+  String get noCustomerInvoicesYet;
+
+  /// No description provided for @noCustomerInvoicesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an invoice for this customer to start tracking their billing history.'**
+  String get noCustomerInvoicesSubtitle;
 }
 
 class _AppLocalizationsDelegate

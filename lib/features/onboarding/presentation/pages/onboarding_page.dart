@@ -7,6 +7,7 @@ import '../../../../config/routes/route_constants.dart';
 import '../../../../core/presentation/widgets/app_currency_picker_field.dart';
 import '../../../../core/widgets/global_button.dart';
 import '../../../../core/utils/app_validators.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../cubit/onboarding_cubit.dart';
 import '../cubit/onboarding_state.dart';
 
@@ -84,7 +85,7 @@ class _OnboardingViewState extends State<_OnboardingView> {
                           size: 64, color: Color(0xFF2563EB)),
                       const SizedBox(height: 24),
                       Text(
-                        'Welcome to InvoiceFlow Pro',
+                        AppLocalizations.of(context)?.welcomeTitle ?? 'Welcome to InvoiceFlow Pro',
                         style:
                             Theme.of(context).textTheme.headlineSmall?.copyWith(
                                   fontWeight: FontWeight.bold,
@@ -93,7 +94,7 @@ class _OnboardingViewState extends State<_OnboardingView> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Set up your business profile to start generating professional invoices.',
+                        AppLocalizations.of(context)?.welcomeSubtitle ?? 'Set up your business profile to start generating professional invoices.',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: Theme.of(context)
                                   .colorScheme
@@ -106,16 +107,16 @@ class _OnboardingViewState extends State<_OnboardingView> {
                       TextFormField(
                         controller: _nameController,
                         maxLength: 100,
-                        decoration: const InputDecoration(
-                          labelText: 'Business Name',
-                          prefixIcon: Icon(Icons.storefront_rounded),
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)?.businessName ?? 'Business Name',
+                          prefixIcon: const Icon(Icons.storefront_rounded),
                         ),
                         textInputAction: TextInputAction.next,
-                        validator: (value) => AppValidators.requiredText(value, min: 2, max: 100, fieldName: 'Business Name'),
+                        validator: (value) => AppValidators.requiredText(value, min: 2, max: 100, fieldName: AppLocalizations.of(context)?.businessName ?? 'Business Name'),
                       ),
                       const SizedBox(height: 20),
                       AppCurrencyPickerField(
-                        label: 'Base Currency',
+                        label: AppLocalizations.of(context)?.baseCurrency ?? 'Base Currency',
                         selectedCurrencyCode: _selectedCurrency,
                         onChanged: (value) {
                           setState(() {
@@ -125,7 +126,7 @@ class _OnboardingViewState extends State<_OnboardingView> {
                       ),
                       const SizedBox(height: 40),
                       GlobalButton(
-                        text: 'Complete Setup',
+                        text: AppLocalizations.of(context)?.completeSetup ?? 'Complete Setup',
                         isLoading: state is OnboardingLoading,
                         onPressed: _submit,
                       ),

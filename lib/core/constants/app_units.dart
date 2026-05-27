@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 
 class AppUnit {
   final String value;
@@ -50,6 +51,41 @@ class AppUnits {
   static String labelOf(String? value) {
     final normalized = normalize(value);
     return all.firstWhere((unit) => unit.value == normalized).label;
+  }
+
+  static String localizedLabelOf(BuildContext context, String? value) {
+    final normalized = normalize(value);
+    final localizations = AppLocalizations.of(context);
+    switch (normalized) {
+      case 'piece':
+        return localizations?.unitPiece ?? 'Piece';
+      case 'hour':
+        return localizations?.unitHour ?? 'Hour';
+      case 'day':
+        return localizations?.unitDay ?? 'Day';
+      case 'project':
+        return localizations?.unitProject ?? 'Project';
+      case 'service':
+        return localizations?.unitService ?? 'Service';
+      case 'kg':
+        return localizations?.unitKg ?? 'Kilogram';
+      case 'gram':
+        return localizations?.unitGram ?? 'Gram';
+      case 'liter':
+        return localizations?.unitLiter ?? 'Liter';
+      case 'meter':
+        return localizations?.unitMeter ?? 'Meter';
+      case 'km':
+        return localizations?.unitKm ?? 'Kilometer';
+      case 'box':
+        return localizations?.unitBox ?? 'Box';
+      case 'pack':
+        return localizations?.unitPack ?? 'Pack';
+      case 'set':
+        return localizations?.unitSet ?? 'Set';
+      default:
+        return labelOf(value);
+    }
   }
 
   static IconData iconOf(String? value) {

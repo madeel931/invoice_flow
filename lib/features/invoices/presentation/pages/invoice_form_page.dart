@@ -478,9 +478,9 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                               controller: _notesController,
                               maxLines: 2,
                               maxLength: 500,
-                              decoration: const InputDecoration(
-                                  labelText: 'Notes / Payment Terms',
-                                  prefixIcon: Icon(Icons.notes)),
+                              decoration: InputDecoration(
+                                  labelText: AppLocalizations.of(context)?.notesPaymentTerms ?? 'Notes / Payment Terms',
+                                  prefixIcon: const Icon(Icons.notes)),
                               onChanged: (val) => context
                                   .read<InvoiceFormCubit>()
                                   .updateNotes(val),

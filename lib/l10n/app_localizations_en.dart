@@ -427,4 +427,297 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get invalidBusinessEmail => 'Enter a valid business email';
+
+  @override
+  String get invoiceSummary => 'Invoice Summary';
+
+  @override
+  String get viewAll => 'View All';
+
+  @override
+  String get newInvoice => 'New Invoice';
+
+  @override
+  String get theme => 'Theme';
+
+  @override
+  String get system => 'System';
+
+  @override
+  String get light => 'Light';
+
+  @override
+  String get dark => 'Dark';
+
+  @override
+  String appVersion(String version) {
+    return 'Version $version';
+  }
+
+  @override
+  String get createBackupTitle => 'Create Backup?';
+
+  @override
+  String get createBackup => 'Create Backup';
+
+  @override
+  String get restoreBackupTitle => 'Restore Backup?';
+
+  @override
+  String get restoreBackup => 'Restore Backup';
+
+  @override
+  String get chooseBackup => 'Choose Backup';
+
+  @override
+  String get confirmRestore => 'Confirm Restore';
+
+  @override
+  String get restoreNow => 'Restore Now';
+
+  @override
+  String get backupAndRestore => 'Backup & Restore';
+
+  @override
+  String get dataManagement => 'Data Management';
+
+  @override
+  String get exportBackup => 'Export Backup';
+
+  @override
+  String get exportBackupSubtitle => 'Save your database securely.';
+
+  @override
+  String get restoreBackupSubtitle => 'Replace current data with backup.';
+
+  @override
+  String get backupCreatedSuccess => 'Backup created successfully.';
+
+  @override
+  String get backupCreatedMissingPath =>
+      'Backup created but file path is missing.';
+
+  @override
+  String get createBackupContent =>
+      'This will export your local InvoiceFlow Pro data into a backup file that you can store safely.';
+
+  @override
+  String get restoreWarningContent =>
+      'Restoring a backup may replace your current local data. Create a fresh backup before continuing.';
+
+  @override
+  String restoreSelectedContent(Object fileName) {
+    return 'Backup file selected: $fileName\n\nRestoring will replace your current local database. This action cannot be undone.';
+  }
+
+  @override
+  String get restoreCompleted => 'Restore Completed';
+
+  @override
+  String get restoreSuccessMessage =>
+      'Your backup was restored successfully. Please restart the app to load restored data safely.';
+
+  @override
+  String get closeAppIOS =>
+      'Close InvoiceFlow Pro from the app switcher and reopen it.';
+
+  @override
+  String get closeApp => 'Close App';
+
+  @override
+  String get backupCreatedSharingFailed => 'Backup created but sharing failed.';
+
+  @override
+  String get invalidBackupFile =>
+      'Please select a valid InvoiceFlow Pro backup file.';
+
+  @override
+  String get couldNotAccessBackup =>
+      'Could not access the selected backup file.';
+
+  @override
+  String get itemDetails => 'Item Details';
+
+  @override
+  String get defaultTaxRate => 'Default Tax Rate';
+
+  @override
+  String get deleteItemTitle => 'Delete Item?';
+
+  @override
+  String get deleteCustomerTitle => 'Delete Customer?';
+
+  @override
+  String get customerDetails => 'Customer Details';
+
+  @override
+  String get billingAddress => 'Billing Address';
+
+  @override
+  String get noContactInfo => 'No contact information provided.';
+
+  @override
+  String copiedToClipboard(String label) {
+    return '$label copied to clipboard';
+  }
+
+  @override
+  String get failedToLoadProfile => 'Failed to load profile for PDF.';
+
+  @override
+  String get draftDeleted => 'Draft deleted successfully.';
+
+  @override
+  String get invoiceCancelled => 'Invoice cancelled.';
+
+  @override
+  String get cancelledInvoiceDeleted => 'Cancelled invoice deleted.';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get status => 'Status';
+
+  @override
+  String get billedTo => 'Billed To';
+
+  @override
+  String get lineItems => 'Line Items';
+
+  @override
+  String get previewPdf => 'Preview PDF';
+
+  @override
+  String get unitPiece => 'Piece';
+
+  @override
+  String get unitHour => 'Hour';
+
+  @override
+  String get unitDay => 'Day';
+
+  @override
+  String get unitProject => 'Project';
+
+  @override
+  String get unitService => 'Service';
+
+  @override
+  String get unitKg => 'Kilogram';
+
+  @override
+  String get unitGram => 'Gram';
+
+  @override
+  String get unitLiter => 'Liter';
+
+  @override
+  String get unitMeter => 'Meter';
+
+  @override
+  String get unitKm => 'Kilometer';
+
+  @override
+  String get unitBox => 'Box';
+
+  @override
+  String get unitPack => 'Pack';
+
+  @override
+  String get unitSet => 'Set';
+
+  @override
+  String deleteCustomerContent(Object customerName) {
+    return 'Are you sure you want to delete $customerName? This action cannot be undone.';
+  }
+
+  @override
+  String deleteItemContent(Object productName) {
+    return 'Are you sure you want to delete \"$productName\"? This action cannot be undone.';
+  }
+
+  @override
+  String get deleteDraftTitle => 'Delete Draft?';
+
+  @override
+  String get deleteDraftMessage =>
+      'This draft invoice will be permanently deleted. This action cannot be undone.';
+
+  @override
+  String get deleteCancelledTitle => 'Delete Cancelled Invoice?';
+
+  @override
+  String get deleteCancelledMessage =>
+      'This will permanently delete this cancelled invoice record. This action cannot be undone.';
+
+  @override
+  String get contactInformation => 'Contact Information';
+
+  @override
+  String get pdfReady => 'PDF Ready';
+
+  @override
+  String pdfGenerated(Object customerName, Object invoiceNumber) {
+    return 'Invoice $invoiceNumber for $customerName has been generated successfully.';
+  }
+
+  @override
+  String get markPaid => 'Mark Paid';
+
+  @override
+  String get markUnpaid => 'Mark Unpaid';
+
+  @override
+  String get invoicePdf => 'Invoice PDF';
+
+  @override
+  String get printPdf => 'Print PDF';
+
+  @override
+  String get sharePdf => 'Share PDF';
+
+  @override
+  String get website => 'Website';
+
+  @override
+  String get websiteHint => 'Enter website URL';
+
+  @override
+  String get phoneTooShort => 'Phone number is too short';
+
+  @override
+  String get amountTooLarge => 'Amount is too large';
+
+  @override
+  String get contactPhone => 'Contact Phone';
+
+  @override
+  String get totalInvoice => 'Total Invoice';
+
+  @override
+  String get totalInvoices => 'Total Invoices';
+
+  @override
+  String get notesPaymentTerms => 'Notes / Payment Terms';
+
+  @override
+  String get welcomeTitle => 'Welcome to InvoiceFlow Pro';
+
+  @override
+  String get welcomeSubtitle =>
+      'Set up your business profile to start generating professional invoices.';
+
+  @override
+  String get completeSetup => 'Complete Setup';
+
+  @override
+  String get customerInvoicesTitle => 'Customer Invoices';
+
+  @override
+  String get noCustomerInvoicesYet => 'No invoices for this customer yet.';
+
+  @override
+  String get noCustomerInvoicesSubtitle =>
+      'Create an invoice for this customer to start tracking their billing history.';
 }

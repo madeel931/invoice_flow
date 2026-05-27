@@ -121,7 +121,7 @@ class _SettingsViewState extends State<_SettingsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)?.settings ?? 'Settings')),
       body: BlocListener<SettingsCubit, SettingsState>(
         listener: (context, state) {
           if (state.status == SettingsStatus.error) {
@@ -288,7 +288,7 @@ class _SettingsViewState extends State<_SettingsView> {
                           ),
                         ),
                         const SizedBox(height: AppSpacing.md),
-                        Text('Contact Information',
+                        Text(AppLocalizations.of(context)?.contactInformation ?? 'Contact Information',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
@@ -310,15 +310,18 @@ class _SettingsViewState extends State<_SettingsView> {
                                   prefixIcon: const Icon(Icons.phone_outlined),
                                   maxLength: 20,
                                   inputFormatters: [AppInputFormatters.phone],
-                                  validator: (val) => AppValidators.phone(val, max: 20)),
+                                  validator: (val) => AppValidators.phone(val, max: 20,
+                                      errorMinLength: AppLocalizations.of(context)?.phoneTooShort,
+                                      errorMaxLength: AppLocalizations.of(context)?.phoneTooLong)),
                               const SizedBox(height: AppSpacing.md),
                               GlobalTextField(
                                   controller: _websiteController,
-                                  label: 'Website',
+                                  label: AppLocalizations.of(context)?.website ?? 'Website',
+                                  hint: AppLocalizations.of(context)?.websiteHint ?? 'Enter website URL',
                                   prefixIcon:
                                       const Icon(Icons.language_outlined),
                                   maxLength: 100,
-                                  validator: (val) => AppValidators.optionalText(val, max: 100, fieldName: 'Website')),
+                                  validator: (val) => AppValidators.optionalText(val, max: 100, fieldName: AppLocalizations.of(context)?.website ?? 'Website')),
                               const SizedBox(height: AppSpacing.md),
                               GlobalTextField(
                                   controller: _addressController,

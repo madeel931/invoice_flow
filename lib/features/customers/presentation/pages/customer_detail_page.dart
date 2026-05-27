@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../config/routes/route_constants.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../../../../core/widgets/global_card.dart';
@@ -61,7 +62,7 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
   void _copyToClipboard(BuildContext context, String text, String label) {
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$label copied to clipboard')),
+      SnackBar(content: Text(AppLocalizations.of(context)?.copiedToClipboard(label) ?? '$label copied to clipboard')),
     );
   }
 
@@ -70,20 +71,20 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete Customer?'),
+          title: Text(AppLocalizations.of(context)?.deleteCustomerTitle ?? 'Delete Customer?'),
           content: Text(
-              'Are you sure you want to delete ${customer.name}? This action cannot be undone.'),
+              AppLocalizations.of(context)?.deleteCustomerContent(customer.name) ?? 'Are you sure you want to delete ${customer.name}? This action cannot be undone.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context)?.cancel ?? 'Cancel'),
             ),
             FilledButton.icon(
               style: FilledButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.error),
               onPressed: () => Navigator.of(context).pop(true),
               icon: const Icon(Icons.delete_outline, size: 18),
-              label: const Text('Delete'),
+              label: Text(AppLocalizations.of(context)?.delete ?? 'Delete'),
             ),
           ],
         );
@@ -105,17 +106,17 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Customer Details')),
+            appBar: AppBar(title: Text(AppLocalizations.of(context)?.customerDetails ?? 'Customer Details')),
             body: const Center(child: CircularProgressIndicator()),
           );
         }
 
         if (snapshot.hasError || !snapshot.hasData) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Customer Details')),
-            body: const EmptyStateWidget(
+            appBar: AppBar(title: Text(AppLocalizations.of(context)?.customerDetails ?? 'Customer Details')),
+            body: EmptyStateWidget(
               icon: Icons.error_outline,
-              title: 'Customer Not Found',
+              title: AppLocalizations.of(context)?.error ?? 'Customer Not Found',
               message: 'This customer may have been deleted or does not exist.',
             ),
           );
@@ -125,7 +126,7 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Customer Details'),
+            title: Text(AppLocalizations.of(context)?.customerDetails ?? 'Customer Details'),
             actions: [
               IconButton(
                 icon: const Icon(Icons.edit_outlined),
@@ -196,7 +197,7 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
                                       child: CircularProgressIndicator(
                                           strokeWidth: 2))
                                   : Text(
-                                      '$count Total Invoices',
+                                      count == 1 ? '${AppLocalizations.of(context)?.totalInvoice ?? 'Total Invoice'}: $count' : '${AppLocalizations.of(context)?.totalInvoices ?? 'Total Invoices'}: $count',
                                       style: theme.textTheme.titleMedium
                                           ?.copyWith(fontWeight: FontWeight.w600),
                                     ),
@@ -220,14 +221,14 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
                         ListTile(
                           leading: Icon(Icons.email_outlined,
                               color: colorScheme.secondary),
-                          title: const Text('Email Address'),
+                          title: Text(AppLocalizations.of(context)?.emailAddress ?? 'Email Address'),
                           subtitle: Text(customer.email!),
                           trailing: IconButton(
                             icon: const Icon(Icons.copy_rounded, size: 20),
                             tooltip: 'Copy Email',
-                            onPressed: () => _copyToClipboard(context, customer.email!, 'Email'),
+                            onPressed: () => _copyToClipboard(context, customer.email!, AppLocalizations.of(context)?.emailAddress ?? 'Email'),
                           ),
-                          onTap: () => _copyToClipboard(context, customer.email!, 'Email'),
+                          onTap: () => _copyToClipboard(context, customer.email!, AppLocalizations.of(context)?.emailAddress ?? 'Email'),
                         ),
                         if (customer.phone != null && customer.phone!.isNotEmpty)
                           const Divider(height: 1),
@@ -236,14 +237,14 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
                         ListTile(
                           leading: Icon(Icons.phone_outlined,
                               color: colorScheme.secondary),
-                          title: const Text('Phone Number'),
+                          title: Text(AppLocalizations.of(context)?.contactPhone ?? 'Contact Phone'),
                           subtitle: Text(customer.phone!),
                           trailing: IconButton(
                             icon: const Icon(Icons.copy_rounded, size: 20),
                             tooltip: 'Copy Phone',
-                            onPressed: () => _copyToClipboard(context, customer.phone!, 'Phone'),
+                            onPressed: () => _copyToClipboard(context, customer.phone!, AppLocalizations.of(context)?.contactPhone ?? 'Phone'),
                           ),
-                          onTap: () => _copyToClipboard(context, customer.phone!, 'Phone'),
+                          onTap: () => _copyToClipboard(context, customer.phone!, AppLocalizations.of(context)?.contactPhone ?? 'Phone'),
                         ),
                         if (customer.billingAddress != null &&
                             customer.billingAddress!.isNotEmpty)
@@ -255,7 +256,7 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
                         ListTile(
                           leading: Icon(Icons.location_on_outlined,
                               color: colorScheme.secondary),
-                          title: const Text('Billing Address'),
+                          title: Text(AppLocalizations.of(context)?.billingAddress ?? 'Billing Address'),
                           subtitle: Text(customer.billingAddress!),
                         ),
                       // If all are empty, show a placeholder
@@ -265,7 +266,7 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
                               customer.billingAddress!.isEmpty))
                         ListTile(
                           leading: Icon(Icons.info_outline, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                          title: const Text('No contact information provided.'),
+                          title: Text(AppLocalizations.of(context)?.noContactInfo ?? 'No contact information provided.'),
                         ),
                     ],
                   ),

@@ -7,6 +7,7 @@ import 'package:get_it/get_it.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../../l10n/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/widgets/global_card.dart';
@@ -40,17 +41,18 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
     final bool? confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Create Backup?'),
-        content: const Text(
-            'This will export your local InvoiceFlow Pro data into a backup file that you can store safely.'),
+        title: Text(AppLocalizations.of(context)?.createBackupTitle ?? 'Create Backup?'),
+        content: Text(
+            AppLocalizations.of(context)?.createBackupContent ?? 'This will export your local InvoiceFlow Pro data into a backup file that you can store safely.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)?.cancel ?? 'Cancel'),
           ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Create Backup'),
+          FilledButton.icon(
+            onPressed: () => Navigator.pop(context, true),
+            icon: const Icon(Icons.save),
+            label: Text(AppLocalizations.of(context)?.createBackup ?? 'Create Backup'),
           ),
         ],
       ),
@@ -66,18 +68,18 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
     final bool? confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Restore Backup?'),
-        content: const Text(
-            'Restoring a backup may replace your current local data. Create a fresh backup before continuing.'),
+        title: Text(AppLocalizations.of(context)?.restoreBackupTitle ?? 'Restore Backup?'),
+        content: Text(
+            AppLocalizations.of(context)?.restoreWarningContent ?? 'Restoring a backup may replace your current local data. Create a fresh backup before continuing.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)?.cancel ?? 'Cancel'),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: FilledButton.styleFrom(backgroundColor: AppColors.error),
-            child: const Text('Choose Backup'),
+            child: Text(AppLocalizations.of(context)?.chooseBackup ?? 'Choose Backup'),
           ),
         ],
       ),
@@ -98,8 +100,8 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
       final String path = result.files.single.path!;
       
       if (!path.toLowerCase().endsWith('.isar')) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Please select a valid InvoiceFlow Pro backup file.'),
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(AppLocalizations.of(context)?.invalidBackupFile ?? 'Please select a valid InvoiceFlow Pro backup file.'),
           backgroundColor: AppColors.error,
         ));
         return;
@@ -108,8 +110,8 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
       final file = File(path);
       if (!await file.exists()) {
          if (mounted) {
-             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                 content: Text('Could not access the selected backup file.'),
+             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                 content: Text(AppLocalizations.of(context)?.couldNotAccessBackup ?? 'Could not access the selected backup file.'),
                  backgroundColor: AppColors.error,
               ));
          }
@@ -126,18 +128,19 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
     final bool? confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirm Restore'),
+        title: Text(AppLocalizations.of(context)?.confirmRestore ?? 'Confirm Restore'),
         content: Text(
-            'Backup file selected: $fileName\n\nRestoring will replace your current local database. This action cannot be undone.'),
+            AppLocalizations.of(context)?.restoreSelectedContent(fileName) ?? 'Backup file selected: $fileName\n\nRestoring will replace your current local database. This action cannot be undone.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)?.cancel ?? 'Cancel'),
           ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
+          FilledButton.icon(
+            onPressed: () => Navigator.pop(context, true),
+            icon: const Icon(Icons.restore),
             style: FilledButton.styleFrom(backgroundColor: AppColors.error),
-            child: const Text('Restore Now'),
+            label: Text(AppLocalizations.of(context)?.restoreNow ?? 'Restore Now'),
           ),
         ],
       ),
@@ -155,7 +158,7 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
       canPop: !_restoreCompleted,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Backup & Restore'),
+          title: Text(AppLocalizations.of(context)?.backupAndRestore ?? 'Backup & Restore'),
           automaticallyImplyLeading: !_restoreCompleted,
         ),
         body: BlocListener<BackupCubit, BackupState>(
@@ -167,8 +170,8 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
               ));
             } else if (state.status == BackupStatus.success) {
               if (state.backupFilePath == null || state.backupFilePath!.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Backup created but file path is missing.'),
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(AppLocalizations.of(context)?.backupCreatedMissingPath ?? 'Backup created but file path is missing.'),
                   backgroundColor: AppColors.error,
                 ));
                 return;
@@ -186,8 +189,8 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
                   sharePositionOrigin: origin,
                 );
                 if (context.mounted) {
-                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                     content: Text('Backup created successfully.'),
+                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                     content: Text(AppLocalizations.of(context)?.backupCreatedSuccess ?? 'Backup created successfully.'),
                      backgroundColor: AppColors.success,
                    ));
                 }
@@ -195,7 +198,7 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
                 // Catch share failures (e.g., iPad share sheet cancellation bugs) and show path as fallback
                 if (context.mounted) {
                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                     content: Text('Backup created but sharing failed. File path: ${state.backupFilePath}'),
+                     content: Text('${AppLocalizations.of(context)?.backupCreatedSharingFailed ?? "Backup created but sharing failed."} File path: ${state.backupFilePath}'),
                      backgroundColor: AppColors.error,
                    ));
                 }
@@ -228,7 +231,7 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
           ),
           const SizedBox(height: AppSpacing.lg),
           Text(
-            'Restore Completed',
+            AppLocalizations.of(context)?.restoreCompleted ?? 'Restore Completed',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
@@ -237,14 +240,14 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
-            'Your backup was restored successfully. Please restart the app to load restored data safely.',
+            AppLocalizations.of(context)?.restoreSuccessMessage ?? 'Your backup was restored successfully. Please restart the app to load restored data safely.',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           if (Platform.isIOS) ...[
             const SizedBox(height: AppSpacing.lg),
             Text(
-              'Close InvoiceFlow Pro from the app switcher and reopen it.',
+              AppLocalizations.of(context)?.closeAppIOS ?? 'Close InvoiceFlow Pro from the app switcher and reopen it.',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -254,7 +257,7 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
           ],
           const SizedBox(height: AppSpacing.xxl),
           GlobalButton(
-            text: 'Close App',
+            text: AppLocalizations.of(context)?.closeApp ?? 'Close App',
             onPressed: () {
               SystemNavigator.pop();
             },
@@ -278,7 +281,7 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
                   children: [
                     Icon(Icons.info_outline, color: Theme.of(context).colorScheme.primary),
                     const SizedBox(width: AppSpacing.sm),
-                    Text('Data Management',
+                    Text(AppLocalizations.of(context)?.dataManagement ?? 'Data Management',
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium
@@ -305,8 +308,8 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
                       children: [
                         ListTile(
                           leading: Icon(Icons.cloud_upload_outlined, color: Theme.of(context).colorScheme.primary),
-                          title: const Text('Export Backup'),
-                          subtitle: const Text('Save your database securely.'),
+                          title: Text(AppLocalizations.of(context)?.exportBackup ?? 'Export Backup'),
+                          subtitle: Text(AppLocalizations.of(context)?.exportBackupSubtitle ?? 'Save your database securely.'),
                           trailing: const Icon(Icons.chevron_right),
                           enabled: !isProcessing,
                           onTap: isProcessing ? null : _confirmExport,
@@ -314,8 +317,8 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
                         const Divider(height: 1),
                         ListTile(
                           leading: Icon(Icons.restore, color: Theme.of(context).colorScheme.error),
-                          title: const Text('Restore Backup'),
-                          subtitle: const Text('Replace current data with backup.'),
+                          title: Text(AppLocalizations.of(context)?.restoreBackup ?? 'Restore Backup'),
+                          subtitle: Text(AppLocalizations.of(context)?.restoreBackupSubtitle ?? 'Replace current data with backup.'),
                           trailing: const Icon(Icons.chevron_right),
                           enabled: !isProcessing,
                           onTap: isProcessing ? null : _confirmRestoreWarning,

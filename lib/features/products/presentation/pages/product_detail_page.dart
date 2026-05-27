@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_units.dart';
 import '../../../../core/utils/formatters.dart';
@@ -50,20 +51,20 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete Item?'),
+          title: Text(AppLocalizations.of(context)?.deleteItemTitle ?? 'Delete Item?'),
           content: Text(
-              'Are you sure you want to delete "${product.name}"? This action cannot be undone.'),
+              AppLocalizations.of(context)?.deleteItemContent(product.name) ?? 'Are you sure you want to delete "${product.name}"? This action cannot be undone.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context)?.cancel ?? 'Cancel'),
             ),
             FilledButton.icon(
               style: FilledButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.error),
               onPressed: () => Navigator.of(context).pop(true),
               icon: const Icon(Icons.delete_outline, size: 18),
-              label: const Text('Delete'),
+              label: Text(AppLocalizations.of(context)?.delete ?? 'Delete'),
             ),
           ],
         );
@@ -85,17 +86,17 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Item Details')),
+            appBar: AppBar(title: Text(AppLocalizations.of(context)?.itemDetails ?? 'Item Details')),
             body: const Center(child: CircularProgressIndicator()),
           );
         }
 
         if (snapshot.hasError || !snapshot.hasData) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Item Details')),
-            body: const EmptyStateWidget(
+            appBar: AppBar(title: Text(AppLocalizations.of(context)?.itemDetails ?? 'Item Details')),
+            body: EmptyStateWidget(
               icon: Icons.error_outline,
-              title: 'Item Not Found',
+              title: AppLocalizations.of(context)?.error ?? 'Item Not Found',
               message: 'This item may have been deleted or does not exist.',
             ),
           );
@@ -105,7 +106,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Item Details'),
+            title: Text(AppLocalizations.of(context)?.itemDetails ?? 'Item Details'),
             actions: [
               IconButton(
                 icon: const Icon(Icons.edit_outlined),
@@ -153,7 +154,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Base Price',
+                              Text(AppLocalizations.of(context)?.basePrice ?? 'Base Price',
                                   style: theme.textTheme.titleMedium
                                       ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
                               const SizedBox(width: AppSpacing.md),
@@ -162,7 +163,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                   fit: BoxFit.scaleDown,
                                   alignment: Alignment.centerRight,
                                   child: Text(
-                                    '${AppFormatters.formatCurrency(product.price, currencyCode)} / ${product.unitType.toLowerCase()}',
+                                    '${AppFormatters.formatCurrency(product.price, currencyCode)} / ${AppUnits.localizedLabelOf(context, product.unitType)}',
                                     style: theme.textTheme.titleLarge?.copyWith(
                                         fontWeight: FontWeight.bold,
                                         color: colorScheme.primary),
@@ -175,9 +176,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('Billing Unit'),
+                              Text(AppLocalizations.of(context)?.billingUnit ?? 'Billing Unit'),
                               Chip(
-                                  label: Text(product.unitType),
+                                  label: Text(AppUnits.localizedLabelOf(context, product.unitType)),
                                   visualDensity: VisualDensity.compact),
                             ],
                           ),
@@ -187,7 +188,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text('Default Tax Rate'),
+                                Text(AppLocalizations.of(context)?.defaultTaxRate ?? 'Default Tax Rate'),
                                 Text('${product.defaultTaxRate!.toStringAsFixed(1)}%',
                                     style:
                                         const TextStyle(fontWeight: FontWeight.bold)),
@@ -210,7 +211,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                 Icon(Icons.notes,
                                     size: 20, color: colorScheme.secondary),
                                 const SizedBox(width: AppSpacing.sm),
-                                Text('Description',
+                                Text(AppLocalizations.of(context)?.description ?? 'Description',
                                     style: theme.textTheme.titleMedium
                                         ?.copyWith(fontWeight: FontWeight.bold)),
                               ],

@@ -31,4 +31,4 @@ android/*.keystore
 
 # Local databases
 *.isar
-*.isar.lock
+*.isar.lockandroid/key.properties

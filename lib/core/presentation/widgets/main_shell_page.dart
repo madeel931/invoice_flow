@@ -45,7 +45,7 @@ class MainShellPage extends StatelessWidget {
           NavigationDestination(
             icon: const Icon(Icons.inventory_2_outlined),
             selectedIcon: const Icon(Icons.inventory_2_rounded),
-            label: AppLocalizations.of(context)!.products,
+            label: AppLocalizations.of(context)?.itemsNavLabel ?? 'Items',
           ),
         ],
       ),

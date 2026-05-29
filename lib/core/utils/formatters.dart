@@ -19,8 +19,18 @@ class AppFormatters {
   /// Compact currency for dashboard/stat cards only. NOT for invoices/PDF/exports.
   static String formatCurrencyCompact(double amount, [String? currencyCode]) {
     final code = (currencyCode == null || currencyCode.trim().isEmpty) ? 'AED' : currencyCode;
-    final format = NumberFormat.compactCurrency(name: code);
-    return format.format(amount);
+    final format = NumberFormat.compactCurrency(name: code, decimalDigits: 2);
+    format.significantDigitsInUse = false;
+    
+    String formatted = format.format(amount);
+    final decimalSeparator = format.symbols.DECIMAL_SEP;
+    
+    formatted = formatted.replaceAll(RegExp(r'\' + decimalSeparator + r'00(?=[^0-9]*$)'), '');
+    formatted = formatted.replaceAllMapped(RegExp(r'(\' + decimalSeparator + r'[0-9]*[1-9])0+(?=[^0-9]*$)'), (match) {
+      return match.group(1)!;
+    });
+    
+    return formatted;
   }
 
   /// PDF-safe currency formatter. Uses ISO 3-letter code instead of Unicode symbols

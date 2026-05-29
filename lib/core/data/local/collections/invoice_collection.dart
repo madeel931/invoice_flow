@@ -41,6 +41,7 @@ class InvoiceCollection {
 
   String? notes;
   String? currencyCode;
+  String? currencySymbol;
 
   DateTime? createdAt;
   DateTime? updatedAt;

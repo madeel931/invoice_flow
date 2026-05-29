@@ -94,16 +94,6 @@ class PremiumDrawer extends StatelessWidget {
                     const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                 children: [
                   _DrawerItem(
-                    icon: Icons.business_center_outlined,
-                    title: AppLocalizations.of(context)!.businessProfile,
-                    isSelected: currentLocation == AppRoutes.settings,
-                    onTap: () {
-                      context.pop(); // Close drawer
-                      context.push(AppRoutes.settings);
-                    },
-                  ),
-                  const SizedBox(height: 4),
-                  _DrawerItem(
                     icon: Icons.cloud_upload_outlined,
                     title: AppLocalizations.of(context)!.backupRestore,
                     isSelected: currentLocation == AppRoutes.backupRestore,
@@ -151,6 +141,20 @@ class PremiumDrawer extends StatelessWidget {
                     isSelected: false,
                     onTap: () {
                       context.pop();
+                    },
+                  ),
+                  const Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                    child: Divider(height: 1),
+                  ),
+                  _DrawerItem(
+                    icon: Icons.business_center_outlined,
+                    title: AppLocalizations.of(context)!.businessProfile,
+                    isSelected: currentLocation == AppRoutes.settings,
+                    onTap: () {
+                      context.pop(); // Close drawer
+                      context.push(AppRoutes.settings);
                     },
                   ),
                 ],

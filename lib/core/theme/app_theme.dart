@@ -73,6 +73,21 @@ class AppTheme {
           ),
         ),
       ),
+      navigationBarTheme: NavigationBarThemeData(
+        indicatorColor: AppColors.primaryBlue.withValues(alpha: 0.2),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const TextStyle(color: AppColors.primaryBlue, fontWeight: FontWeight.bold);
+          }
+          return const TextStyle(color: AppColors.textSecondaryLight);
+        }),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const IconThemeData(color: AppColors.primaryBlue);
+          }
+          return const IconThemeData(color: AppColors.textSecondaryLight);
+        }),
+      ),
     );
   }
 
@@ -146,6 +161,21 @@ class AppTheme {
             letterSpacing: 0.2,
           ),
         ),
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        indicatorColor: AppColors.primaryBlue.withValues(alpha: 0.3),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const TextStyle(color: AppColors.primaryBlue, fontWeight: FontWeight.bold);
+          }
+          return const TextStyle(color: AppColors.textSecondaryDark);
+        }),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const IconThemeData(color: AppColors.primaryBlue);
+          }
+          return const IconThemeData(color: AppColors.textSecondaryDark);
+        }),
       ),
     );
   }

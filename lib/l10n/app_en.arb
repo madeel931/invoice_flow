@@ -1,154 +1,589 @@
 {
   "@@locale": "en",
   "appName": "InvoiceFlow Pro",
+  "@appName": {
+    "description": "Label or text for app name"
+  },
   "dashboard": "Dashboard",
+  "@dashboard": {
+    "description": "Label or text for dashboard"
+  },
   "invoices": "Invoices",
+  "@invoices": {
+    "description": "Label or text for invoices"
+  },
   "customers": "Customers",
+  "@customers": {
+    "description": "Label or text for customers"
+  },
   "products": "Products & Services",
+  "@products": {
+    "description": "Label or text for products"
+  },
   "itemsNavLabel": "Items",
+  "@itemsNavLabel": {
+    "description": "Label or text for items nav label"
+  },
   "settings": "Settings",
+  "@settings": {
+    "description": "Label or text for settings"
+  },
   "businessProfile": "Business Profile",
+  "@businessProfile": {
+    "description": "Label or text for business profile"
+  },
   "backupRestore": "Backup & Restore",
+  "@backupRestore": {
+    "description": "Label or text for backup restore"
+  },
   "language": "Language",
+  "@language": {
+    "description": "Label or text for language"
+  },
   "english": "English",
+  "@english": {
+    "description": "Label or text for english"
+  },
   "arabic": "Arabic",
+  "@arabic": {
+    "description": "Label or text for arabic"
+  },
   "save": "Save",
+  "@save": {
+    "description": "Label or text for save"
+  },
   "cancel": "Cancel",
+  "@cancel": {
+    "description": "Label or text for cancel"
+  },
   "create": "Create",
+  "@create": {
+    "description": "Label or text for create"
+  },
   "edit": "Edit",
+  "@edit": {
+    "description": "Label or text for edit"
+  },
   "delete": "Delete",
+  "@delete": {
+    "description": "Label or text for delete"
+  },
   "noRecentInvoices": "No recent invoices yet.",
+  "@noRecentInvoices": {
+    "description": "Label or text for no recent invoices"
+  },
   "totalRevenue": "Total Revenue",
+  "@totalRevenue": {
+    "description": "Label or text for total revenue"
+  },
   "outstandingBalance": "Outstanding Balance",
+  "@outstandingBalance": {
+    "description": "Label or text for outstanding balance"
+  },
   "recentInvoice": "Recent Invoice",
+  "@recentInvoice": {
+    "description": "Label or text for recent invoice"
+  },
   "systemDefault": "System Default",
+  "@systemDefault": {
+    "description": "Label or text for system default"
+  },
   "languageSettings": "Language Settings",
+  "@languageSettings": {
+    "description": "Label or text for language settings"
+  },
   "chooseAppLanguage": "Choose app language",
+  "@chooseAppLanguage": {
+    "description": "Label or text for choose app language"
+  },
   "customersTitle": "Customers",
+  "@customersTitle": {
+    "description": "Label or text for customers title"
+  },
   "productsTitle": "Items & Services",
+  "@productsTitle": {
+    "description": "Label or text for products title"
+  },
   "invoicesTitle": "Invoices",
+  "@invoicesTitle": {
+    "description": "Label or text for invoices title"
+  },
   "noCustomersYet": "No customers yet",
+  "@noCustomersYet": {
+    "description": "Label or text for no customers yet"
+  },
   "noCustomersSubtitle": "Add customers to create invoices faster.",
+  "@noCustomersSubtitle": {
+    "description": "Label or text for no customers subtitle"
+  },
   "addCustomer": "Add Customer",
+  "@addCustomer": {
+    "description": "Label or text for add customer"
+  },
   "noProductsYet": "No products yet",
+  "@noProductsYet": {
+    "description": "Label or text for no products yet"
+  },
   "noProductsSubtitle": "Add your first product or service to speed up invoice creation.",
+  "@noProductsSubtitle": {
+    "description": "Label or text for no products subtitle"
+  },
   "addProduct": "Add Product",
+  "@addProduct": {
+    "description": "Label or text for add product"
+  },
   "noInvoicesYet": "No invoices yet",
+  "@noInvoicesYet": {
+    "description": "Label or text for no invoices yet"
+  },
   "noInvoicesSubtitle": "Create your first invoice to start tracking your business.",
+  "@noInvoicesSubtitle": {
+    "description": "Label or text for no invoices subtitle"
+  },
   "createInvoice": "Create Invoice",
+  "@createInvoice": {
+    "description": "Label or text for create invoice"
+  },
   "searchCustomers": "Search customers...",
+  "@searchCustomers": {
+    "description": "Search hint input label for customers"
+  },
   "searchProducts": "Search items...",
-  "searchInvoices": "Search invoice # or customer...",
+  "@searchProducts": {
+    "description": "Search hint input label for products"
+  },
+  "searchInvoices": "Search invoices...",
+  "@searchInvoices": {
+    "description": "Search hint input label for invoices"
+  },
   "statusDraft": "Draft",
+  "@statusDraft": {
+    "description": "Status label for draft"
+  },
   "statusUnpaid": "Unpaid",
+  "@statusUnpaid": {
+    "description": "Status label for unpaid"
+  },
   "statusPartiallyPaid": "Partially Paid",
+  "@statusPartiallyPaid": {
+    "description": "Status label for partiallypaid"
+  },
   "statusPaid": "Paid",
+  "@statusPaid": {
+    "description": "Status label for paid"
+  },
   "statusOverdue": "Overdue",
+  "@statusOverdue": {
+    "description": "Status label for overdue"
+  },
   "statusCancelled": "Cancelled",
+  "@statusCancelled": {
+    "description": "Status label for cancelled"
+  },
   "filterAll": "All",
+  "@filterAll": {
+    "description": "Label or text for filter all"
+  },
   "filterPartial": "Partial",
+  "@filterPartial": {
+    "description": "Label or text for filter partial"
+  },
   "viewDetails": "View Details",
+  "@viewDetails": {
+    "description": "Label or text for view details"
+  },
   "viewPdf": "View PDF",
+  "@viewPdf": {
+    "description": "Label or text for view pdf"
+  },
   "editDraft": "Edit Draft",
+  "@editDraft": {
+    "description": "Label or text for edit draft"
+  },
   "deleteDraft": "Delete Draft",
+  "@deleteDraft": {
+    "description": "Label or text for delete draft"
+  },
   "deletePermanently": "Delete Permanently",
+  "@deletePermanently": {
+    "description": "Label or text for delete permanently"
+  },
   "markAsPaid": "Mark as Paid",
+  "@markAsPaid": {
+    "description": "Label or text for mark as paid"
+  },
   "markAsUnpaid": "Mark as Unpaid",
+  "@markAsUnpaid": {
+    "description": "Label or text for mark as unpaid"
+  },
   "cancelInvoice": "Cancel Invoice",
+  "@cancelInvoice": {
+    "description": "Label or text for cancel invoice"
+  },
   "customerDeleted": "Customer deleted successfully.",
+  "@customerDeleted": {
+    "description": "Label or text for customer deleted"
+  },
   "productDeleted": "Item deleted successfully.",
+  "@productDeleted": {
+    "description": "Label or text for product deleted"
+  },
   "customerName": "Customer Name",
+  "@customerName": {
+    "description": "Label or text for customer name"
+  },
   "phoneNumber": "Phone Number",
+  "@phoneNumber": {
+    "description": "Label or text for phone number"
+  },
   "emailAddress": "Email Address",
+  "@emailAddress": {
+    "description": "Label or text for email address"
+  },
   "address": "Address",
+  "@address": {
+    "description": "Label or text for address"
+  },
   "saveCustomer": "Save Customer",
+  "@saveCustomer": {
+    "description": "Label or text for save customer"
+  },
   "updateCustomer": "Update Customer",
+  "@updateCustomer": {
+    "description": "Label or text for update customer"
+  },
   "customerRequired": "Customer Name is required",
+  "@customerRequired": {
+    "description": "Label or text for customer required"
+  },
   "invalidEmail": "Enter a valid email address",
+  "@invalidEmail": {
+    "description": "Label or text for invalid email"
+  },
   "phoneTooLong": "Phone number is too long",
+  "@phoneTooLong": {
+    "description": "Label or text for phone too long"
+  },
   "addressTooLong": "Address is too long",
+  "@addressTooLong": {
+    "description": "Label or text for address too long"
+  },
   "productName": "Item Name",
+  "@productName": {
+    "description": "Label or text for product name"
+  },
   "description": "Description",
+  "@description": {
+    "description": "Label or text for description"
+  },
   "basePrice": "Base Price",
+  "@basePrice": {
+    "description": "Label or text for base price"
+  },
   "billingUnit": "Billing Unit",
+  "@billingUnit": {
+    "description": "Label or text for billing unit"
+  },
   "taxRate": "Tax Rate (%)",
+  "@taxRate": {
+    "description": "Label or text for tax rate"
+  },
   "saveProduct": "Save Product",
+  "@saveProduct": {
+    "description": "Label or text for save product"
+  },
   "updateProduct": "Update Product",
+  "@updateProduct": {
+    "description": "Label or text for update product"
+  },
   "productRequired": "Item Name is required",
+  "@productRequired": {
+    "description": "Label or text for product required"
+  },
   "priceRequired": "Price is required",
+  "@priceRequired": {
+    "description": "Label or text for price required"
+  },
   "invalidPrice": "Enter a valid price",
+  "@invalidPrice": {
+    "description": "Label or text for invalid price"
+  },
   "taxCannotExceed100": "Tax cannot exceed 100%",
+  "@taxCannotExceed100": {
+    "description": "Label or text for tax cannot exceed100"
+  },
   "addLineItem": "Add Line Item",
+  "@addLineItem": {
+    "description": "Label or text for add line item"
+  },
   "editLineItem": "Edit Line Item",
+  "@editLineItem": {
+    "description": "Label or text for edit line item"
+  },
   "itemDescription": "Item Description",
+  "@itemDescription": {
+    "description": "Label or text for item description"
+  },
   "quantity": "Quantity",
+  "@quantity": {
+    "description": "Label or text for quantity"
+  },
   "unitPrice": "Unit Price",
+  "@unitPrice": {
+    "description": "Label or text for unit price"
+  },
   "tax": "Tax",
+  "@tax": {
+    "description": "Label or text for tax"
+  },
   "unit": "Unit",
+  "@unit": {
+    "description": "Label or text for unit"
+  },
   "saveItem": "Save Item",
+  "@saveItem": {
+    "description": "Label or text for save item"
+  },
   "updateItem": "Update Item",
+  "@updateItem": {
+    "description": "Label or text for update item"
+  },
   "selectSavedProduct": "Select Saved Product",
+  "@selectSavedProduct": {
+    "description": "Label or text for select saved product"
+  },
   "searchSavedProducts": "Search saved products...",
+  "@searchSavedProducts": {
+    "description": "Search hint input label for savedproducts"
+  },
   "noProductsFound": "No products found",
+  "@noProductsFound": {
+    "description": "Label or text for no products found"
+  },
   "quantityRequired": "Quantity is required",
+  "@quantityRequired": {
+    "description": "Label or text for quantity required"
+  },
   "dialogDeleteDraftTitle": "Delete Draft?",
+  "@dialogDeleteDraftTitle": {
+    "description": "Dialog text for deletedrafttitle"
+  },
   "dialogDeleteDraftMessage": "This draft invoice will be permanently deleted. This action cannot be undone.",
+  "@dialogDeleteDraftMessage": {
+    "description": "Dialog text for deletedraftmessage"
+  },
   "dialogDeleteDraftConfirm": "Delete",
+  "@dialogDeleteDraftConfirm": {
+    "description": "Dialog text for deletedraftconfirm"
+  },
   "dialogCancelInvoiceTitle": "Cancel Invoice?",
+  "@dialogCancelInvoiceTitle": {
+    "description": "Dialog text for cancelinvoicetitle"
+  },
   "dialogCancelInvoiceMessage": "This invoice will be marked as cancelled but kept for your records.",
+  "@dialogCancelInvoiceMessage": {
+    "description": "Dialog text for cancelinvoicemessage"
+  },
   "dialogCancelInvoiceConfirm": "Cancel Invoice",
+  "@dialogCancelInvoiceConfirm": {
+    "description": "Dialog text for cancelinvoiceconfirm"
+  },
   "dialogCancelInvoiceCancel": "Keep Invoice",
+  "@dialogCancelInvoiceCancel": {
+    "description": "Dialog text for cancelinvoicecancel"
+  },
   "dialogDeleteCancelledTitle": "Delete Cancelled Invoice?",
+  "@dialogDeleteCancelledTitle": {
+    "description": "Dialog text for deletecancelledtitle"
+  },
   "dialogDeleteCancelledMessage": "This will permanently delete this cancelled invoice record. This action cannot be undone.",
+  "@dialogDeleteCancelledMessage": {
+    "description": "Dialog text for deletecancelledmessage"
+  },
   "dialogDeleteCancelledConfirm": "Delete Permanently",
-  "createInvoice": "Create Invoice",
+  "@dialogDeleteCancelledConfirm": {
+    "description": "Dialog text for deletecancelledconfirm"
+  },
   "editInvoice": "Edit Invoice",
+  "@editInvoice": {
+    "description": "Label or text for edit invoice"
+  },
   "saveInvoice": "Save Invoice",
+  "@saveInvoice": {
+    "description": "Label or text for save invoice"
+  },
   "saveAsDraft": "Save as Draft",
+  "@saveAsDraft": {
+    "description": "Label or text for save as draft"
+  },
   "savedCustomer": "Saved Customer",
+  "@savedCustomer": {
+    "description": "Label or text for saved customer"
+  },
   "walkInCustomer": "Walk-in Customer",
+  "@walkInCustomer": {
+    "description": "Label or text for walk in customer"
+  },
   "selectCustomer": "Select Customer",
+  "@selectCustomer": {
+    "description": "Label or text for select customer"
+  },
   "searchCustomer": "Search Customer",
+  "@searchCustomer": {
+    "description": "Search hint input label for customer"
+  },
   "issueDate": "Issue Date",
+  "@issueDate": {
+    "description": "Label or text for issue date"
+  },
   "dueDate": "Due Date",
+  "@dueDate": {
+    "description": "Label or text for due date"
+  },
   "discount": "Discount",
+  "@discount": {
+    "description": "Label or text for discount"
+  },
   "discountAmount": "Discount Amount",
+  "@discountAmount": {
+    "description": "Label or text for discount amount"
+  },
   "discountPercentage": "Discount (%)",
+  "@discountPercentage": {
+    "description": "Label or text for discount percentage"
+  },
   "paidAmount": "Paid Amount",
+  "@paidAmount": {
+    "description": "Label or text for paid amount"
+  },
   "invoiceItems": "Invoice Items",
+  "@invoiceItems": {
+    "description": "Label or text for invoice items"
+  },
   "subtotal": "Subtotal",
+  "@subtotal": {
+    "description": "Label or text for subtotal"
+  },
   "grandTotal": "Grand Total",
+  "@grandTotal": {
+    "description": "Label or text for grand total"
+  },
   "balanceDue": "Balance Due",
+  "@balanceDue": {
+    "description": "Label or text for balance due"
+  },
   "amountPaid": "Amount Paid",
+  "@amountPaid": {
+    "description": "Label or text for amount paid"
+  },
   "noItemsAdded": "No items added yet.",
+  "@noItemsAdded": {
+    "description": "Label or text for no items added"
+  },
   "selectCustomerOrWalkIn": "Select a customer or use walk-in",
+  "@selectCustomerOrWalkIn": {
+    "description": "Label or text for select customer or walk in"
+  },
   "invoiceSaved": "Invoice saved successfully.",
+  "@invoiceSaved": {
+    "description": "Label or text for invoice saved"
+  },
   "draftSaved": "Draft saved successfully.",
+  "@draftSaved": {
+    "description": "Label or text for draft saved"
+  },
   "invoiceUpdated": "Invoice updated successfully.",
+  "@invoiceUpdated": {
+    "description": "Label or text for invoice updated"
+  },
   "cannotSaveInvoice": "Cannot save invoice. Please check your inputs.",
-  "create": "Create",
-  "save": "Save",
+  "@cannotSaveInvoice": {
+    "description": "Label or text for cannot save invoice"
+  },
   "businessDetails": "Business Details",
+  "@businessDetails": {
+    "description": "Label or text for business details"
+  },
   "businessName": "Business Name",
+  "@businessName": {
+    "description": "Label or text for business name"
+  },
   "businessEmail": "Business Email",
+  "@businessEmail": {
+    "description": "Label or text for business email"
+  },
   "businessPhone": "Business Phone",
+  "@businessPhone": {
+    "description": "Label or text for business phone"
+  },
   "businessAddress": "Business Address",
+  "@businessAddress": {
+    "description": "Label or text for business address"
+  },
   "taxId": "Tax ID",
+  "@taxId": {
+    "description": "Label or text for tax id"
+  },
   "baseCurrency": "Default Invoice Currency",
+  "@baseCurrency": {
+    "description": "Label or text for base currency"
+  },
   "saveProfile": "Save Profile",
+  "@saveProfile": {
+    "description": "Label or text for save profile"
+  },
   "profileSaved": "Business profile saved successfully.",
+  "@profileSaved": {
+    "description": "Label or text for profile saved"
+  },
   "selectLogo": "Select Logo",
+  "@selectLogo": {
+    "description": "Label or text for select logo"
+  },
   "changeLogo": "Change Logo",
+  "@changeLogo": {
+    "description": "Label or text for change logo"
+  },
   "removeLogo": "Remove Logo",
+  "@removeLogo": {
+    "description": "Label or text for remove logo"
+  },
   "businessNameRequired": "Business name is required",
+  "@businessNameRequired": {
+    "description": "Label or text for business name required"
+  },
   "invalidBusinessEmail": "Enter a valid business email",
+  "@invalidBusinessEmail": {
+    "description": "Label or text for invalid business email"
+  },
   "invoiceSummary": "Invoice Summary",
+  "@invoiceSummary": {
+    "description": "Label or text for invoice summary"
+  },
   "viewAll": "View All",
+  "@viewAll": {
+    "description": "Label or text for view all"
+  },
   "newInvoice": "New Invoice",
+  "@newInvoice": {
+    "description": "Label or text for new invoice"
+  },
   "theme": "Theme",
+  "@theme": {
+    "description": "Label or text for theme"
+  },
   "system": "System",
+  "@system": {
+    "description": "Label or text for system"
+  },
   "light": "Light",
+  "@light": {
+    "description": "Label or text for light"
+  },
   "dark": "Dark",
+  "@dark": {
+    "description": "Label or text for dark"
+  },
   "appVersion": "Version {version}",
   "@appVersion": {
     "placeholders": {
@@ -158,42 +593,134 @@
     }
   },
   "createBackupTitle": "Create Backup?",
+  "@createBackupTitle": {
+    "description": "Label or text for create backup title"
+  },
   "createBackup": "Create Backup",
+  "@createBackup": {
+    "description": "Label or text for create backup"
+  },
   "restoreBackupTitle": "Restore Backup?",
+  "@restoreBackupTitle": {
+    "description": "Label or text for restore backup title"
+  },
   "restoreBackup": "Restore Backup",
+  "@restoreBackup": {
+    "description": "Label or text for restore backup"
+  },
   "chooseBackup": "Choose Backup",
+  "@chooseBackup": {
+    "description": "Label or text for choose backup"
+  },
   "confirmRestore": "Confirm Restore",
+  "@confirmRestore": {
+    "description": "Label or text for confirm restore"
+  },
   "restoreNow": "Restore Now",
+  "@restoreNow": {
+    "description": "Label or text for restore now"
+  },
   "backupAndRestore": "Backup & Restore",
+  "@backupAndRestore": {
+    "description": "Label or text for backup and restore"
+  },
   "dataManagement": "Data Management",
+  "@dataManagement": {
+    "description": "Label or text for data management"
+  },
   "exportBackup": "Export Backup",
+  "@exportBackup": {
+    "description": "Label or text for export backup"
+  },
   "exportBackupSubtitle": "Save your database securely.",
+  "@exportBackupSubtitle": {
+    "description": "Label or text for export backup subtitle"
+  },
   "restoreBackupSubtitle": "Replace current data with backup.",
+  "@restoreBackupSubtitle": {
+    "description": "Label or text for restore backup subtitle"
+  },
   "backupCreatedSuccess": "Backup created successfully.",
+  "@backupCreatedSuccess": {
+    "description": "Label or text for backup created success"
+  },
   "backupCreatedMissingPath": "Backup created but file path is missing.",
+  "@backupCreatedMissingPath": {
+    "description": "Label or text for backup created missing path"
+  },
   "createBackupContent": "This will export your local InvoiceFlow Pro data into a backup file that you can store safely.",
+  "@createBackupContent": {
+    "description": "Label or text for create backup content"
+  },
   "restoreWarningContent": "Restoring a backup may replace your current local data. Create a fresh backup before continuing.",
+  "@restoreWarningContent": {
+    "description": "Label or text for restore warning content"
+  },
   "restoreSelectedContent": "Backup file selected: {fileName}\n\nRestoring will replace your current local database. This action cannot be undone.",
-  "chooseBackup": "Choose Backup",
+  "@restoreSelectedContent": {
+    "description": "Label or text for restore selected content",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
   "restoreCompleted": "Restore Completed",
+  "@restoreCompleted": {
+    "description": "Label or text for restore completed"
+  },
   "restoreSuccessMessage": "Your backup was restored successfully. Please restart the app to load restored data safely.",
+  "@restoreSuccessMessage": {
+    "description": "Label or text for restore success message"
+  },
   "closeAppIOS": "Close InvoiceFlow Pro from the app switcher and reopen it.",
+  "@closeAppIOS": {
+    "description": "Label or text for close app i o s"
+  },
   "closeApp": "Close App",
+  "@closeApp": {
+    "description": "Label or text for close app"
+  },
   "backupCreatedSharingFailed": "Backup created but sharing failed.",
+  "@backupCreatedSharingFailed": {
+    "description": "Label or text for backup created sharing failed"
+  },
   "invalidBackupFile": "Please select a valid InvoiceFlow Pro backup file.",
+  "@invalidBackupFile": {
+    "description": "Label or text for invalid backup file"
+  },
   "couldNotAccessBackup": "Could not access the selected backup file.",
+  "@couldNotAccessBackup": {
+    "description": "Label or text for could not access backup"
+  },
   "itemDetails": "Item Details",
-  "basePrice": "Base Price",
-  "billingUnit": "Billing Unit",
+  "@itemDetails": {
+    "description": "Label or text for item details"
+  },
   "defaultTaxRate": "Default Tax Rate",
-  "description": "Description",
+  "@defaultTaxRate": {
+    "description": "Label or text for default tax rate"
+  },
   "deleteItemTitle": "Delete Item?",
+  "@deleteItemTitle": {
+    "description": "Label or text for delete item title"
+  },
   "deleteCustomerTitle": "Delete Customer?",
+  "@deleteCustomerTitle": {
+    "description": "Label or text for delete customer title"
+  },
   "customerDetails": "Customer Details",
-  "emailAddress": "Email Address",
-  "phoneNumber": "Phone Number",
+  "@customerDetails": {
+    "description": "Label or text for customer details"
+  },
   "billingAddress": "Billing Address",
+  "@billingAddress": {
+    "description": "Label or text for billing address"
+  },
   "noContactInfo": "No contact information provided.",
+  "@noContactInfo": {
+    "description": "Label or text for no contact info"
+  },
   "copiedToClipboard": "{label} copied to clipboard",
   "@copiedToClipboard": {
     "placeholders": {
@@ -203,67 +730,255 @@
     }
   },
   "failedToLoadProfile": "Failed to load profile for PDF.",
+  "@failedToLoadProfile": {
+    "description": "Label or text for failed to load profile"
+  },
   "draftDeleted": "Draft deleted successfully.",
+  "@draftDeleted": {
+    "description": "Label or text for draft deleted"
+  },
   "invoiceCancelled": "Invoice cancelled.",
+  "@invoiceCancelled": {
+    "description": "Label or text for invoice cancelled"
+  },
   "cancelledInvoiceDeleted": "Cancelled invoice deleted.",
+  "@cancelledInvoiceDeleted": {
+    "description": "Label or text for cancelled invoice deleted"
+  },
   "error": "Error",
-  "markAsPaid": "Mark as Paid",
-  "markAsUnpaid": "Mark as Unpaid",
+  "@error": {
+    "description": "Label or text for error"
+  },
   "status": "Status",
+  "@status": {
+    "description": "Status label for "
+  },
   "billedTo": "Billed To",
+  "@billedTo": {
+    "description": "Label or text for billed to"
+  },
   "lineItems": "Line Items",
+  "@lineItems": {
+    "description": "Label or text for line items"
+  },
   "previewPdf": "Preview PDF",
+  "@previewPdf": {
+    "description": "Label or text for preview pdf"
+  },
   "unitPiece": "Piece",
+  "@unitPiece": {
+    "description": "Label or text for unit piece"
+  },
   "unitHour": "Hour",
+  "@unitHour": {
+    "description": "Label or text for unit hour"
+  },
   "unitDay": "Day",
+  "@unitDay": {
+    "description": "Label or text for unit day"
+  },
   "unitProject": "Project",
+  "@unitProject": {
+    "description": "Label or text for unit project"
+  },
   "unitService": "Service",
+  "@unitService": {
+    "description": "Label or text for unit service"
+  },
   "unitKg": "Kilogram",
+  "@unitKg": {
+    "description": "Label or text for unit kg"
+  },
   "unitGram": "Gram",
+  "@unitGram": {
+    "description": "Label or text for unit gram"
+  },
   "unitLiter": "Liter",
+  "@unitLiter": {
+    "description": "Label or text for unit liter"
+  },
   "unitMeter": "Meter",
+  "@unitMeter": {
+    "description": "Label or text for unit meter"
+  },
   "unitKm": "Kilometer",
+  "@unitKm": {
+    "description": "Label or text for unit km"
+  },
   "unitBox": "Box",
+  "@unitBox": {
+    "description": "Label or text for unit box"
+  },
   "unitPack": "Pack",
+  "@unitPack": {
+    "description": "Label or text for unit pack"
+  },
   "unitSet": "Set",
+  "@unitSet": {
+    "description": "Label or text for unit set"
+  },
   "deleteCustomerContent": "Are you sure you want to delete {customerName}? This action cannot be undone.",
+  "@deleteCustomerContent": {
+    "description": "Label or text for delete customer content",
+    "placeholders": {
+      "customerName": {
+        "type": "String"
+      }
+    }
+  },
   "deleteItemContent": "Are you sure you want to delete \"{productName}\"? This action cannot be undone.",
+  "@deleteItemContent": {
+    "description": "Label or text for delete item content",
+    "placeholders": {
+      "productName": {
+        "type": "String"
+      }
+    }
+  },
   "deleteDraftTitle": "Delete Draft?",
+  "@deleteDraftTitle": {
+    "description": "Label or text for delete draft title"
+  },
   "deleteDraftMessage": "This draft invoice will be permanently deleted. This action cannot be undone.",
+  "@deleteDraftMessage": {
+    "description": "Label or text for delete draft message"
+  },
   "deleteCancelledTitle": "Delete Cancelled Invoice?",
+  "@deleteCancelledTitle": {
+    "description": "Label or text for delete cancelled title"
+  },
   "deleteCancelledMessage": "This will permanently delete this cancelled invoice record. This action cannot be undone.",
-  "deletePermanently": "Delete Permanently",
+  "@deleteCancelledMessage": {
+    "description": "Label or text for delete cancelled message"
+  },
   "contactInformation": "Contact Information",
+  "@contactInformation": {
+    "description": "Label or text for contact information"
+  },
   "pdfReady": "PDF Ready",
+  "@pdfReady": {
+    "description": "Label or text for pdf ready"
+  },
   "pdfGenerated": "Invoice {invoiceNumber} for {customerName} has been generated successfully.",
+  "@pdfGenerated": {
+    "description": "Label or text for pdf generated",
+    "placeholders": {
+      "invoiceNumber": {
+        "type": "String"
+      },
+      "customerName": {
+        "type": "String"
+      }
+    }
+  },
   "markPaid": "Mark Paid",
+  "@markPaid": {
+    "description": "Label or text for mark paid"
+  },
   "markUnpaid": "Mark Unpaid",
+  "@markUnpaid": {
+    "description": "Label or text for mark unpaid"
+  },
   "invoicePdf": "Invoice PDF",
+  "@invoicePdf": {
+    "description": "Label or text for invoice pdf"
+  },
   "printPdf": "Print PDF",
+  "@printPdf": {
+    "description": "Label or text for print pdf"
+  },
   "sharePdf": "Share PDF",
+  "@sharePdf": {
+    "description": "Label or text for share pdf"
+  },
   "website": "Website",
+  "@website": {
+    "description": "Label or text for website"
+  },
   "websiteHint": "Enter website URL",
+  "@websiteHint": {
+    "description": "Label or text for website hint"
+  },
   "phoneTooShort": "Phone number is too short",
+  "@phoneTooShort": {
+    "description": "Label or text for phone too short"
+  },
   "amountTooLarge": "Amount is too large",
+  "@amountTooLarge": {
+    "description": "Label or text for amount too large"
+  },
   "contactPhone": "Contact Phone",
+  "@contactPhone": {
+    "description": "Label or text for contact phone"
+  },
   "totalInvoice": "Total Invoice",
+  "@totalInvoice": {
+    "description": "Label or text for total invoice"
+  },
   "totalInvoices": "Total Invoices",
+  "@totalInvoices": {
+    "description": "Label or text for total invoices"
+  },
   "notesPaymentTerms": "Notes / Payment Terms",
+  "@notesPaymentTerms": {
+    "description": "Label or text for notes payment terms"
+  },
   "welcomeTitle": "Welcome to InvoiceFlow Pro",
+  "@welcomeTitle": {
+    "description": "Label or text for welcome title"
+  },
   "welcomeSubtitle": "Set up your business profile to start generating professional invoices.",
+  "@welcomeSubtitle": {
+    "description": "Label or text for welcome subtitle"
+  },
   "completeSetup": "Complete Setup",
+  "@completeSetup": {
+    "description": "Label or text for complete setup"
+  },
   "customerInvoicesTitle": "Customer Invoices",
+  "@customerInvoicesTitle": {
+    "description": "Label or text for customer invoices title"
+  },
   "noCustomerInvoicesYet": "No invoices for this customer yet.",
+  "@noCustomerInvoicesYet": {
+    "description": "Label or text for no customer invoices yet"
+  },
   "noCustomerInvoicesSubtitle": "Create an invoice for this customer to start tracking their billing history.",
+  "@noCustomerInvoicesSubtitle": {
+    "description": "Label or text for no customer invoices subtitle"
+  },
   "cannotExceed100": "Cannot exceed 100%",
+  "@cannotExceed100": {
+    "description": "Label or text for cannot exceed100"
+  },
   "cannotBeNegative": "Cannot be negative",
+  "@cannotBeNegative": {
+    "description": "Label or text for cannot be negative"
+  },
   "cannotExceedSubtotal": "Cannot exceed subtotal",
+  "@cannotExceedSubtotal": {
+    "description": "Label or text for cannot exceed subtotal"
+  },
   "cannotExceedGrandTotal": "Cannot exceed grand total",
-  "searchInvoices": "Search invoices...",
+  "@cannotExceedGrandTotal": {
+    "description": "Label or text for cannot exceed grand total"
+  },
   "backupInstructionText": "Keep your data safe by exporting backups regularly. You can restore your data on any device.",
+  "@backupInstructionText": {
+    "description": "Label or text for backup instruction text"
+  },
   "restoreWarningText": "Restore may replace existing local data. Keep a safe backup before importing.",
+  "@restoreWarningText": {
+    "description": "Label or text for restore warning text"
+  },
   "processingBackupRequest": "Processing backup request...",
+  "@processingBackupRequest": {
+    "description": "Label or text for processing backup request"
+  },
   "anErrorOccurred": "An error occurred",
+  "@anErrorOccurred": {
+    "description": "Label or text for an error occurred"
+  },
   "discountWithPercentage": "Discount ({percentage}%)",
   "@discountWithPercentage": {
     "placeholders": {
@@ -273,5 +988,15 @@
     }
   },
   "revenueByCurrency": "Revenue by Currency",
-  "outstandingByCurrency": "Outstanding by Currency"
+  "@revenueByCurrency": {
+    "description": "Label or text for revenue by currency"
+  },
+  "outstandingByCurrency": "Outstanding by Currency",
+  "@outstandingByCurrency": {
+    "description": "Label or text for outstanding by currency"
+  },
+  "urdu": "Urdu",
+  "@urdu": {
+    "description": "Label or text for urdu"
+  }
 }

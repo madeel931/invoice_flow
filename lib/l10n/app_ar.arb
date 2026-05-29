@@ -38,7 +38,7 @@
   "createInvoice": "إنشاء فاتورة",
   "searchCustomers": "البحث عن عملاء...",
   "searchProducts": "البحث عن عناصر...",
-  "searchInvoices": "البحث برقم الفاتورة أو العميل...",
+  "searchInvoices": "البحث عن الفواتير...",
   "statusDraft": "مسودة",
   "statusUnpaid": "غير مدفوعة",
   "statusPartiallyPaid": "مدفوعة جزئياً",
@@ -70,7 +70,7 @@
   "productName": "اسم العنصر",
   "description": "الوصف",
   "basePrice": "السعر الأساسي",
-  "billingUnit": "وحدة الفوترة",
+  "billingUnit": "وحدة القياس",
   "taxRate": "نسبة الضريبة (%)",
   "saveProduct": "حفظ المنتج",
   "updateProduct": "تحديث المنتج",
@@ -101,7 +101,6 @@
   "dialogDeleteCancelledTitle": "حذف الفاتورة الملغاة؟",
   "dialogDeleteCancelledMessage": "سيؤدي هذا إلى حذف سجل الفاتورة الملغاة نهائياً. لا يمكن التراجع عن هذا الإجراء.",
   "dialogDeleteCancelledConfirm": "حذف نهائي",
-  "createInvoice": "إنشاء فاتورة",
   "editInvoice": "تعديل الفاتورة",
   "saveInvoice": "حفظ الفاتورة",
   "saveAsDraft": "حفظ كمسودة",
@@ -126,8 +125,6 @@
   "draftSaved": "تم حفظ المسودة بنجاح.",
   "invoiceUpdated": "تم تحديث الفاتورة بنجاح.",
   "cannotSaveInvoice": "لا يمكن حفظ الفاتورة. يرجى التحقق من مدخلاتك.",
-  "create": "إنشاء",
-  "save": "حفظ",
   "businessDetails": "تفاصيل العمل",
   "businessName": "اسم العمل",
   "businessEmail": "البريد الإلكتروني للعمل",
@@ -150,18 +147,11 @@
   "light": "فاتح",
   "dark": "داكن",
   "appVersion": "الإصدار {version}",
-  "@appVersion": {
-    "placeholders": {
-      "version": {
-        "type": "String"
-      }
-    }
-  },
   "createBackupTitle": "إنشاء نسخة احتياطية؟",
   "createBackup": "إنشاء نسخة احتياطية",
   "restoreBackupTitle": "استعادة نسخة احتياطية؟",
   "restoreBackup": "استعادة النسخة",
-  "chooseBackup": "اختيار النسخة",
+  "chooseBackup": "اختيار النسخة الاحتياطية",
   "confirmRestore": "تأكيد الاستعادة",
   "restoreNow": "استعادة الآن",
   "backupAndRestore": "النسخ الاحتياطي والاستعادة",
@@ -174,7 +164,6 @@
   "createBackupContent": "سيؤدي هذا إلى تصدير بياناتك المحلية في تطبيق InvoiceFlow Pro إلى ملف نسخة احتياطية يمكنك تخزينه بأمان.",
   "restoreWarningContent": "قد تؤدي استعادة النسخة الاحتياطية إلى استبدال بياناتك المحلية الحالية. قم بإنشاء نسخة احتياطية جديدة قبل المتابعة.",
   "restoreSelectedContent": "تم تحديد ملف النسخة الاحتياطية: {fileName}\n\nستؤدي الاستعادة إلى استبدال قاعدة بياناتك المحلية الحالية. لا يمكن التراجع عن هذا الإجراء.",
-  "chooseBackup": "اختيار النسخة الاحتياطية",
   "restoreCompleted": "اكتملت الاستعادة",
   "restoreSuccessMessage": "تمت استعادة النسخة الاحتياطية بنجاح. يرجى إعادة تشغيل التطبيق لتحميل البيانات المستعادة بأمان.",
   "closeAppIOS": "أغلق تطبيق InvoiceFlow Pro من مبدل التطبيقات وأعد فتحه.",
@@ -183,32 +172,18 @@
   "invalidBackupFile": "يرجى تحديد ملف نسخة احتياطية صالح للتطبيق.",
   "couldNotAccessBackup": "تعذر الوصول إلى ملف النسخة الاحتياطية المحدد.",
   "itemDetails": "تفاصيل العنصر",
-  "basePrice": "السعر الأساسي",
-  "billingUnit": "وحدة القياس",
   "defaultTaxRate": "نسبة الضريبة الافتراضية",
-  "description": "الوصف",
   "deleteItemTitle": "حذف العنصر؟",
   "deleteCustomerTitle": "حذف العميل؟",
   "customerDetails": "تفاصيل العميل",
-  "emailAddress": "البريد الإلكتروني",
-  "phoneNumber": "رقم الهاتف",
   "billingAddress": "عنوان الفوترة",
   "noContactInfo": "لم يتم توفير معلومات اتصال.",
   "copiedToClipboard": "تم نسخ {label} إلى الحافظة",
-  "@copiedToClipboard": {
-    "placeholders": {
-      "label": {
-        "type": "String"
-      }
-    }
-  },
   "failedToLoadProfile": "فشل تحميل ملف العمل لإنشاء ملف PDF.",
   "draftDeleted": "تم حذف المسودة بنجاح.",
   "invoiceCancelled": "تم إلغاء الفاتورة.",
   "cancelledInvoiceDeleted": "تم حذف الفاتورة الملغاة.",
   "error": "خطأ",
-  "markAsPaid": "تحديد كمدفوعة",
-  "markAsUnpaid": "تحديد كغير مدفوعة",
   "status": "الحالة",
   "billedTo": "فاتورة إلى",
   "lineItems": "عناصر الفاتورة",
@@ -232,7 +207,6 @@
   "deleteDraftMessage": "سيتم حذف مسودة الفاتورة هذه نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
   "deleteCancelledTitle": "حذف الفاتورة الملغاة؟",
   "deleteCancelledMessage": "سيؤدي هذا إلى حذف سجل الفاتورة الملغاة هذا نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
-  "deletePermanently": "حذف نهائي",
   "contactInformation": "معلومات الاتصال",
   "pdfReady": "ملف PDF جاهز",
   "pdfGenerated": "تم إنشاء فاتورة {invoiceNumber} للعميل {customerName} بنجاح.",
@@ -259,12 +233,12 @@
   "cannotBeNegative": "لا يمكن أن يكون سالباً",
   "cannotExceedSubtotal": "لا يمكن أن يتجاوز المجموع الفرعي",
   "cannotExceedGrandTotal": "لا يمكن أن يتجاوز الإجمالي النهائي",
-  "searchInvoices": "البحث عن الفواتير...",
   "backupInstructionText": "حافظ على أمان بياناتك عن طريق تصدير النسخ الاحتياطية بانتظام. يمكنك استعادة بياناتك على أي جهاز.",
   "restoreWarningText": "قد تؤدي الاستعادة إلى استبدال البيانات المحلية الحالية. احتفظ بنسخة احتياطية آمنة قبل الاستيراد.",
   "processingBackupRequest": "جاري معالجة طلب النسخ الاحتياطي...",
   "anErrorOccurred": "حدث خطأ",
   "discountWithPercentage": "الخصم ({percentage}%)",
   "revenueByCurrency": "الإيرادات حسب العملة",
-  "outstandingByCurrency": "المستحقات حسب العملة"
+  "outstandingByCurrency": "المستحقات حسب العملة",
+  "urdu": "الأردية"
 }

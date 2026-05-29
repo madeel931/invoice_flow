@@ -509,7 +509,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Restoring a backup may replace your current local data. Create a fresh backup before continuing.';
 
   @override
-  String restoreSelectedContent(Object fileName) {
+  String restoreSelectedContent(String fileName) {
     return 'Backup file selected: $fileName\n\nRestoring will replace your current local database. This action cannot be undone.';
   }
 
@@ -631,12 +631,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unitSet => 'Set';
 
   @override
-  String deleteCustomerContent(Object customerName) {
+  String deleteCustomerContent(String customerName) {
     return 'Are you sure you want to delete $customerName? This action cannot be undone.';
   }
 
   @override
-  String deleteItemContent(Object productName) {
+  String deleteItemContent(String productName) {
     return 'Are you sure you want to delete \"$productName\"? This action cannot be undone.';
   }
 
@@ -661,7 +661,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pdfReady => 'PDF Ready';
 
   @override
-  String pdfGenerated(Object customerName, Object invoiceNumber) {
+  String pdfGenerated(String invoiceNumber, String customerName) {
     return 'Invoice $invoiceNumber for $customerName has been generated successfully.';
   }
 
@@ -760,4 +760,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get outstandingByCurrency => 'Outstanding by Currency';
+
+  @override
+  String get urdu => 'Urdu';
 }

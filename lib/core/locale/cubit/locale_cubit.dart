@@ -17,6 +17,8 @@ class LocaleCubit extends Cubit<Locale?> {
       emit(const Locale('en'));
     } else if (localeString == 'ar') {
       emit(const Locale('ar'));
+    } else if (localeString == 'ur') {
+      emit(const Locale('ur'));
     } else {
       emit(null); // system default
     }
@@ -31,6 +33,9 @@ class LocaleCubit extends Cubit<Locale?> {
     } else if (code == 'ar') {
       emit(const Locale('ar'));
       await prefs.setString(_localeKey, 'ar');
+    } else if (code == 'ur') {
+      emit(const Locale('ur'));
+      await prefs.setString(_localeKey, 'ur');
     } else {
       emit(null);
       await prefs.setString(_localeKey, 'system');
@@ -41,6 +46,7 @@ class LocaleCubit extends Cubit<Locale?> {
   String get currentCode {
     if (state?.languageCode == 'en') return 'en';
     if (state?.languageCode == 'ar') return 'ar';
+    if (state?.languageCode == 'ur') return 'ur';
     return 'system';
   }
 }

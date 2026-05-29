@@ -508,7 +508,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'قد تؤدي استعادة النسخة الاحتياطية إلى استبدال بياناتك المحلية الحالية. قم بإنشاء نسخة احتياطية جديدة قبل المتابعة.';
 
   @override
-  String restoreSelectedContent(Object fileName) {
+  String restoreSelectedContent(String fileName) {
     return 'تم تحديد ملف النسخة الاحتياطية: $fileName\n\nستؤدي الاستعادة إلى استبدال قاعدة بياناتك المحلية الحالية. لا يمكن التراجع عن هذا الإجراء.';
   }
 
@@ -630,12 +630,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get unitSet => 'مجموعة';
 
   @override
-  String deleteCustomerContent(Object customerName) {
+  String deleteCustomerContent(String customerName) {
     return 'هل أنت متأكد أنك تريد حذف $customerName؟ لا يمكن التراجع عن هذا الإجراء.';
   }
 
   @override
-  String deleteItemContent(Object productName) {
+  String deleteItemContent(String productName) {
     return 'هل أنت متأكد أنك تريد حذف \"$productName\"؟ لا يمكن التراجع عن هذا الإجراء.';
   }
 
@@ -660,7 +660,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pdfReady => 'ملف PDF جاهز';
 
   @override
-  String pdfGenerated(Object customerName, Object invoiceNumber) {
+  String pdfGenerated(String invoiceNumber, String customerName) {
     return 'تم إنشاء فاتورة $invoiceNumber للعميل $customerName بنجاح.';
   }
 
@@ -759,4 +759,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get outstandingByCurrency => 'المستحقات حسب العملة';
+
+  @override
+  String get urdu => 'الأردية';
 }

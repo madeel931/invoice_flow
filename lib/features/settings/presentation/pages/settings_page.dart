@@ -243,6 +243,10 @@ class _SettingsViewState extends State<_SettingsView> {
                                     value: 'ar',
                                     child: Text(AppLocalizations.of(context)?.arabic ?? 'العربية'),
                                   ),
+                                  DropdownMenuItem(
+                                    value: 'ur',
+                                    child: Text(AppLocalizations.of(context)?.urdu ?? 'اردو'),
+                                  ),
                                 ],
                                 onChanged: (value) {
                                   if (value != null) {

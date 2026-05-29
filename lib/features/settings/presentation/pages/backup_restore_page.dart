@@ -165,7 +165,7 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
           listener: (context, state) async {
             if (state.status == BackupStatus.error) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(state.errorMessage ?? 'An error occurred'),
+                content: Text(state.errorMessage ?? AppLocalizations.of(context)?.anErrorOccurred ?? 'An error occurred'),
                 backgroundColor: AppColors.error,
               ));
             } else if (state.status == BackupStatus.success) {
@@ -290,7 +290,7 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Text(
-                  'Keep your data safe by exporting backups regularly. You can restore your data on any device.',
+                  AppLocalizations.of(context)?.backupInstructionText ?? 'Keep your data safe by exporting backups regularly. You can restore your data on any device.',
                   style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
               ],
@@ -337,7 +337,7 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
                                 ),
                                 const SizedBox(width: AppSpacing.md),
                                 Text(
-                                  'Processing backup request...',
+                                  AppLocalizations.of(context)?.processingBackupRequest ?? 'Processing backup request...',
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.primary,
                                     fontWeight: FontWeight.bold,
@@ -362,7 +362,7 @@ class _BackupRestoreViewState extends State<_BackupRestoreView> {
                 const SizedBox(width: AppSpacing.md),
                 Expanded(
                   child: Text(
-                    'Restore may replace existing local data. Keep a safe backup before importing.',
+                    AppLocalizations.of(context)?.restoreWarningText ?? 'Restore may replace existing local data. Keep a safe backup before importing.',
                     style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                 ),

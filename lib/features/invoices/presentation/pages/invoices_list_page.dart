@@ -212,7 +212,7 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                       onChanged: (val) =>
                           context.read<InvoiceListCubit>().search(val),
                       decoration: InputDecoration(
-                        hintText: AppLocalizations.of(context)?.searchInvoices ?? 'Search invoice # or customer...',
+                        hintText: AppLocalizations.of(context)?.searchInvoices ?? 'Search invoices...',
                         prefixIcon: const Icon(Icons.search),
                         suffixIcon: _searchController.text.isNotEmpty
                             ? IconButton(
@@ -306,7 +306,7 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                     const SizedBox(height: AppSpacing.sm),
                 itemBuilder: (context, index) {
                   final inv = displayInvoices[index];
-                  final statusColor = _getStatusColor(context, inv.status);
+                  final statusColor = _getStatusColor(context, inv.effectiveStatus);
                   final theme = Theme.of(context);
                   final colorScheme = theme.colorScheme;
                   final textTheme = theme.textTheme;
@@ -317,7 +317,7 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
 
                   return Card(
                     key: ValueKey(
-                        '${inv.id}_${theme.brightness}_${inv.status.name}_${inv.updatedAt?.millisecondsSinceEpoch}'),
+                        '${inv.id}_${theme.brightness}_${inv.effectiveStatus.name}_${inv.updatedAt?.millisecondsSinceEpoch}'),
                     color: colorScheme.surface,
                     margin: EdgeInsets.zero,
                     shape: RoundedRectangleBorder(
@@ -329,7 +329,7 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                       onTap: () =>
                           context.push('${AppRoutes.invoiceDetail}/${inv.id}'),
                       child: Padding(
-                        padding: const EdgeInsets.all(AppSpacing.md),
+                        padding: const EdgeInsets.all(12),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -351,7 +351,7 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                                         AppSizes.radiusXl),
                                   ),
                                   child: Text(
-                                    _getLocalizedStatusName(context, inv.status),
+                                    _getLocalizedStatusName(context, inv.effectiveStatus),
                                     style: TextStyle(
                                       fontSize: 10,
                                       fontWeight: FontWeight.bold,
@@ -373,9 +373,7 @@ class _InvoicesListViewState extends State<_InvoicesListView> {
                                 style: textTheme.bodySmall?.copyWith(
                                   color: colorScheme.onSurfaceVariant,
                                 )),
-                            const SizedBox(height: AppSpacing.md),
-                            const Divider(height: 1),
-                            const SizedBox(height: AppSpacing.md),
+                            const SizedBox(height: 8),
                             // Bottom row: Total amount large + chevron/action
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,

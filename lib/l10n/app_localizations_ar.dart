@@ -24,6 +24,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get products => 'المنتجات والخدمات';
 
   @override
+  String get itemsNavLabel => 'العناصر';
+
+  @override
   String get settings => 'الإعدادات';
 
   @override
@@ -121,7 +124,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get searchProducts => 'البحث عن عناصر...';
 
   @override
-  String get searchInvoices => 'البحث برقم الفاتورة أو العميل...';
+  String get searchInvoices => 'البحث عن الفواتير...';
 
   @override
   String get statusDraft => 'مسودة';
@@ -404,7 +407,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get taxId => 'الرقم الضريبي';
 
   @override
-  String get baseCurrency => 'العملة الأساسية';
+  String get baseCurrency => 'العملة الافتراضية للفواتير';
 
   @override
   String get saveProfile => 'حفظ الملف الشخصي';
@@ -719,4 +722,41 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get noCustomerInvoicesSubtitle =>
       'أنشئ فاتورة لهذا العميل لبدء تتبع سجل الفوترة الخاص به.';
+
+  @override
+  String get cannotExceed100 => 'لا يمكن أن يتجاوز 100%';
+
+  @override
+  String get cannotBeNegative => 'لا يمكن أن يكون سالباً';
+
+  @override
+  String get cannotExceedSubtotal => 'لا يمكن أن يتجاوز المجموع الفرعي';
+
+  @override
+  String get cannotExceedGrandTotal => 'لا يمكن أن يتجاوز الإجمالي النهائي';
+
+  @override
+  String get backupInstructionText =>
+      'حافظ على أمان بياناتك عن طريق تصدير النسخ الاحتياطية بانتظام. يمكنك استعادة بياناتك على أي جهاز.';
+
+  @override
+  String get restoreWarningText =>
+      'قد تؤدي الاستعادة إلى استبدال البيانات المحلية الحالية. احتفظ بنسخة احتياطية آمنة قبل الاستيراد.';
+
+  @override
+  String get processingBackupRequest => 'جاري معالجة طلب النسخ الاحتياطي...';
+
+  @override
+  String get anErrorOccurred => 'حدث خطأ';
+
+  @override
+  String discountWithPercentage(String percentage) {
+    return 'الخصم ($percentage%)';
+  }
+
+  @override
+  String get revenueByCurrency => 'الإيرادات حسب العملة';
+
+  @override
+  String get outstandingByCurrency => 'المستحقات حسب العملة';
 }

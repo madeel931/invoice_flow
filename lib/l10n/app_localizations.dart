@@ -128,6 +128,12 @@ abstract class AppLocalizations {
   /// **'Products & Services'**
   String get products;
 
+  /// No description provided for @itemsNavLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Items'**
+  String get itemsNavLabel;
+
   /// No description provided for @settings.
   ///
   /// In en, this message translates to:
@@ -323,7 +329,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchInvoices.
   ///
   /// In en, this message translates to:
-  /// **'Search invoice # or customer...'**
+  /// **'Search invoices...'**
   String get searchInvoices;
 
   /// No description provided for @statusDraft.
@@ -881,7 +887,7 @@ abstract class AppLocalizations {
   /// No description provided for @baseCurrency.
   ///
   /// In en, this message translates to:
-  /// **'Base Currency'**
+  /// **'Default Invoice Currency'**
   String get baseCurrency;
 
   /// No description provided for @saveProfile.
@@ -1465,6 +1471,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create an invoice for this customer to start tracking their billing history.'**
   String get noCustomerInvoicesSubtitle;
+
+  /// No description provided for @cannotExceed100.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot exceed 100%'**
+  String get cannotExceed100;
+
+  /// No description provided for @cannotBeNegative.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot be negative'**
+  String get cannotBeNegative;
+
+  /// No description provided for @cannotExceedSubtotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot exceed subtotal'**
+  String get cannotExceedSubtotal;
+
+  /// No description provided for @cannotExceedGrandTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot exceed grand total'**
+  String get cannotExceedGrandTotal;
+
+  /// No description provided for @backupInstructionText.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your data safe by exporting backups regularly. You can restore your data on any device.'**
+  String get backupInstructionText;
+
+  /// No description provided for @restoreWarningText.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore may replace existing local data. Keep a safe backup before importing.'**
+  String get restoreWarningText;
+
+  /// No description provided for @processingBackupRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing backup request...'**
+  String get processingBackupRequest;
+
+  /// No description provided for @anErrorOccurred.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred'**
+  String get anErrorOccurred;
+
+  /// No description provided for @discountWithPercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount ({percentage}%)'**
+  String discountWithPercentage(String percentage);
+
+  /// No description provided for @revenueByCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue by Currency'**
+  String get revenueByCurrency;
+
+  /// No description provided for @outstandingByCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Outstanding by Currency'**
+  String get outstandingByCurrency;
 }
 
 class _AppLocalizationsDelegate

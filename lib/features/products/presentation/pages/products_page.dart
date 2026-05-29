@@ -64,8 +64,10 @@ class _ProductsListViewState extends State<_ProductsListView> {
   Widget build(BuildContext context) {
     final currencyCode = context.watch<SettingsCubit>().state.profile?.currencyCode;
 
-    return Scaffold(
-      appBar: AppBar(
+    return BlocBuilder<ProductListCubit, ProductListState>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
         title: Text(AppLocalizations.of(context)?.products ?? 'Items & Services'),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60),
@@ -92,8 +94,8 @@ class _ProductsListViewState extends State<_ProductsListView> {
           ),
         ),
       ),
-      body: BlocBuilder<ProductListCubit, ProductListState>(
-        builder: (context, state) {
+      body: Builder(
+        builder: (context) {
           if (state.status == ProductListStatus.loading) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -157,11 +159,15 @@ class _ProductsListViewState extends State<_ProductsListView> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'product_add_fab',
-        onPressed: () => _openProductForm(context),
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: state.filteredProducts.isEmpty
+          ? null
+          : FloatingActionButton(
+              heroTag: 'product_add_fab',
+              onPressed: () => _openProductForm(context),
+              child: const Icon(Icons.add),
+            ),
+        );
+      },
     );
   }
 }

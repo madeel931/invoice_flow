@@ -24,6 +24,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get products => 'Products & Services';
 
   @override
+  String get itemsNavLabel => 'Items';
+
+  @override
   String get settings => 'Settings';
 
   @override
@@ -122,7 +125,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchProducts => 'Search items...';
 
   @override
-  String get searchInvoices => 'Search invoice # or customer...';
+  String get searchInvoices => 'Search invoices...';
 
   @override
   String get statusDraft => 'Draft';
@@ -405,7 +408,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taxId => 'Tax ID';
 
   @override
-  String get baseCurrency => 'Base Currency';
+  String get baseCurrency => 'Default Invoice Currency';
 
   @override
   String get saveProfile => 'Save Profile';
@@ -720,4 +723,41 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get noCustomerInvoicesSubtitle =>
       'Create an invoice for this customer to start tracking their billing history.';
+
+  @override
+  String get cannotExceed100 => 'Cannot exceed 100%';
+
+  @override
+  String get cannotBeNegative => 'Cannot be negative';
+
+  @override
+  String get cannotExceedSubtotal => 'Cannot exceed subtotal';
+
+  @override
+  String get cannotExceedGrandTotal => 'Cannot exceed grand total';
+
+  @override
+  String get backupInstructionText =>
+      'Keep your data safe by exporting backups regularly. You can restore your data on any device.';
+
+  @override
+  String get restoreWarningText =>
+      'Restore may replace existing local data. Keep a safe backup before importing.';
+
+  @override
+  String get processingBackupRequest => 'Processing backup request...';
+
+  @override
+  String get anErrorOccurred => 'An error occurred';
+
+  @override
+  String discountWithPercentage(String percentage) {
+    return 'Discount ($percentage%)';
+  }
+
+  @override
+  String get revenueByCurrency => 'Revenue by Currency';
+
+  @override
+  String get outstandingByCurrency => 'Outstanding by Currency';
 }

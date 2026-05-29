@@ -8,6 +8,8 @@ class DashboardMetrics extends Equatable {
   final int unpaidInvoicesCount;
   final int overdueInvoicesCount;
   final int draftInvoicesCount;
+  final Map<String, double> revenues; // e.g. {'USD': 100.0, 'SAR': 150.0}
+  final Map<String, double> outstandings; // e.g. {'USD': 70.0, 'SAR': 30.0}
 
   const DashboardMetrics({
     required this.totalRevenue,
@@ -17,6 +19,8 @@ class DashboardMetrics extends Equatable {
     required this.unpaidInvoicesCount,
     required this.overdueInvoicesCount,
     required this.draftInvoicesCount,
+    required this.revenues,
+    required this.outstandings,
   });
 
   // Helper to easily calculate collection rate
@@ -34,5 +38,7 @@ class DashboardMetrics extends Equatable {
         unpaidInvoicesCount,
         overdueInvoicesCount,
         draftInvoicesCount,
+        revenues,
+        outstandings,
       ];
 }

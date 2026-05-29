@@ -58,7 +58,7 @@ class InvoiceListCubit extends Cubit<InvoiceListState> {
 
     // 1. Apply Status Filter
     if (status != null) {
-      filtered = filtered.where((i) => i.status == status).toList();
+      filtered = filtered.where((i) => i.effectiveStatus == status).toList();
     }
 
     // 2. Apply Text Search (Invoice Number or Customer Name)

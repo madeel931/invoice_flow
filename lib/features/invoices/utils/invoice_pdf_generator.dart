@@ -96,7 +96,7 @@ class InvoicePdfGenerator {
     // If the invoice is updated, the timestamp changes and forces a new PDF generation.
     // Include displayCurrency so changing fallback currency invalidates cache
     final cacheKey =
-        '${invoice.id}_${invoice.status.name}_${invoice.updatedAt?.millisecondsSinceEpoch}_$displayCurrency';
+        '${invoice.id}_${invoice.effectiveStatus.name}_${invoice.updatedAt?.millisecondsSinceEpoch}_$displayCurrency';
 
     // 2. Check Cache First
     if (_pdfCache.containsKey(cacheKey)) {
@@ -182,10 +182,10 @@ class InvoicePdfGenerator {
                     pw.Text('Due Date: ${dateFormat.format(invoice.dueDate)}',
                         style: const pw.TextStyle(color: PdfColors.grey700)),
                     pw.SizedBox(height: 4),
-                    pw.Text('Status: ${_getPdfStatusString(invoice.status)}',
+                    pw.Text('Status: ${_getPdfStatusString(invoice.effectiveStatus)}',
                         style: pw.TextStyle(
                           fontWeight: pw.FontWeight.bold,
-                          color: _getPdfStatusColor(invoice.status),
+                          color: _getPdfStatusColor(invoice.effectiveStatus),
                         )),
                   ],
                 ),

@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart' show Either, Left, Right;
 import 'package:isar/isar.dart';
 
 import '../../../../core/data/local/collections/invoice_collection.dart';
+import '../../../../core/data/local/collections/business_profile_collection.dart';
 import '../../../../core/data/local/local_database_service.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../invoices/domain/entities/invoice_item.dart';
@@ -22,7 +23,14 @@ extension on InvoiceCollection {
       issueDate: issueDate,
       dueDate: dueDate,
       status: status,
+      discountType: discountType,
       discountAmount: discountAmount,
+      paidAmount: paidAmount,
+      notes: notes,
+      currencyCode: currencyCode,
+      currencySymbol: currencySymbol,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
       items: items
           .map((i) => InvoiceItem(
                 description: i.description,
@@ -32,8 +40,6 @@ extension on InvoiceCollection {
                 unitType: i.unitType,
               ))
           .toList(),
-      discountType: discountType,
-      paidAmount: paidAmount,
     );
   }
 }
@@ -56,66 +62,85 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
       // Convert to rich domain entities to access the dynamic totalAmount math
       final invoices = collections.map((c) => c.toEntity()).toList();
 
-      double totalRevenue = 0.0;
-      double outstandingBalance = 0.0;
+        final profile = await isar.businessProfileCollections.where().findFirst();
+        final defaultCurrency = profile?.currencyCode ?? 'USD';
 
-      int paidCount = 0;
-      int unpaidCount = 0;
-      int overdueCount = 0;
-      int draftCount = 0;
+        double totalRevenue = 0.0;
+        double outstandingBalance = 0.0;
 
-      // Single pass aggregation - O(n) Time Complexity
-      for (final inv in invoices) {
-        if (inv.status == InvoiceStatus.draft) {
-          draftCount++;
-          // Skip heavy InvoiceCalculator math for drafts, they aren't revenue yet.
-          continue; 
+        int paidCount = 0;
+        int unpaidCount = 0;
+        int overdueCount = 0;
+        int draftCount = 0;
+
+        final Map<String, double> revenues = {};
+        final Map<String, double> outstandings = {};
+
+        // Single pass aggregation - O(n) Time Complexity
+        for (final inv in invoices) {
+          if (inv.effectiveStatus == InvoiceStatus.draft) {
+            draftCount++;
+            // Skip heavy InvoiceCalculator math for drafts, they aren't revenue yet.
+            continue; 
+          }
+          if (inv.effectiveStatus == InvoiceStatus.cancelled) {
+            // Cancelled invoices hold no financial weight.
+            continue; 
+          }
+
+          final calc = InvoiceCalculator.calculate(inv);
+          final balanceDue = calc.balanceDue;
+          final paidAmount = calc.paidAmount;
+
+          // Historical invoices created before currency persistence use default currency fallback.
+          final code = (inv.currencyCode == null || inv.currencyCode!.trim().isEmpty)
+              ? defaultCurrency.trim().toUpperCase()
+              : inv.currencyCode!.trim().toUpperCase();
+
+          switch (inv.effectiveStatus) {
+            case InvoiceStatus.paid:
+              // A fully paid invoice guarantees revenue is equal to the grand total.
+              totalRevenue += calc.grandTotal;
+              paidCount++;
+              revenues[code] = (revenues[code] ?? 0.0) + calc.grandTotal;
+              break;
+            case InvoiceStatus.partiallyPaid:
+              // For partials, revenue is only what was paid, the rest is outstanding.
+              totalRevenue += paidAmount;
+              outstandingBalance += balanceDue;
+              unpaidCount++; // Treat partially paid as unpaid in basic metrics for now
+              revenues[code] = (revenues[code] ?? 0.0) + paidAmount;
+              outstandings[code] = (outstandings[code] ?? 0.0) + balanceDue;
+              break;
+            case InvoiceStatus.unpaid:
+              outstandingBalance += balanceDue;
+              unpaidCount++;
+              outstandings[code] = (outstandings[code] ?? 0.0) + balanceDue;
+              break;
+            case InvoiceStatus.overdue:
+              totalRevenue += paidAmount;
+              outstandingBalance += balanceDue;
+              overdueCount++;
+              revenues[code] = (revenues[code] ?? 0.0) + paidAmount;
+              outstandings[code] = (outstandings[code] ?? 0.0) + balanceDue;
+              break;
+            case InvoiceStatus.draft:
+            case InvoiceStatus.cancelled:
+              break; // Handled earlier, required for exhaustive switch
+          }
         }
-        if (inv.status == InvoiceStatus.cancelled) {
-          // Cancelled invoices hold no financial weight.
-          continue; 
-        }
 
-        final calc = InvoiceCalculator.calculate(inv);
-        final balanceDue = calc.balanceDue;
-        final paidAmount = calc.paidAmount;
-
-        switch (inv.status) {
-          case InvoiceStatus.paid:
-            // A fully paid invoice guarantees revenue is equal to the grand total.
-            totalRevenue += calc.grandTotal;
-            paidCount++;
-            break;
-          case InvoiceStatus.partiallyPaid:
-            // For partials, revenue is only what was paid, the rest is outstanding.
-            totalRevenue += paidAmount;
-            outstandingBalance += balanceDue;
-            unpaidCount++; // Treat partially paid as unpaid in basic metrics for now
-            break;
-          case InvoiceStatus.unpaid:
-            outstandingBalance += balanceDue;
-            unpaidCount++;
-            break;
-          case InvoiceStatus.overdue:
-            totalRevenue += paidAmount;
-            outstandingBalance += balanceDue;
-            overdueCount++;
-            break;
-          case InvoiceStatus.draft:
-          case InvoiceStatus.cancelled:
-            break; // Handled earlier, required for exhaustive switch
-        }
-      }
-
-      final metrics = DashboardMetrics(
-        totalRevenue: totalRevenue,
-        outstandingBalance: outstandingBalance,
-        totalInvoices: invoices.length,
-        paidInvoicesCount: paidCount,
-        unpaidInvoicesCount: unpaidCount,
-        overdueInvoicesCount: overdueCount,
-        draftInvoicesCount: draftCount,
-      );
+        final metrics = DashboardMetrics(
+          totalRevenue: totalRevenue,
+          outstandingBalance: outstandingBalance,
+          totalInvoices: invoices.length,
+          paidInvoicesCount: paidCount,
+          unpaidInvoicesCount: unpaidCount,
+          overdueInvoicesCount: overdueCount,
+          draftInvoicesCount: draftCount,
+          revenues: revenues,
+          outstandings: outstandings,
+        );
 
       return Right(metrics);
     } catch (e) {

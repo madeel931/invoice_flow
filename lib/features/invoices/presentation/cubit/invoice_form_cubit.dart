@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../../../customers/domain/entities/customer.dart';
+import 'package:currency_picker/currency_picker.dart';
 import '../../domain/entities/invoice.dart';
 import '../../domain/entities/invoice_item.dart';
 import '../../domain/entities/invoice_status.dart';
@@ -40,7 +41,20 @@ class InvoiceFormCubit extends Cubit<InvoiceFormState> {
                     ? existingInvoice.currencyCode
                     : defaultCurrencyCode;
 
-            final updatedInvoice = existingInvoice.copyWith(currencyCode: resolvedCurrencyCode);
+            String? resolvedSymbol = existingInvoice.currencySymbol;
+            if (resolvedSymbol == null || resolvedSymbol.trim().isEmpty) {
+              if (resolvedCurrencyCode != null) {
+                try {
+                  final currency = CurrencyService().findByCode(resolvedCurrencyCode);
+                  resolvedSymbol = currency?.symbol;
+                } catch (_) {}
+              }
+            }
+
+            final updatedInvoice = existingInvoice.copyWith(
+              currencyCode: resolvedCurrencyCode,
+              currencySymbol: resolvedSymbol,
+            );
 
             emit(state.copyWith(
                 status: InvoiceFormStatus.ready, draftInvoice: updatedInvoice));
@@ -60,6 +74,16 @@ class InvoiceFormCubit extends Cubit<InvoiceFormState> {
           status: InvoiceFormStatus.error, errorMessage: failure.message)),
       (nextNumber) {
         final now = DateTime.now();
+        final resolvedCurrencyCode = defaultCurrencyCode?.trim().isNotEmpty == true 
+            ? defaultCurrencyCode!.trim().toUpperCase() 
+            : 'USD';
+
+        String? resolvedSymbol;
+        try {
+          final currency = CurrencyService().findByCode(resolvedCurrencyCode);
+          resolvedSymbol = currency?.symbol;
+        } catch (_) {}
+
         final newInvoice = Invoice(
           invoiceNumber: nextNumber,
           customerId: 0,
@@ -67,9 +91,8 @@ class InvoiceFormCubit extends Cubit<InvoiceFormState> {
           issueDate: now,
           dueDate: now,
           items: const [],
-          currencyCode: defaultCurrencyCode?.trim().isNotEmpty == true 
-              ? defaultCurrencyCode!.trim().toUpperCase() 
-              : 'USD',
+          currencyCode: resolvedCurrencyCode,
+          currencySymbol: resolvedSymbol,
         );
 
         emit(state.copyWith(

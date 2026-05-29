@@ -228,7 +228,6 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
                             tooltip: 'Copy Email',
                             onPressed: () => _copyToClipboard(context, customer.email!, AppLocalizations.of(context)?.emailAddress ?? 'Email'),
                           ),
-                          onTap: () => _copyToClipboard(context, customer.email!, AppLocalizations.of(context)?.emailAddress ?? 'Email'),
                         ),
                         if (customer.phone != null && customer.phone!.isNotEmpty)
                           const Divider(height: 1),
@@ -244,7 +243,6 @@ class _CustomerDetailPageState extends State<CustomerDetailPage> {
                             tooltip: 'Copy Phone',
                             onPressed: () => _copyToClipboard(context, customer.phone!, AppLocalizations.of(context)?.contactPhone ?? 'Phone'),
                           ),
-                          onTap: () => _copyToClipboard(context, customer.phone!, AppLocalizations.of(context)?.contactPhone ?? 'Phone'),
                         ),
                         if (customer.billingAddress != null &&
                             customer.billingAddress!.isNotEmpty)

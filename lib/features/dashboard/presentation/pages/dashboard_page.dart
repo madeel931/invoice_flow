@@ -60,6 +60,19 @@ class _DashboardView extends StatelessWidget {
     }
   }
 
+  String _getLocalizedStatusName(BuildContext context, InvoiceStatus status) {
+    final loc = AppLocalizations.of(context);
+    switch (status) {
+      case InvoiceStatus.draft: return loc?.statusDraft.toUpperCase() ?? 'DRAFT';
+      case InvoiceStatus.unpaid: return loc?.statusUnpaid.toUpperCase() ?? 'UNPAID';
+      case InvoiceStatus.partiallyPaid: return loc?.statusPartiallyPaid.toUpperCase() ?? 'PARTIALLY PAID';
+      case InvoiceStatus.paid: return loc?.statusPaid.toUpperCase() ?? 'PAID';
+      case InvoiceStatus.overdue: return loc?.statusOverdue.toUpperCase() ?? 'OVERDUE';
+      case InvoiceStatus.cancelled: return loc?.statusCancelled.toUpperCase() ?? 'CANCELLED';
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,7 +84,12 @@ class _DashboardView extends StatelessWidget {
           builder: (context, settingsState) {
             final hasLogo = settingsState.profile?.logoPath != null;
             return Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsetsDirectional.only(
+                start: 16.0, 
+                top: 8.0, 
+                bottom: 8.0, 
+                end: 8.0,
+              ),
               child: GestureDetector(
                 onTap: () => Scaffold.of(context).openDrawer(),
                 child: CircleAvatar(
@@ -127,8 +145,9 @@ class _DashboardView extends StatelessWidget {
                     // 1. HERO METRICS
                     MetricCard(
                       title: AppLocalizations.of(context)!.totalRevenue,
-                      amount: AppFormatters.formatCurrencyCompact(
-                          metrics.totalRevenue, currency),
+                      breakdownTitle: AppLocalizations.of(context)?.revenueByCurrency ?? 'Revenue by Currency',
+                      amounts: metrics.revenues,
+                      fallbackCurrency: currency,
                       icon: Icons.account_balance_wallet_rounded,
                       gradientColors: const [
                         Color(0xFF2563EB),
@@ -138,8 +157,9 @@ class _DashboardView extends StatelessWidget {
                     const SizedBox(height: 16),
                     MetricCard(
                       title: AppLocalizations.of(context)!.outstandingBalance,
-                      amount: AppFormatters.formatCurrencyCompact(
-                          metrics.outstandingBalance, currency),
+                      breakdownTitle: AppLocalizations.of(context)?.outstandingByCurrency ?? 'Outstanding by Currency',
+                      amounts: metrics.outstandings,
+                      fallbackCurrency: currency,
                       icon: Icons.hourglass_empty_rounded,
                       gradientColors: const [
                         Color(0xFFF59E0B),
@@ -248,13 +268,11 @@ class _DashboardView extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  state.recentInvoice!.status == InvoiceStatus.partiallyPaid 
-                                      ? 'PARTIALLY PAID' 
-                                      : state.recentInvoice!.status.name.toUpperCase(),
+                                  _getLocalizedStatusName(context, state.recentInvoice!.effectiveStatus),
                                   style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
-                                    color: _getStatusColor(state.recentInvoice!.status),
+                                    color: _getStatusColor(state.recentInvoice!.effectiveStatus),
                                   ),
                                 ),
                               ],

@@ -17,6 +17,7 @@ class Invoice extends Equatable {
   final double paidAmount;
   final String? notes;
   final String? currencyCode;
+  final String? currencySymbol;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -34,11 +35,10 @@ class Invoice extends Equatable {
     this.paidAmount = 0.0,
     this.notes,
     this.currencyCode,
+    this.currencySymbol,
     this.createdAt,
     this.updatedAt,
   });
-
-
 
   Invoice copyWith({
     int? id,
@@ -54,6 +54,7 @@ class Invoice extends Equatable {
     double? paidAmount,
     String? notes,
     String? currencyCode,
+    String? currencySymbol,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -71,10 +72,13 @@ class Invoice extends Equatable {
       paidAmount: paidAmount ?? this.paidAmount,
       notes: notes ?? this.notes,
       currencyCode: currencyCode ?? this.currencyCode,
+      currencySymbol: currencySymbol ?? this.currencySymbol,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
+
+  InvoiceStatus get effectiveStatus => getEffectiveInvoiceStatus(this);
 
   @override
   List<Object?> get props => [
@@ -91,7 +95,30 @@ class Invoice extends Equatable {
         paidAmount,
         notes,
         currencyCode,
+        currencySymbol,
         createdAt,
         updatedAt
       ];
 }
+
+InvoiceStatus getEffectiveInvoiceStatus(Invoice invoice, {DateTime? now}) {
+  if (invoice.status == InvoiceStatus.paid) {
+    return InvoiceStatus.paid;
+  }
+  if (invoice.status == InvoiceStatus.cancelled) {
+    return InvoiceStatus.cancelled;
+  }
+  if (invoice.status == InvoiceStatus.draft) {
+    return InvoiceStatus.draft;
+  }
+  if (invoice.status == InvoiceStatus.unpaid || invoice.status == InvoiceStatus.partiallyPaid) {
+    final referenceDate = now ?? DateTime.now();
+    final today = DateTime(referenceDate.year, referenceDate.month, referenceDate.day);
+    final due = DateTime(invoice.dueDate.year, invoice.dueDate.month, invoice.dueDate.day);
+    if (due.isBefore(today)) {
+      return InvoiceStatus.overdue;
+    }
+  }
+  return invoice.status;
+}
+

@@ -24,6 +24,7 @@ extension on InvoiceCollection {
       paidAmount: paidAmount,
       notes: notes,
       currencyCode: currencyCode,
+      currencySymbol: currencySymbol,
       createdAt: createdAt,
       updatedAt: updatedAt,
       items: items
@@ -53,6 +54,7 @@ extension on Invoice {
       ..paidAmount = paidAmount
       ..notes = notes
       ..currencyCode = currencyCode
+      ..currencySymbol = currencySymbol
       ..createdAt = createdAt ?? DateTime.now()
       ..updatedAt = DateTime.now()
       ..items = items

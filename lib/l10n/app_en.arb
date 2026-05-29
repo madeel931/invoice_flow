@@ -5,6 +5,7 @@
   "invoices": "Invoices",
   "customers": "Customers",
   "products": "Products & Services",
+  "itemsNavLabel": "Items",
   "settings": "Settings",
   "businessProfile": "Business Profile",
   "backupRestore": "Backup & Restore",
@@ -133,7 +134,7 @@
   "businessPhone": "Business Phone",
   "businessAddress": "Business Address",
   "taxId": "Tax ID",
-  "baseCurrency": "Base Currency",
+  "baseCurrency": "Default Invoice Currency",
   "saveProfile": "Save Profile",
   "profileSaved": "Business profile saved successfully.",
   "selectLogo": "Select Logo",
@@ -253,5 +254,24 @@
   "completeSetup": "Complete Setup",
   "customerInvoicesTitle": "Customer Invoices",
   "noCustomerInvoicesYet": "No invoices for this customer yet.",
-  "noCustomerInvoicesSubtitle": "Create an invoice for this customer to start tracking their billing history."
+  "noCustomerInvoicesSubtitle": "Create an invoice for this customer to start tracking their billing history.",
+  "cannotExceed100": "Cannot exceed 100%",
+  "cannotBeNegative": "Cannot be negative",
+  "cannotExceedSubtotal": "Cannot exceed subtotal",
+  "cannotExceedGrandTotal": "Cannot exceed grand total",
+  "searchInvoices": "Search invoices...",
+  "backupInstructionText": "Keep your data safe by exporting backups regularly. You can restore your data on any device.",
+  "restoreWarningText": "Restore may replace existing local data. Keep a safe backup before importing.",
+  "processingBackupRequest": "Processing backup request...",
+  "anErrorOccurred": "An error occurred",
+  "discountWithPercentage": "Discount ({percentage}%)",
+  "@discountWithPercentage": {
+    "placeholders": {
+      "percentage": {
+        "type": "String"
+      }
+    }
+  },
+  "revenueByCurrency": "Revenue by Currency",
+  "outstandingByCurrency": "Outstanding by Currency"
 }

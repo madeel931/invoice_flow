@@ -239,7 +239,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                 ? currentInvoice.currencyCode! 
                 : profileCurrency;
 
-            String statusLabel = _getLocalizedStatusName(context, currentInvoice.status);
+            String statusLabel = _getLocalizedStatusName(context, currentInvoice.effectiveStatus);
 
             return Scaffold(
               appBar: AppBar(
@@ -316,7 +316,7 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold)),
                                 backgroundColor:
-                                    _getStatusColor(currentInvoice.status),
+                                    _getStatusColor(currentInvoice.effectiveStatus),
                               ),
                             ],
                           ),
@@ -454,8 +454,8 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(currentInvoice.discountType == 'percentage' 
-                                     ? 'Discount (${currentInvoice.discountAmount}%)' 
-                                     : 'Discount',
+                                     ? (AppLocalizations.of(context)?.discountWithPercentage(currentInvoice.discountAmount.toString()) ?? 'Discount (${currentInvoice.discountAmount}%)') 
+                                     : (AppLocalizations.of(context)?.discount ?? 'Discount'),
                                     style: const TextStyle(color: Colors.red)),
                                 Text(
                                     '-${AppFormatters.formatCurrency(calc.discountValue, currencyCode)}',

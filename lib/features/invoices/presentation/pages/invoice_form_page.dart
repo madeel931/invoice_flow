@@ -173,7 +173,7 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                 title: Text(invoice.invoiceNumber),
                 actions: [
                   Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
+                    padding: const EdgeInsetsDirectional.only(end: 8.0),
                     child: TextButton.icon(
                       icon: const Icon(Icons.check_circle_outline),
                       label: Text(invoice.id == null 
@@ -225,9 +225,11 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                             SegmentedButton<bool>(
                               segments: [
                                 ButtonSegment(
-                                    value: false, label: Text(AppLocalizations.of(context)?.savedCustomer ?? 'Saved Customer')),
+                                    value: false, 
+                                    label: FittedBox(fit: BoxFit.scaleDown, child: Text(AppLocalizations.of(context)?.savedCustomer ?? 'Saved Customer'))),
                                 ButtonSegment(
-                                    value: true, label: Text(AppLocalizations.of(context)?.walkInCustomer ?? 'Walk-in Customer')),
+                                    value: true, 
+                                    label: FittedBox(fit: BoxFit.scaleDown, child: Text(AppLocalizations.of(context)?.walkInCustomer ?? 'Walk-in Customer'))),
                               ],
                               selected: {_isWalkIn},
                               onSelectionChanged: (Set<bool> newSelection) {
@@ -400,9 +402,10 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                               keyboardType:
                                   const TextInputType.numberWithOptions(
                                       decimal: true),
-                              maxLength: 12,
+                              maxLength: invoice.discountType == 'percentage' ? 6 : 12,
                               inputFormatters: [AppInputFormatters.amount],
                               decoration: InputDecoration(
+                                  counterText: '',
                                   labelText:
                                       invoice.discountType == 'percentage'
                                           ? AppLocalizations.of(context)?.discountPercentage ?? 'Discount Percentage (%)'
@@ -417,16 +420,16 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                                 final parsed = double.tryParse(
                                         val?.replaceAll(',', '.') ?? '') ??
                                     0.0;
-                                if (parsed < 0) return 'Cannot be negative';
+                                if (parsed < 0) return AppLocalizations.of(context)?.cannotBeNegative ?? 'Cannot be negative';
                                 if (invoice.discountType == 'percentage' &&
                                     parsed > 100) {
-                                  return 'Cannot exceed 100%';
+                                  return AppLocalizations.of(context)?.cannotExceed100 ?? 'Cannot exceed 100%';
                                 }
                                 final calc =
                                     InvoiceCalculator.calculate(invoice);
                                 if (invoice.discountType == 'amount' &&
                                     parsed > calc.subtotal) {
-                                  return 'Cannot exceed subtotal';
+                                  return AppLocalizations.of(context)?.cannotExceedSubtotal ?? 'Cannot exceed subtotal';
                                 }
                                 return null;
                               },
@@ -448,6 +451,7 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                               maxLength: 12,
                               inputFormatters: [AppInputFormatters.amount],
                               decoration: InputDecoration(
+                                  counterText: '',
                                   labelText: AppLocalizations.of(context)?.paidAmount ?? 'Paid Amount',
                                   prefixIcon: const Icon(Icons.payments)),
                               autovalidateMode:
@@ -456,11 +460,11 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
                                 final parsed = double.tryParse(
                                         val?.replaceAll(',', '.') ?? '') ??
                                     0.0;
-                                if (parsed < 0) return 'Cannot be negative';
+                                if (parsed < 0) return AppLocalizations.of(context)?.cannotBeNegative ?? 'Cannot be negative';
                                 final calc =
                                     InvoiceCalculator.calculate(invoice);
                                 if (parsed > calc.grandTotal) {
-                                  return 'Cannot exceed grand total';
+                                  return AppLocalizations.of(context)?.cannotExceedGrandTotal ?? 'Cannot exceed grand total';
                                 }
                                 return null;
                               },

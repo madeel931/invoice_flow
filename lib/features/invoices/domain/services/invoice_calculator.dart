@@ -141,6 +141,15 @@ class InvoiceCalculator {
     double grandTotal = roundMoney(taxableAmount + totalTax);
     
     double paidAmount = invoice.paidAmount;
+
+    // BUSINESS RULES FOR PAYMENT STATUS:
+    if (invoice.status == InvoiceStatus.paid) {
+      paidAmount = grandTotal;
+    } else if (invoice.status == InvoiceStatus.unpaid) {
+      paidAmount = 0.0;
+    }
+    // If partiallyPaid or overdue, keep the stored paidAmount
+    
     if (paidAmount < 0) paidAmount = 0.0;
     if (paidAmount > grandTotal) paidAmount = grandTotal; // cap
     

@@ -54,8 +54,10 @@ class _CustomersListViewState extends State<_CustomersListView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return BlocBuilder<CustomerListCubit, CustomerListState>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
         title: Text(AppLocalizations.of(context)?.customers ?? 'Customers'),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(60),
@@ -82,8 +84,8 @@ class _CustomersListViewState extends State<_CustomersListView> {
           ),
         ),
       ),
-      body: BlocBuilder<CustomerListCubit, CustomerListState>(
-        builder: (context, state) {
+      body: Builder(
+        builder: (context) {
           if (state.status == CustomerListStatus.loading) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -153,11 +155,15 @@ class _CustomersListViewState extends State<_CustomersListView> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'customer_add_fab',
-        onPressed: () => _openCustomerForm(context),
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: state.filteredCustomers.isEmpty
+          ? null
+          : FloatingActionButton(
+              heroTag: 'customer_add_fab',
+              onPressed: () => _openCustomerForm(context),
+              child: const Icon(Icons.add),
+            ),
+    );
+      },
     );
   }
 }

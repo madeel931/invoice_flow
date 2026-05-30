@@ -5,24 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LocaleCubit extends Cubit<Locale?> {
   static const _localeKey = 'app_locale_code';
 
-  LocaleCubit() : super(null) {
-    _loadLocale();
-  }
-
-  Future<void> _loadLocale() async {
-    final prefs = await SharedPreferences.getInstance();
-    final localeString = prefs.getString(_localeKey);
-
-    if (localeString == 'en') {
-      emit(const Locale('en'));
-    } else if (localeString == 'ar') {
-      emit(const Locale('ar'));
-    } else if (localeString == 'ur') {
-      emit(const Locale('ur'));
-    } else {
-      emit(null); // system default
-    }
-  }
+  LocaleCubit(super.initialLocale);
 
   Future<void> changeLocale(String code) async {
     final prefs = await SharedPreferences.getInstance();

@@ -5,22 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ThemeCubit extends Cubit<ThemeMode> {
   static const _themeKey = 'app_theme_mode';
 
-  ThemeCubit() : super(ThemeMode.system) {
-    _loadTheme(); // Instantly load saved theme on app start
-  }
-
-  Future<void> _loadTheme() async {
-    final prefs = await SharedPreferences.getInstance();
-    final themeString = prefs.getString(_themeKey);
-
-    if (themeString == 'light') {
-      emit(ThemeMode.light);
-    } else if (themeString == 'dark') {
-      emit(ThemeMode.dark);
-    } else {
-      emit(ThemeMode.system);
-    }
-  }
+  ThemeCubit(super.initialTheme);
 
   Future<void> updateTheme(ThemeMode mode) async {
     emit(mode); // Update UI instantly

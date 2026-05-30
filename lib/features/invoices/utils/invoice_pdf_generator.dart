@@ -36,10 +36,6 @@ class InvoicePdfGenerator {
     }
   }
 
-  // ---  Smart Memory Cache ---
-  // Stores generated PDFs in RAM to prevent CPU-heavy rebuilds
-  static final Map<String, Uint8List> _pdfCache = {};
-
   static String _formatQuantity(double quantity) {
     if (quantity % 1 == 0) {
       return quantity.toInt().toString();
@@ -90,19 +86,8 @@ class InvoicePdfGenerator {
   static Future<Uint8List> generate(
       Invoice invoice, BusinessProfile profile) async {
     try {
-      // 1. Generate Unique Cache Key
       // Safely determine the display currency for this specific invoice
       final displayCurrency = invoice.currencyCode?.trim().isNotEmpty == true ? invoice.currencyCode! : profile.currencyCode;
-      
-      // If the invoice is updated, the timestamp changes and forces a new PDF generation.
-      // Include displayCurrency so changing fallback currency invalidates cache
-      final cacheKey =
-          '${invoice.id}_${invoice.effectiveStatus.name}_${invoice.updatedAt?.millisecondsSinceEpoch}_$displayCurrency';
-
-      // 2. Check Cache First
-      if (_pdfCache.containsKey(cacheKey)) {
-        return _pdfCache[cacheKey]!; // Instantly return cached PDF!
-      }
 
     final calc = InvoiceCalculator.calculate(invoice);
     final pdf = pw.Document();
@@ -390,9 +375,8 @@ class InvoicePdfGenerator {
       ),
     );
 
-    // 6. Save PDF to bytes, store in Cache, and return
+    // 6. Save PDF to bytes and return
     final bytes = await pdf.save();
-    _pdfCache[cacheKey] = bytes;
     return bytes;
     } catch (e) {
       throw Exception('Failed to generate PDF. Please verify invoice details or remove problematic characters and try again.');

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:printing/printing.dart';
+import 'package:pdf/pdf.dart';
 
 import 'dart:typed_data';
 
@@ -25,7 +26,6 @@ class InvoicePreviewPage extends StatefulWidget {
 
 class _InvoicePreviewPageState extends State<InvoicePreviewPage> {
   late final Future<Uint8List> _pdfFuture;
-  bool _isActionRunning = false;
 
   @override
   void initState() {
@@ -63,117 +63,28 @@ class _InvoicePreviewPageState extends State<InvoicePreviewPage> {
 
   @override
   Widget build(BuildContext context) {
+    final invoices = context.read<InvoiceListCubit>().state.allInvoices;
+    final invoiceIndex = invoices.indexWhere((i) => i.id?.toString() == widget.invoiceId);
+    final invoiceNumber = invoiceIndex != -1 ? invoices[invoiceIndex].invoiceNumber : widget.invoiceId;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)?.invoicePdf ?? 'Invoice PDF'),
       ),
-      body: FutureBuilder<Uint8List>(
-        future: _pdfFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return const LoadingWidget();
-          }
-
-          if (snapshot.hasError || !snapshot.hasData) {
-            return const EmptyStateWidget(
-              message: 'Failed to generate PDF.',
-              icon: Icons.error_outline,
-            );
-          }
-
-          final pdfBytes = snapshot.data!;
-          final theme = Theme.of(context);
-          final invoices = context.read<InvoiceListCubit>().state.allInvoices;
-          final invoiceIndex = invoices.indexWhere((i) => i.id?.toString() == widget.invoiceId);
-          if (invoiceIndex == -1) {
-            return const EmptyStateWidget(
-              message: 'Invoice not found.',
-              icon: Icons.error_outline,
-            );
-          }
-          final invoice = invoices[invoiceIndex];
-
-          return Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Icon(
-                  Icons.picture_as_pdf,
-                  size: 80,
-                  color: theme.colorScheme.primary,
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  AppLocalizations.of(context)?.pdfReady ?? 'PDF Ready',
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  AppLocalizations.of(context)?.pdfGenerated(invoice.invoiceNumber, invoice.customerName) ?? 'Invoice ${invoice.invoiceNumber} for ${invoice.customerName} has been generated successfully.',
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(height: 48),
-                FilledButton.icon(
-                  onPressed: _isActionRunning ? null : () async {
-                    setState(() => _isActionRunning = true);
-                    try {
-                      await Printing.layoutPdf(
-                        onLayout: (_) async => pdfBytes,
-                        name: 'invoice_${invoice.invoiceNumber}.pdf',
-                      );
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to print PDF. Please try again.')));
-                      }
-                    } finally {
-                      if (mounted) setState(() => _isActionRunning = false);
-                    }
-                  },
-                  icon: _isActionRunning 
-                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) 
-                    : const Icon(Icons.print),
-                  label: Text(AppLocalizations.of(context)?.printPdf ?? 'Print PDF'),
-                  style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                OutlinedButton.icon(
-                  onPressed: _isActionRunning ? null : () async {
-                    setState(() => _isActionRunning = true);
-                    try {
-                      await Printing.sharePdf(
-                        bytes: pdfBytes,
-                        filename: 'invoice_${invoice.invoiceNumber}.pdf',
-                      );
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to share PDF. Please try again.')));
-                      }
-                    } finally {
-                      if (mounted) setState(() => _isActionRunning = false);
-                    }
-                  },
-                  icon: _isActionRunning 
-                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) 
-                    : const Icon(Icons.share),
-                  label: Text(AppLocalizations.of(context)?.sharePdf ?? 'Share PDF'),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
+      body: PdfPreview(
+        build: (format) => _pdfFuture,
+        allowPrinting: true,
+        allowSharing: true,
+        canChangeOrientation: false,
+        canChangePageFormat: false,
+        canDebug: false,
+        initialPageFormat: PdfPageFormat.a4,
+        pdfFileName: 'invoice_$invoiceNumber.pdf',
+        loadingWidget: const LoadingWidget(),
+        onError: (context, error) => const EmptyStateWidget(
+          message: 'Failed to generate PDF.',
+          icon: Icons.error_outline,
+        ),
       ),
     );
   }

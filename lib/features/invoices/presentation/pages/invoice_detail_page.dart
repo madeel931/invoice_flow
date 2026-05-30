@@ -33,6 +33,7 @@ class InvoiceDetailPage extends StatefulWidget {
 
 class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
   late Future<Invoice> _invoiceFuture;
+  bool _isGeneratingPdf = false;
 
   @override
   void initState() {
@@ -84,20 +85,35 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
   }
 
   Future<void> _sharePdf(BuildContext context, Invoice currentInvoice) async {
-    final getProfile = GetIt.instance<GetBusinessProfileUseCase>();
-    final result = await getProfile(NoParams());
+    if (_isGeneratingPdf) return;
+    setState(() => _isGeneratingPdf = true);
 
-    result.fold(
-        (l) => ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(AppLocalizations.of(context)?.failedToLoadProfile ?? 'Failed to load profile for PDF.'))),
-        (profile) async {
-      final bytes = await InvoicePdfGenerator.generate(currentInvoice, profile);
-      final fileName =
-          '${currentInvoice.invoiceNumber}_${currentInvoice.customerName.replaceAll(' ', '_')}.pdf';
+    try {
+      final getProfile = GetIt.instance<GetBusinessProfileUseCase>();
+      final result = await getProfile(NoParams());
 
-      // Uses the Printing package to instantly open the native OS share sheet!
-      await Printing.sharePdf(bytes: bytes, filename: fileName);
-    });
+      await result.fold(
+          (l) async => ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(AppLocalizations.of(context)?.failedToLoadProfile ?? 'Failed to load profile for PDF.'))),
+          (profile) async {
+        final bytes = await InvoicePdfGenerator.generate(currentInvoice, profile);
+        final fileName =
+            '${currentInvoice.invoiceNumber}_${currentInvoice.customerName.replaceAll(' ', '_')}.pdf';
+
+        // Uses the Printing package to instantly open the native OS share sheet!
+        await Printing.sharePdf(bytes: bytes, filename: fileName);
+      });
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to generate PDF. Please try again.')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isGeneratingPdf = false);
+      }
+    }
   }
 
   Future<bool?> _showConfirmDialog({
@@ -245,11 +261,23 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
               appBar: AppBar(
                 title: Text(currentInvoice.invoiceNumber),
                 actions: [
-                  IconButton(
-                    icon: const Icon(Icons.share_rounded),
-                    tooltip: AppLocalizations.of(context)?.sharePdf ?? 'Share PDF',
-                    onPressed: () => _sharePdf(context, currentInvoice),
-                  ),
+                  if (_isGeneratingPdf)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                    )
+                  else
+                    IconButton(
+                      icon: const Icon(Icons.share_rounded),
+                      tooltip: AppLocalizations.of(context)?.sharePdf ?? 'Share PDF',
+                      onPressed: () => _sharePdf(context, currentInvoice),
+                    ),
                   PopupMenuButton<String>(
                     icon: const Icon(Icons.more_vert),
                     onSelected: (value) => _handleInvoiceAction(currentInvoice, value),

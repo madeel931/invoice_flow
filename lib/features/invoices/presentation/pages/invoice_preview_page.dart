@@ -25,6 +25,7 @@ class InvoicePreviewPage extends StatefulWidget {
 
 class _InvoicePreviewPageState extends State<InvoicePreviewPage> {
   late final Future<Uint8List> _pdfFuture;
+  bool _isActionRunning = false;
 
   @override
   void initState() {
@@ -121,13 +122,24 @@ class _InvoicePreviewPageState extends State<InvoicePreviewPage> {
                 ),
                 const SizedBox(height: 48),
                 FilledButton.icon(
-                  onPressed: () async {
-                    await Printing.layoutPdf(
-                      onLayout: (_) async => pdfBytes,
-                      name: 'invoice_${invoice.invoiceNumber}.pdf',
-                    );
+                  onPressed: _isActionRunning ? null : () async {
+                    setState(() => _isActionRunning = true);
+                    try {
+                      await Printing.layoutPdf(
+                        onLayout: (_) async => pdfBytes,
+                        name: 'invoice_${invoice.invoiceNumber}.pdf',
+                      );
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to print PDF. Please try again.')));
+                      }
+                    } finally {
+                      if (mounted) setState(() => _isActionRunning = false);
+                    }
                   },
-                  icon: const Icon(Icons.print),
+                  icon: _isActionRunning 
+                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) 
+                    : const Icon(Icons.print),
                   label: Text(AppLocalizations.of(context)?.printPdf ?? 'Print PDF'),
                   style: FilledButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -135,13 +147,24 @@ class _InvoicePreviewPageState extends State<InvoicePreviewPage> {
                 ),
                 const SizedBox(height: 16),
                 OutlinedButton.icon(
-                  onPressed: () async {
-                    await Printing.sharePdf(
-                      bytes: pdfBytes,
-                      filename: 'invoice_${invoice.invoiceNumber}.pdf',
-                    );
+                  onPressed: _isActionRunning ? null : () async {
+                    setState(() => _isActionRunning = true);
+                    try {
+                      await Printing.sharePdf(
+                        bytes: pdfBytes,
+                        filename: 'invoice_${invoice.invoiceNumber}.pdf',
+                      );
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to share PDF. Please try again.')));
+                      }
+                    } finally {
+                      if (mounted) setState(() => _isActionRunning = false);
+                    }
                   },
-                  icon: const Icon(Icons.share),
+                  icon: _isActionRunning 
+                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)) 
+                    : const Icon(Icons.share),
                   label: Text(AppLocalizations.of(context)?.sharePdf ?? 'Share PDF'),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),

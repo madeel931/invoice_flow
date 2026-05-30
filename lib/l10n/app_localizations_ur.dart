@@ -770,4 +770,53 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get urdu => 'اردو';
+
+  @override
+  String get invoiceNumber => 'انوائس نمبر';
+
+  @override
+  String get errInvoiceNumberExists =>
+      'اس نمبر کے ساتھ ایک انوائس پہلے سے موجود ہے۔';
+
+  @override
+  String get errInvoiceNumberRequired =>
+      'انوائس نمبر ضروری ہے اور زیادہ سے زیادہ 40 حروف پر مشتمل ہونا چاہیے۔';
+
+  @override
+  String get errDueDateInvalid => 'آخری تاریخ تاریخ اجرا سے پہلے نہیں ہو سکتی۔';
+
+  @override
+  String get errNoItems => 'ایک انوائس میں کم از کم ایک آئٹم ہونا ضروری ہے۔';
+
+  @override
+  String get errDiscountNegative => 'ڈسکاؤنٹ منفی نہیں ہو سکتا۔';
+
+  @override
+  String get errDiscountExceedsSubtotal =>
+      'ڈسکاؤنٹ انوائس کے ذیلی کل سے زیادہ نہیں ہو سکتا۔';
+
+  @override
+  String get errDiscountExceeds100 => 'ڈسکاؤنٹ 100٪ سے زیادہ نہیں ہو سکتا۔';
+
+  @override
+  String get errPaidAmountNegative => 'ادا شدہ رقم منفی نہیں ہو سکتی۔';
+
+  @override
+  String get errPaidAmountExceedsTotal =>
+      'ادا شدہ رقم مجموعی کل سے زیادہ نہیں ہو سکتی۔';
+
+  @override
+  String get errItemDescInvalid =>
+      'آئٹم کی تفصیل ضروری ہے اور زیادہ سے زیادہ 120 حروف پر مشتمل ہونی چاہیے۔';
+
+  @override
+  String get errItemQtyInvalid =>
+      'مقدار 0 سے زیادہ اور زیادہ سے زیادہ 999999 ہونی چاہیے۔';
+
+  @override
+  String get errItemPriceInvalid =>
+      'یونٹ کی قیمت 0 یا اس سے زیادہ اور زیادہ سے زیادہ 999999999 ہونی چاہیے۔';
+
+  @override
+  String get errItemTaxInvalid => 'ٹیکس کی شرح 0 اور 100 کے درمیان ہونی چاہیے۔';
 }

@@ -141,11 +141,11 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
               textInputAction: TextInputAction.next,
               label: '${AppLocalizations.of(context)?.productName ?? "Item Name"} *',
               prefixIcon: const Icon(Icons.inventory_2_outlined),
-              maxLength: 100,
+              maxLength: 80,
               validator: (val) => AppValidators.requiredText(
                 val, 
                 min: 2, 
-                max: 100, 
+                max: 80, 
                 errorRequired: AppLocalizations.of(context)?.productRequired
               ),
             ),
@@ -165,7 +165,7 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
                     inputFormatters: [AppInputFormatters.amount],
                     validator: (val) => AppValidators.amount(
                       val, 
-                      max: 99999999.99, 
+                      max: 999999999, 
                       errorRequired: AppLocalizations.of(context)?.priceRequired,
                       errorInvalid: AppLocalizations.of(context)?.invalidPrice,
                       errorMax: AppLocalizations.of(context)?.amountTooLarge,
@@ -214,8 +214,8 @@ class _ProductFormSheetState extends State<ProductFormSheet> {
               textInputAction: TextInputAction.done,
               maxLines: 2,
               label: AppLocalizations.of(context)?.description ?? 'Description (Optional)',
-              maxLength: 300,
-              validator: (val) => AppValidators.optionalText(val, max: 300),
+              maxLength: 120,
+              validator: (val) => AppValidators.optionalText(val, max: 120),
             ),
             const SizedBox(height: AppSpacing.xl),
             GlobalButton(

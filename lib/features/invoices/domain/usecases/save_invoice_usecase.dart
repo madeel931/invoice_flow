@@ -18,9 +18,36 @@ class SaveInvoiceUseCase implements UseCase<Invoice, SaveInvoiceParams> {
     final inv = params.invoice;
 
     // Strict Domain Validation
+    if (inv.invoiceNumber.trim().isEmpty || inv.invoiceNumber.trim().length > 40) {
+      return const Left(ValidationFailure('err_invoice_number_required'));
+    }
+
+    final existingInvoiceResult = await repository.getInvoiceByNumber(inv.invoiceNumber);
+    if (existingInvoiceResult.isRight()) {
+      final existingInvoice = existingInvoiceResult.getOrElse(() => null);
+      if (existingInvoice != null && existingInvoice.id != inv.id) {
+        return const Left(ValidationFailure('err_invoice_number_exists'));
+      }
+    }
+
     if (inv.items.isEmpty) {
       return const Left(
-          ValidationFailure('An invoice must have at least one line item.'));
+          ValidationFailure('err_no_items'));
+    }
+
+    for (final item in inv.items) {
+      if (item.description.trim().isEmpty || item.description.trim().length > 120) {
+        return const Left(ValidationFailure('err_item_desc_invalid'));
+      }
+      if (item.quantity <= 0 || item.quantity > 999999) {
+        return const Left(ValidationFailure('err_item_qty_invalid'));
+      }
+      if (item.unitPrice < 0 || item.unitPrice > 999999999) {
+        return const Left(ValidationFailure('err_item_price_invalid'));
+      }
+      if (item.taxRate < 0 || item.taxRate > 100) {
+        return const Left(ValidationFailure('err_item_tax_invalid'));
+      }
     }
 
     DateTime dateOnly(DateTime date) {
@@ -35,21 +62,28 @@ class SaveInvoiceUseCase implements UseCase<Invoice, SaveInvoiceParams> {
     // Prevent illogical timelines (due dates cannot be in the past relative to issue date).
     if (dueOnly.isBefore(issueOnly)) {
       return const Left(
-          ValidationFailure('Due date cannot be before issue date.'));
+          ValidationFailure('err_due_date_invalid'));
     }
 
     if (inv.discountAmount < 0) {
-      return const Left(ValidationFailure('Discount cannot be negative.'));
+      return const Left(ValidationFailure('err_discount_negative'));
     }
 
     final calc = InvoiceCalculator.calculate(inv);
     if (inv.discountType == 'amount' && inv.discountAmount > calc.subtotal) {
       return const Left(
-          ValidationFailure('Discount cannot exceed the invoice subtotal.'));
+          ValidationFailure('err_discount_exceeds_subtotal'));
     }
     if (inv.discountType == 'percentage' && inv.discountAmount > 100) {
       return const Left(
-          ValidationFailure('Discount percentage cannot exceed 100%.'));
+          ValidationFailure('err_discount_exceeds_100'));
+    }
+
+    if (inv.paidAmount < 0) {
+      return const Left(ValidationFailure('err_paid_amount_negative'));
+    }
+    if (inv.paidAmount > calc.grandTotal) {
+      return const Left(ValidationFailure('err_paid_amount_exceeds_total'));
     }
 
     return await repository.saveInvoice(inv);

@@ -95,16 +95,42 @@ class InvoiceRepositoryImpl implements InvoiceRepository {
   Future<Either<Failure, String>> generateNextInvoiceNumber() async {
     try {
       final isar = localDb.db;
-      final count = await isar.invoiceCollections.count();
+      final invoices = await isar.invoiceCollections.where().findAll();
 
-      // Basic formatting: INV-001, INV-002, etc.
-      // In a real scenario, this prefix could be customizable in settings.
-      final nextNumber = count + 1;
-      final formattedNumber = 'INV-${nextNumber.toString().padLeft(3, '0')}';
+      int maxNumber = 0;
+      const prefix = 'INV-';
+
+      for (final inv in invoices) {
+        final numberStr = inv.invoiceNumber;
+        if (numberStr.startsWith(prefix)) {
+          final suffixStr = numberStr.substring(prefix.length);
+          final parsed = int.tryParse(suffixStr);
+          if (parsed != null && parsed > maxNumber) {
+            maxNumber = parsed;
+          }
+        }
+      }
+
+      final nextNumber = maxNumber + 1;
+      final formattedNumber = '$prefix${nextNumber.toString().padLeft(3, '0')}';
 
       return Right(formattedNumber);
     } catch (e) {
       return Left(DatabaseFailure('Failed to generate invoice number: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Invoice?>> getInvoiceByNumber(String number) async {
+    try {
+      final isar = localDb.db;
+      final collection = await isar.invoiceCollections
+          .filter()
+          .invoiceNumberEqualTo(number)
+          .findFirst();
+      return Right(collection?.toEntity());
+    } catch (e) {
+      return Left(DatabaseFailure('Failed to fetch invoice by number: $e'));
     }
   }
 

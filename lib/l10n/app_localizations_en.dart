@@ -763,4 +763,53 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get urdu => 'Urdu';
+
+  @override
+  String get invoiceNumber => 'Invoice Number';
+
+  @override
+  String get errInvoiceNumberExists =>
+      'An invoice with this number already exists.';
+
+  @override
+  String get errInvoiceNumberRequired =>
+      'Invoice number is required and max 40 characters.';
+
+  @override
+  String get errDueDateInvalid => 'Due date cannot be before issue date.';
+
+  @override
+  String get errNoItems => 'An invoice must have at least one line item.';
+
+  @override
+  String get errDiscountNegative => 'Discount cannot be negative.';
+
+  @override
+  String get errDiscountExceedsSubtotal =>
+      'Discount cannot exceed the invoice subtotal.';
+
+  @override
+  String get errDiscountExceeds100 => 'Discount percentage cannot exceed 100%.';
+
+  @override
+  String get errPaidAmountNegative => 'Paid amount cannot be negative.';
+
+  @override
+  String get errPaidAmountExceedsTotal =>
+      'Paid amount cannot exceed grand total.';
+
+  @override
+  String get errItemDescInvalid =>
+      'Item description is required and max 120 characters.';
+
+  @override
+  String get errItemQtyInvalid =>
+      'Quantity must be greater than 0 and max 999999.';
+
+  @override
+  String get errItemPriceInvalid =>
+      'Unit price must be >= 0 and max 999999999.';
+
+  @override
+  String get errItemTaxInvalid => 'Tax rate must be between 0 and 100.';
 }

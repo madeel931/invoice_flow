@@ -110,6 +110,12 @@ class InvoiceFormCubit extends Cubit<InvoiceFormState> {
     emit(state.copyWith(draftInvoice: updated));
   }
 
+  void updateInvoiceNumber(String number) {
+    if (state.draftInvoice == null) return;
+    emit(state.copyWith(
+        draftInvoice: state.draftInvoice!.copyWith(invoiceNumber: number)));
+  }
+
   void addLineItem(InvoiceItem item) {
     if (state.draftInvoice == null) return;
     final currentItems = List<InvoiceItem>.from(state.draftInvoice!.items);

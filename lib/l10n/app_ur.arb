@@ -240,5 +240,19 @@
   "discountWithPercentage": "الخصم ({percentage}%)",
   "revenueByCurrency": "آمدنی بلحاظ کرنسی",
   "outstandingByCurrency": "بقایا جات بلحاظ کرنسی",
-  "urdu": "اردو"
+  "urdu": "اردو",
+  "invoiceNumber": "انوائس نمبر",
+  "errInvoiceNumberExists": "اس نمبر کے ساتھ ایک انوائس پہلے سے موجود ہے۔",
+  "errInvoiceNumberRequired": "انوائس نمبر ضروری ہے اور زیادہ سے زیادہ 40 حروف پر مشتمل ہونا چاہیے۔",
+  "errDueDateInvalid": "آخری تاریخ تاریخ اجرا سے پہلے نہیں ہو سکتی۔",
+  "errNoItems": "ایک انوائس میں کم از کم ایک آئٹم ہونا ضروری ہے۔",
+  "errDiscountNegative": "ڈسکاؤنٹ منفی نہیں ہو سکتا۔",
+  "errDiscountExceedsSubtotal": "ڈسکاؤنٹ انوائس کے ذیلی کل سے زیادہ نہیں ہو سکتا۔",
+  "errDiscountExceeds100": "ڈسکاؤنٹ 100٪ سے زیادہ نہیں ہو سکتا۔",
+  "errPaidAmountNegative": "ادا شدہ رقم منفی نہیں ہو سکتی۔",
+  "errPaidAmountExceedsTotal": "ادا شدہ رقم مجموعی کل سے زیادہ نہیں ہو سکتی۔",
+  "errItemDescInvalid": "آئٹم کی تفصیل ضروری ہے اور زیادہ سے زیادہ 120 حروف پر مشتمل ہونی چاہیے۔",
+  "errItemQtyInvalid": "مقدار 0 سے زیادہ اور زیادہ سے زیادہ 999999 ہونی چاہیے۔",
+  "errItemPriceInvalid": "یونٹ کی قیمت 0 یا اس سے زیادہ اور زیادہ سے زیادہ 999999999 ہونی چاہیے۔",
+  "errItemTaxInvalid": "ٹیکس کی شرح 0 اور 100 کے درمیان ہونی چاہیے۔"
 }

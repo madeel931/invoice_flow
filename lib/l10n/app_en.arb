@@ -998,5 +998,19 @@
   "urdu": "Urdu",
   "@urdu": {
     "description": "Label or text for urdu"
-  }
+  },
+  "invoiceNumber": "Invoice Number",
+  "errInvoiceNumberExists": "An invoice with this number already exists.",
+  "errInvoiceNumberRequired": "Invoice number is required and max 40 characters.",
+  "errDueDateInvalid": "Due date cannot be before issue date.",
+  "errNoItems": "An invoice must have at least one line item.",
+  "errDiscountNegative": "Discount cannot be negative.",
+  "errDiscountExceedsSubtotal": "Discount cannot exceed the invoice subtotal.",
+  "errDiscountExceeds100": "Discount percentage cannot exceed 100%.",
+  "errPaidAmountNegative": "Paid amount cannot be negative.",
+  "errPaidAmountExceedsTotal": "Paid amount cannot exceed grand total.",
+  "errItemDescInvalid": "Item description is required and max 120 characters.",
+  "errItemQtyInvalid": "Quantity must be greater than 0 and max 999999.",
+  "errItemPriceInvalid": "Unit price must be >= 0 and max 999999999.",
+  "errItemTaxInvalid": "Tax rate must be between 0 and 100."
 }

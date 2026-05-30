@@ -762,4 +762,52 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get urdu => 'الأردية';
+
+  @override
+  String get invoiceNumber => 'رقم الفاتورة';
+
+  @override
+  String get errInvoiceNumberExists => 'توجد فاتورة بهذا الرقم بالفعل.';
+
+  @override
+  String get errInvoiceNumberRequired =>
+      'رقم الفاتورة مطلوب وبحد أقصى 40 حرفاً.';
+
+  @override
+  String get errDueDateInvalid =>
+      'لا يمكن أن يكون تاريخ الاستحقاق قبل تاريخ الإصدار.';
+
+  @override
+  String get errNoItems => 'يجب أن تحتوي الفاتورة على عنصر واحد على الأقل.';
+
+  @override
+  String get errDiscountNegative => 'لا يمكن أن يكون الخصم سالباً.';
+
+  @override
+  String get errDiscountExceedsSubtotal =>
+      'لا يمكن أن يتجاوز الخصم المجموع الفرعي للفاتورة.';
+
+  @override
+  String get errDiscountExceeds100 => 'لا يمكن أن تتجاوز نسبة الخصم 100%.';
+
+  @override
+  String get errPaidAmountNegative => 'لا يمكن أن يكون المبلغ المدفوع سالباً.';
+
+  @override
+  String get errPaidAmountExceedsTotal =>
+      'لا يمكن أن يتجاوز المبلغ المدفوع المجموع الإجمالي.';
+
+  @override
+  String get errItemDescInvalid => 'وصف العنصر مطلوب وبحد أقصى 120 حرفاً.';
+
+  @override
+  String get errItemQtyInvalid =>
+      'يجب أن تكون الكمية أكبر من 0 وبحد أقصى 999999.';
+
+  @override
+  String get errItemPriceInvalid =>
+      'يجب أن يكون سعر الوحدة أكبر من أو يساوي 0 وبحد أقصى 999999999.';
+
+  @override
+  String get errItemTaxInvalid => 'يجب أن تكون نسبة الضريبة بين 0 و 100.';
 }

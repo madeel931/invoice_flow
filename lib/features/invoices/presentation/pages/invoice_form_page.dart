@@ -62,6 +62,26 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
   bool _isWalkIn = false;
   bool _hasUserSelectedDueDate = false;
 
+  String _getLocalizedError(BuildContext context, String error) {
+    final loc = AppLocalizations.of(context);
+    switch (error) {
+      case 'err_invoice_number_exists': return loc?.errInvoiceNumberExists ?? 'An invoice with this number already exists.';
+      case 'err_invoice_number_required': return loc?.errInvoiceNumberRequired ?? 'Invoice number is required and max 40 characters.';
+      case 'err_due_date_invalid': return loc?.errDueDateInvalid ?? 'Due date cannot be before issue date.';
+      case 'err_no_items': return loc?.errNoItems ?? 'An invoice must have at least one line item.';
+      case 'err_discount_negative': return loc?.errDiscountNegative ?? 'Discount cannot be negative.';
+      case 'err_discount_exceeds_subtotal': return loc?.errDiscountExceedsSubtotal ?? 'Discount cannot exceed the invoice subtotal.';
+      case 'err_discount_exceeds_100': return loc?.errDiscountExceeds100 ?? 'Discount percentage cannot exceed 100%.';
+      case 'err_paid_amount_negative': return loc?.errPaidAmountNegative ?? 'Paid amount cannot be negative.';
+      case 'err_paid_amount_exceeds_total': return loc?.errPaidAmountExceedsTotal ?? 'Paid amount cannot exceed grand total.';
+      case 'err_item_desc_invalid': return loc?.errItemDescInvalid ?? 'Item description is required and max 120 characters.';
+      case 'err_item_qty_invalid': return loc?.errItemQtyInvalid ?? 'Quantity must be greater than 0 and max 999999.';
+      case 'err_item_price_invalid': return loc?.errItemPriceInvalid ?? 'Unit price must be >= 0 and max 999999999.';
+      case 'err_item_tax_invalid': return loc?.errItemTaxInvalid ?? 'Tax rate must be between 0 and 100.';
+      default: return error;
+    }
+  }
+
   @override
   void dispose() {
     _discountController.dispose();
@@ -128,7 +148,7 @@ class _InvoiceFormViewState extends State<_InvoiceFormView> {
           listener: (context, state) {
             if (state.errorMessage != null) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(state.errorMessage!),
+                  content: Text(_getLocalizedError(context, state.errorMessage!)),
                   backgroundColor: Theme.of(context).colorScheme.error));
             }
             if (state.status == InvoiceFormStatus.success) {

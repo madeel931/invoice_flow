@@ -240,5 +240,19 @@
   "discountWithPercentage": "الخصم ({percentage}%)",
   "revenueByCurrency": "الإيرادات حسب العملة",
   "outstandingByCurrency": "المستحقات حسب العملة",
-  "urdu": "الأردية"
+  "urdu": "الأردية",
+  "invoiceNumber": "رقم الفاتورة",
+  "errInvoiceNumberExists": "توجد فاتورة بهذا الرقم بالفعل.",
+  "errInvoiceNumberRequired": "رقم الفاتورة مطلوب وبحد أقصى 40 حرفاً.",
+  "errDueDateInvalid": "لا يمكن أن يكون تاريخ الاستحقاق قبل تاريخ الإصدار.",
+  "errNoItems": "يجب أن تحتوي الفاتورة على عنصر واحد على الأقل.",
+  "errDiscountNegative": "لا يمكن أن يكون الخصم سالباً.",
+  "errDiscountExceedsSubtotal": "لا يمكن أن يتجاوز الخصم المجموع الفرعي للفاتورة.",
+  "errDiscountExceeds100": "لا يمكن أن تتجاوز نسبة الخصم 100%.",
+  "errPaidAmountNegative": "لا يمكن أن يكون المبلغ المدفوع سالباً.",
+  "errPaidAmountExceedsTotal": "لا يمكن أن يتجاوز المبلغ المدفوع المجموع الإجمالي.",
+  "errItemDescInvalid": "وصف العنصر مطلوب وبحد أقصى 120 حرفاً.",
+  "errItemQtyInvalid": "يجب أن تكون الكمية أكبر من 0 وبحد أقصى 999999.",
+  "errItemPriceInvalid": "يجب أن يكون سعر الوحدة أكبر من أو يساوي 0 وبحد أقصى 999999999.",
+  "errItemTaxInvalid": "يجب أن تكون نسبة الضريبة بين 0 و 100."
 }

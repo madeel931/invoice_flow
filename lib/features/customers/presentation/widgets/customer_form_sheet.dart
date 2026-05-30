@@ -138,11 +138,11 @@ class _CustomerFormSheetState extends State<CustomerFormSheet> {
               keyboardType: TextInputType.phone,
               label: AppLocalizations.of(context)?.phoneNumber ?? 'Phone Number',
               prefixIcon: const Icon(Icons.phone),
-              maxLength: 20,
+              maxLength: 30,
               inputFormatters: [AppInputFormatters.phone],
               validator: (val) => AppValidators.phone(
                 val, 
-                max: 20, 
+                max: 30, 
                 errorMaxLength: AppLocalizations.of(context)?.phoneTooLong,
                 errorMinLength: AppLocalizations.of(context)?.phoneTooShort,
               ),

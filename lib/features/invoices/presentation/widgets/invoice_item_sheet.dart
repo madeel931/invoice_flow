@@ -186,11 +186,11 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
             GlobalTextField(
               controller: _descController,
               label: '${AppLocalizations.of(context)?.itemDescription ?? "Description"} *',
-              maxLength: 100,
+              maxLength: 120,
               validator: (val) => AppValidators.requiredText(
                 val, 
                 min: 2, 
-                max: 100, 
+                max: 120, 
                 errorRequired: AppLocalizations.of(context)?.productRequired
               ),
             ),
@@ -247,7 +247,7 @@ class _InvoiceItemSheetState extends State<InvoiceItemSheet> {
                     inputFormatters: [AppInputFormatters.amount],
                     validator: (val) => AppValidators.amount(
                       val, 
-                      max: 99999999.99, 
+                      max: 999999999, 
                       errorRequired: AppLocalizations.of(context)?.priceRequired,
                       errorInvalid: AppLocalizations.of(context)?.invalidPrice,
                       errorMax: AppLocalizations.of(context)?.amountTooLarge,

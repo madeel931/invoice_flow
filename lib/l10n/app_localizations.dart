@@ -1545,6 +1545,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Urdu'**
   String get urdu;
+
+  /// No description provided for @invoiceNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice Number'**
+  String get invoiceNumber;
+
+  /// No description provided for @errInvoiceNumberExists.
+  ///
+  /// In en, this message translates to:
+  /// **'An invoice with this number already exists.'**
+  String get errInvoiceNumberExists;
+
+  /// No description provided for @errInvoiceNumberRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Invoice number is required and max 40 characters.'**
+  String get errInvoiceNumberRequired;
+
+  /// No description provided for @errDueDateInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date cannot be before issue date.'**
+  String get errDueDateInvalid;
+
+  /// No description provided for @errNoItems.
+  ///
+  /// In en, this message translates to:
+  /// **'An invoice must have at least one line item.'**
+  String get errNoItems;
+
+  /// No description provided for @errDiscountNegative.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount cannot be negative.'**
+  String get errDiscountNegative;
+
+  /// No description provided for @errDiscountExceedsSubtotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount cannot exceed the invoice subtotal.'**
+  String get errDiscountExceedsSubtotal;
+
+  /// No description provided for @errDiscountExceeds100.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount percentage cannot exceed 100%.'**
+  String get errDiscountExceeds100;
+
+  /// No description provided for @errPaidAmountNegative.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid amount cannot be negative.'**
+  String get errPaidAmountNegative;
+
+  /// No description provided for @errPaidAmountExceedsTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid amount cannot exceed grand total.'**
+  String get errPaidAmountExceedsTotal;
+
+  /// No description provided for @errItemDescInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Item description is required and max 120 characters.'**
+  String get errItemDescInvalid;
+
+  /// No description provided for @errItemQtyInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity must be greater than 0 and max 999999.'**
+  String get errItemQtyInvalid;
+
+  /// No description provided for @errItemPriceInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit price must be >= 0 and max 999999999.'**
+  String get errItemPriceInvalid;
+
+  /// No description provided for @errItemTaxInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Tax rate must be between 0 and 100.'**
+  String get errItemTaxInvalid;
 }
 
 class _AppLocalizationsDelegate

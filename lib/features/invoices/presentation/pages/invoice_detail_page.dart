@@ -12,12 +12,14 @@ import '../../../../config/routes/route_constants.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../core/widgets/global_card.dart';
 import '../../../../core/constants/app_units.dart';
+import '../../../../core/locale/cubit/locale_cubit.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../../../settings/domain/usecases/get_business_profile_usecase.dart';
 import '../../domain/usecases/get_invoices_usecase.dart';
 import '../../domain/entities/invoice.dart';
 import '../../domain/entities/invoice_status.dart';
 import '../../domain/services/invoice_calculator.dart';
+import '../../utils/arabic_invoice_pdf_generator.dart';
 import '../../utils/invoice_pdf_generator.dart';
 import '../cubit/invoice_list_cubit.dart';
 import '../cubit/invoice_list_state.dart';
@@ -95,16 +97,22 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
     if (_isGeneratingPdf) return;
     setState(() => _isGeneratingPdf = true);
 
+    // Capture context references before any async operations to prevent use_build_context_synchronously
+    final languageCode = context.read<LocaleCubit>().state?.languageCode ?? 'en';
+    final messenger = ScaffoldMessenger.of(context);
+    final errorMsg = AppLocalizations.of(context)?.failedToLoadProfile ?? 'Failed to load profile for PDF.';
+    const generalErrorMsg = 'Failed to generate PDF. Please try again.';
+
     try {
       final getProfile = GetIt.instance<GetBusinessProfileUseCase>();
       final result = await getProfile(NoParams());
 
       await result.fold(
-          (l) async => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(AppLocalizations.of(context)?.failedToLoadProfile ??
-                  'Failed to load profile for PDF.'))), (profile) async {
-        final bytes =
-            await InvoicePdfGenerator.generate(currentInvoice, profile);
+          (l) async => messenger.showSnackBar(SnackBar(content: Text(errorMsg))), 
+          (profile) async {
+        final bytes = languageCode == 'ar'
+            ? await ArabicInvoicePdfGenerator.generate(currentInvoice, profile)
+            : await InvoicePdfGenerator.generate(currentInvoice, profile);
         final fileName =
             '${currentInvoice.invoiceNumber}_${currentInvoice.customerName.replaceAll(' ', '_')}.pdf';
 
@@ -112,11 +120,8 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
         await Printing.sharePdf(bytes: bytes, filename: fileName);
       });
     } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Failed to generate PDF. Please try again.')),
-        );
+      if (mounted) {
+        messenger.showSnackBar(const SnackBar(content: Text(generalErrorMsg)));
       }
     } finally {
       if (mounted) {

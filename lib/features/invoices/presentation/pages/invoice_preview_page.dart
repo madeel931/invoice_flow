@@ -11,7 +11,9 @@ import '../../../../core/usecases/usecase.dart';
 import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../../../settings/domain/usecases/get_business_profile_usecase.dart';
+import '../../utils/arabic_invoice_pdf_generator.dart';
 import '../../utils/invoice_pdf_generator.dart';
+import '../../../../core/locale/cubit/locale_cubit.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../cubit/invoice_list_cubit.dart';
 
@@ -31,10 +33,11 @@ class _InvoicePreviewPageState extends State<InvoicePreviewPage> {
   void initState() {
     super.initState();
     final cubit = context.read<InvoiceListCubit>();
-    _pdfFuture = _generatePdf(cubit);
+    final languageCode = context.read<LocaleCubit>().state?.languageCode ?? 'en';
+    _pdfFuture = _generatePdf(cubit, languageCode);
   }
 
-  Future<Uint8List> _generatePdf(InvoiceListCubit cubit) async {
+  Future<Uint8List> _generatePdf(InvoiceListCubit cubit, String languageCode) async {
     final profileResult = await GetIt.instance<GetBusinessProfileUseCase>().call(NoParams());
     
     if (profileResult.isLeft()) {
@@ -54,7 +57,10 @@ class _InvoicePreviewPageState extends State<InvoicePreviewPage> {
     }
     final invoice = invoices[invoiceIndex];
     
-    final bytes = await InvoicePdfGenerator.generate(invoice, profile);
+    final bytes = languageCode == 'ar'
+        ? await ArabicInvoicePdfGenerator.generate(invoice, profile)
+        : await InvoicePdfGenerator.generate(invoice, profile);
+        
     if (bytes.isEmpty) {
       throw Exception('Generated PDF is empty');
     }

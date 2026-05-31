@@ -65,7 +65,7 @@ class ArabicInvoicePdfGenerator {
   }
 
   static pw.Widget _tableBodyCell(String text, pw.Alignment alignment, {bool useFittedBox = false}) {
-    pw.Widget textWidget = pw.Text(text, style: const pw.TextStyle(fontSize: 10));
+    pw.Widget textWidget = pw.Text(text, style: const pw.TextStyle(fontSize: 10), softWrap: true);
     if (useFittedBox) {
       // Prevents massive numbers (e.g., 100,000,000) from breaking the PDF table layout
       textWidget = pw.FittedBox(
@@ -159,35 +159,46 @@ class ArabicInvoicePdfGenerator {
                         )),
                   ],
                 ),
-                pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.end,
-                  children: [
-                    if (logoImage != null)
-                      pw.Container(
-                        width: 80,
-                        height: 80,
-                        child: pw.Image(logoImage),
-                      ),
-                    pw.SizedBox(height: 8),
-                    pw.Text(PdfTextFormatter.formatUserTextForPdf(profile.businessName),
-                        style: pw.TextStyle(
-                            fontSize: 24, fontWeight: pw.FontWeight.bold)),
-                    if (profile.taxId != null && profile.taxId!.isNotEmpty)
-                      pw.Text('${profile.taxId} :${PdfTextFormatter.formatUserTextForPdf('الرقم الضريبي')}',
-                          style: const pw.TextStyle(color: PdfColors.grey700)),
-                    if (profile.email != null && profile.email!.isNotEmpty)
-                      pw.Text(profile.email!,
-                          style: const pw.TextStyle(color: PdfColors.grey700)),
-                    if (profile.phone != null && profile.phone!.isNotEmpty)
-                      pw.Text(profile.phone!,
-                          style: const pw.TextStyle(color: PdfColors.grey700)),
-                    if (profile.website != null && profile.website!.isNotEmpty)
-                      pw.Text(profile.website!,
-                          style: const pw.TextStyle(color: PdfColors.grey700)),
-                    if (profile.address != null && profile.address!.isNotEmpty)
-                      pw.Text(PdfTextFormatter.formatUserTextForPdf(profile.address!),
-                          style: const pw.TextStyle(color: PdfColors.grey700)),
-                  ],
+                pw.SizedBox(width: 16),
+                pw.Expanded(
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.end,
+                    children: [
+                      if (logoImage != null)
+                        pw.Container(
+                          width: 80,
+                          height: 80,
+                          child: pw.Image(logoImage),
+                        ),
+                      pw.SizedBox(height: 8),
+                      PdfTextFormatter.buildWrappedPdfText(
+                          profile.businessName,
+                          maxLines: 3,
+                          maxCharsPerLine: 40,
+                          alignment: pw.Alignment.centerRight,
+                          style: pw.TextStyle(
+                              fontSize: 24, fontWeight: pw.FontWeight.bold)),
+                      if (profile.taxId != null && profile.taxId!.isNotEmpty)
+                        pw.Text('${profile.taxId} :${PdfTextFormatter.formatUserTextForPdf('الرقم الضريبي')}',
+                            style: const pw.TextStyle(color: PdfColors.grey700)),
+                      if (profile.email != null && profile.email!.isNotEmpty)
+                        pw.Text(profile.email!,
+                            style: const pw.TextStyle(color: PdfColors.grey700)),
+                      if (profile.phone != null && profile.phone!.isNotEmpty)
+                        pw.Text(profile.phone!,
+                            style: const pw.TextStyle(color: PdfColors.grey700)),
+                      if (profile.website != null && profile.website!.isNotEmpty)
+                        pw.Text(profile.website!,
+                            style: const pw.TextStyle(color: PdfColors.grey700)),
+                      if (profile.address != null && profile.address!.isNotEmpty)
+                        PdfTextFormatter.buildWrappedPdfText(
+                            profile.address!,
+                            maxLines: 4,
+                            maxCharsPerLine: 50,
+                            alignment: pw.Alignment.centerRight,
+                            style: const pw.TextStyle(color: PdfColors.grey700)),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -203,9 +214,17 @@ class ArabicInvoicePdfGenerator {
                       style: pw.TextStyle(
                           fontWeight: pw.FontWeight.bold, color: PdfColors.grey700)),
                   pw.SizedBox(height: 4),
-                  pw.Text(PdfTextFormatter.formatUserTextForPdf(invoice.customerName),
-                      style:
-                          pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
+                  pw.Container(
+                    width: 300,
+                    alignment: pw.Alignment.centerRight,
+                    child: PdfTextFormatter.buildWrappedPdfText(
+                        invoice.customerName,
+                        maxLines: 3,
+                        maxCharsPerLine: 50,
+                        alignment: pw.Alignment.centerRight,
+                        style:
+                            pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
+                  ),
                 ],
               ),
             ),
@@ -260,7 +279,15 @@ class ArabicInvoicePdfGenerator {
                         _tableBodyCell(taxString, pw.Alignment.center),
                         _tableBodyCell(AppFormatters.formatCurrencyPdf(item.unitPrice, displayCurrency), pw.Alignment.centerLeft, useFittedBox: true),
                         _tableBodyCell(qtyString, pw.Alignment.center),
-                        _tableBodyCell(PdfTextFormatter.formatUserTextForPdf(item.description), pw.Alignment.centerRight),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                          child: PdfTextFormatter.buildWrappedPdfText(
+                            item.description,
+                            maxCharsPerLine: 35,
+                            alignment: pw.Alignment.centerRight,
+                            style: const pw.TextStyle(fontSize: 10),
+                          ),
+                        ),
                       ]
                     );
                   }),
@@ -396,7 +423,11 @@ class ArabicInvoicePdfGenerator {
               pw.SizedBox(height: 4),
               pw.Container(
                 alignment: pw.Alignment.centerRight,
-                child: pw.Text(PdfTextFormatter.formatUserTextForPdf(invoice.notes!)),
+                width: 400,
+                child: PdfTextFormatter.buildWrappedPdfText(
+                    invoice.notes!,
+                    maxCharsPerLine: 70,
+                    alignment: pw.Alignment.centerRight),
               ),
             ],
           ];

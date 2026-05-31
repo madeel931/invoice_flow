@@ -20,6 +20,7 @@ import '../../domain/entities/invoice.dart';
 import '../../domain/entities/invoice_status.dart';
 import '../../domain/services/invoice_calculator.dart';
 import '../../utils/arabic_invoice_pdf_generator.dart';
+import '../../utils/urdu_invoice_pdf_generator.dart';
 import '../../utils/invoice_pdf_generator.dart';
 import '../cubit/invoice_list_cubit.dart';
 import '../cubit/invoice_list_state.dart';
@@ -112,7 +113,9 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
           (profile) async {
         final bytes = languageCode == 'ar'
             ? await ArabicInvoicePdfGenerator.generate(currentInvoice, profile)
-            : await InvoicePdfGenerator.generate(currentInvoice, profile);
+            : languageCode == 'ur'
+                ? await UrduInvoicePdfGenerator.generate(currentInvoice, profile)
+                : await InvoicePdfGenerator.generate(currentInvoice, profile);
         final fileName =
             '${currentInvoice.invoiceNumber}_${currentInvoice.customerName.replaceAll(' ', '_')}.pdf';
 

@@ -12,6 +12,7 @@ import '../../../../core/widgets/empty_state_widget.dart';
 import '../../../../core/widgets/loading_widget.dart';
 import '../../../settings/domain/usecases/get_business_profile_usecase.dart';
 import '../../utils/arabic_invoice_pdf_generator.dart';
+import '../../utils/urdu_invoice_pdf_generator.dart';
 import '../../utils/invoice_pdf_generator.dart';
 import '../../../../core/locale/cubit/locale_cubit.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -59,7 +60,9 @@ class _InvoicePreviewPageState extends State<InvoicePreviewPage> {
     
     final bytes = languageCode == 'ar'
         ? await ArabicInvoicePdfGenerator.generate(invoice, profile)
-        : await InvoicePdfGenerator.generate(invoice, profile);
+        : languageCode == 'ur'
+            ? await UrduInvoicePdfGenerator.generate(invoice, profile)
+            : await InvoicePdfGenerator.generate(invoice, profile);
         
     if (bytes.isEmpty) {
       throw Exception('Generated PDF is empty');

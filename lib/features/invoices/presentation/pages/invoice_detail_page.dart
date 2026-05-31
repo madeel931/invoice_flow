@@ -13,6 +13,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../../core/widgets/global_card.dart';
 import '../../../../core/constants/app_units.dart';
 import '../../../../core/locale/cubit/locale_cubit.dart';
+import '../../../../core/locale/cubit/pdf_language_cubit.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../../../settings/domain/usecases/get_business_profile_usecase.dart';
 import '../../domain/usecases/get_invoices_usecase.dart';
@@ -99,7 +100,9 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
     setState(() => _isGeneratingPdf = true);
 
     // Capture context references before any async operations to prevent use_build_context_synchronously
-    final languageCode = context.read<LocaleCubit>().state?.languageCode ?? 'en';
+    final appLanguageCode = context.read<LocaleCubit>().state?.languageCode ?? 'en';
+    final pdfLangPref = context.read<PdfLanguageCubit>().state;
+    final targetPdfLanguage = pdfLangPref == 'sameAsApp' ? appLanguageCode : pdfLangPref;
     final messenger = ScaffoldMessenger.of(context);
     final errorMsg = AppLocalizations.of(context)?.failedToLoadProfile ?? 'Failed to load profile for PDF.';
     const generalErrorMsg = 'Failed to generate PDF. Please try again.';
@@ -111,9 +114,9 @@ class _InvoiceDetailPageState extends State<InvoiceDetailPage> {
       await result.fold(
           (l) async => messenger.showSnackBar(SnackBar(content: Text(errorMsg))), 
           (profile) async {
-        final bytes = languageCode == 'ar'
+        final bytes = targetPdfLanguage == 'ar'
             ? await ArabicInvoicePdfGenerator.generate(currentInvoice, profile)
-            : languageCode == 'ur'
+            : targetPdfLanguage == 'ur'
                 ? await UrduInvoicePdfGenerator.generate(currentInvoice, profile)
                 : await InvoicePdfGenerator.generate(currentInvoice, profile);
         final fileName =

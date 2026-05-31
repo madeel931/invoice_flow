@@ -12,6 +12,7 @@ import '../../../../core/presentation/widgets/app_currency_picker_field.dart';
 import '../../../../core/widgets/global_text_field.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../core/locale/cubit/locale_cubit.dart';
+import '../../../../core/locale/cubit/pdf_language_cubit.dart';
 import '../../../../core/utils/app_directories.dart';
 import '../../../../core/utils/app_validators.dart';
 import '../../../../core/utils/app_input_formatters.dart';
@@ -219,42 +220,84 @@ class _SettingsViewState extends State<_SettingsView> {
                                 ?.copyWith(fontWeight: FontWeight.bold)),
                         const SizedBox(height: AppSpacing.sm),
                         GlobalCard(
-                          child: BlocBuilder<LocaleCubit, Locale?>(
-                            builder: (context, locale) {
-                              final currentCode = context.read<LocaleCubit>().currentCode;
-                              return DropdownButtonFormField<String>(
-                                key: ValueKey(currentCode),
-                                initialValue: currentCode,
-                                decoration: InputDecoration(
-                                  labelText: AppLocalizations.of(context)?.chooseAppLanguage ?? 'Choose app language',
-                                  prefixIcon: const Icon(Icons.language),
-                                  border: const OutlineInputBorder(),
-                                ),
-                                items: [
-                                  DropdownMenuItem(
-                                    value: 'system',
-                                    child: Text(AppLocalizations.of(context)?.systemDefault ?? 'System Default'),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: 'en',
-                                    child: Text(AppLocalizations.of(context)?.english ?? 'English'),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: 'ar',
-                                    child: Text(AppLocalizations.of(context)?.arabic ?? 'العربية'),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: 'ur',
-                                    child: Text(AppLocalizations.of(context)?.urdu ?? 'اردو'),
-                                  ),
-                                ],
-                                onChanged: (value) {
-                                  if (value != null) {
-                                    context.read<LocaleCubit>().changeLocale(value);
-                                  }
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              BlocBuilder<LocaleCubit, Locale?>(
+                                builder: (context, locale) {
+                                  final currentCode = context.read<LocaleCubit>().currentCode;
+                                  return DropdownButtonFormField<String>(
+                                    key: ValueKey('app_$currentCode'),
+                                    initialValue: currentCode,
+                                    decoration: InputDecoration(
+                                      labelText: AppLocalizations.of(context)?.chooseAppLanguage ?? 'Choose app language',
+                                      prefixIcon: const Icon(Icons.language),
+                                      border: const OutlineInputBorder(),
+                                    ),
+                                    items: [
+                                      DropdownMenuItem(
+                                        value: 'system',
+                                        child: Text(AppLocalizations.of(context)?.systemDefault ?? 'System Default'),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'en',
+                                        child: Text(AppLocalizations.of(context)?.english ?? 'English'),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'ar',
+                                        child: Text(AppLocalizations.of(context)?.arabic ?? 'العربية'),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'ur',
+                                        child: Text(AppLocalizations.of(context)?.urdu ?? 'اردو'),
+                                      ),
+                                    ],
+                                    onChanged: (value) {
+                                      if (value != null) {
+                                        context.read<LocaleCubit>().changeLocale(value);
+                                      }
+                                    },
+                                  );
                                 },
-                              );
-                            },
+                              ),
+                              const SizedBox(height: AppSpacing.md),
+                              BlocBuilder<PdfLanguageCubit, String>(
+                                builder: (context, pdfLang) {
+                                  return DropdownButtonFormField<String>(
+                                    key: ValueKey('pdf_$pdfLang'),
+                                    initialValue: pdfLang,
+                                    decoration: InputDecoration(
+                                      labelText: AppLocalizations.of(context)?.pdfLanguage ?? 'PDF Language',
+                                      prefixIcon: const Icon(Icons.picture_as_pdf_outlined),
+                                      border: const OutlineInputBorder(),
+                                    ),
+                                    items: [
+                                      DropdownMenuItem(
+                                        value: 'sameAsApp',
+                                        child: Text(AppLocalizations.of(context)?.sameAsAppLanguage ?? 'Same as app language'),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'en',
+                                        child: Text(AppLocalizations.of(context)?.english ?? 'English'),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'ar',
+                                        child: Text(AppLocalizations.of(context)?.arabic ?? 'العربية'),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'ur',
+                                        child: Text(AppLocalizations.of(context)?.urdu ?? 'اردو'),
+                                      ),
+                                    ],
+                                    onChanged: (value) {
+                                      if (value != null) {
+                                        context.read<PdfLanguageCubit>().changePdfLanguage(value);
+                                      }
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: AppSpacing.md),

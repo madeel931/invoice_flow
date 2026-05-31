@@ -24,6 +24,8 @@
   "systemDefault": "سیسم ڈیفالٹ",
   "languageSettings": "زبان کی سیٹنگز",
   "chooseAppLanguage": "ایپ کی زبان منتخب کریں",
+  "pdfLanguage": "PDF کی زبان",
+  "sameAsAppLanguage": "ایپ کی زبان کے مطابق",
   "customersTitle": "کسٹمرز",
   "productsTitle": "آئٹمز اور سروسز",
   "invoicesTitle": "انوائسز",

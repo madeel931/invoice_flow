@@ -81,6 +81,12 @@ class AppLocalizationsUr extends AppLocalizations {
   String get chooseAppLanguage => 'ایپ کی زبان منتخب کریں';
 
   @override
+  String get pdfLanguage => 'PDF کی زبان';
+
+  @override
+  String get sameAsAppLanguage => 'ایپ کی زبان کے مطابق';
+
+  @override
   String get customersTitle => 'کسٹمرز';
 
   @override

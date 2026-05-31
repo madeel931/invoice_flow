@@ -81,6 +81,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chooseAppLanguage => 'Choose app language';
 
   @override
+  String get pdfLanguage => 'PDF Language';
+
+  @override
+  String get sameAsAppLanguage => 'Same as app language';
+
+  @override
   String get customersTitle => 'Customers';
 
   @override

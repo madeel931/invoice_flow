@@ -81,6 +81,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get chooseAppLanguage => 'اختر لغة التطبيق';
 
   @override
+  String get pdfLanguage => 'لغة ملف PDF';
+
+  @override
+  String get sameAsAppLanguage => 'نفس لغة التطبيق';
+
+  @override
   String get customersTitle => 'العملاء';
 
   @override

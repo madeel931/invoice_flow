@@ -9,6 +9,7 @@ import 'features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'features/invoices/presentation/cubit/invoice_list_cubit.dart';
 import 'l10n/app_localizations.dart';
 import 'core/locale/cubit/locale_cubit.dart';
+import 'core/locale/cubit/pdf_language_cubit.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -39,15 +40,21 @@ void main() async {
     initialLocale = const Locale('ur');
   }
 
+  final savedPdfLangStr = prefs.getString('pdf_language_preference') ?? 'sameAsApp';
+
   await di.init();
-  runApp(InvoiceFlowApp(initialTheme: initialTheme, initialLocale: initialLocale));
+  runApp(InvoiceFlowApp(
+      initialTheme: initialTheme, 
+      initialLocale: initialLocale,
+      initialPdfLanguage: savedPdfLangStr));
 }
 
 class InvoiceFlowApp extends StatelessWidget {
   final ThemeMode initialTheme;
   final Locale? initialLocale;
+  final String initialPdfLanguage;
   
-  const InvoiceFlowApp({super.key, required this.initialTheme, this.initialLocale});
+  const InvoiceFlowApp({super.key, required this.initialTheme, this.initialLocale, required this.initialPdfLanguage});
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +62,7 @@ class InvoiceFlowApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => ThemeCubit(initialTheme)),
         BlocProvider(create: (_) => LocaleCubit(initialLocale)),
+        BlocProvider(create: (_) => PdfLanguageCubit(initialPdfLanguage)),
         // LIFTING STATE UP: Now all tabs share these exact instances!
         BlocProvider(create: (_) => di.sl<DashboardCubit>()..loadDashboard()),
         BlocProvider(create: (_) => di.sl<InvoiceListCubit>()..loadInvoices()),

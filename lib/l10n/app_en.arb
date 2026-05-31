@@ -96,6 +96,14 @@
   "@chooseAppLanguage": {
     "description": "Label or text for choose app language"
   },
+  "pdfLanguage": "PDF Language",
+  "@pdfLanguage": {
+    "description": "Label or text for pdf language"
+  },
+  "sameAsAppLanguage": "Same as app language",
+  "@sameAsAppLanguage": {
+    "description": "Label or text for same as app language"
+  },
   "customersTitle": "Customers",
   "@customersTitle": {
     "description": "Label or text for customers title"

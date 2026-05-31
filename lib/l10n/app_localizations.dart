@@ -244,6 +244,18 @@ abstract class AppLocalizations {
   /// **'Choose app language'**
   String get chooseAppLanguage;
 
+  /// Label or text for pdf language
+  ///
+  /// In en, this message translates to:
+  /// **'PDF Language'**
+  String get pdfLanguage;
+
+  /// Label or text for same as app language
+  ///
+  /// In en, this message translates to:
+  /// **'Same as app language'**
+  String get sameAsAppLanguage;
+
   /// Label or text for customers title
   ///
   /// In en, this message translates to:

@@ -15,6 +15,7 @@ import '../../utils/arabic_invoice_pdf_generator.dart';
 import '../../utils/urdu_invoice_pdf_generator.dart';
 import '../../utils/invoice_pdf_generator.dart';
 import '../../../../core/locale/cubit/locale_cubit.dart';
+import '../../../../core/locale/cubit/pdf_language_cubit.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../cubit/invoice_list_cubit.dart';
 
@@ -34,8 +35,11 @@ class _InvoicePreviewPageState extends State<InvoicePreviewPage> {
   void initState() {
     super.initState();
     final cubit = context.read<InvoiceListCubit>();
-    final languageCode = context.read<LocaleCubit>().state?.languageCode ?? 'en';
-    _pdfFuture = _generatePdf(cubit, languageCode);
+    final appLanguageCode = context.read<LocaleCubit>().state?.languageCode ?? 'en';
+    final pdfLangPref = context.read<PdfLanguageCubit>().state;
+    final targetPdfLanguage = pdfLangPref == 'sameAsApp' ? appLanguageCode : pdfLangPref;
+    
+    _pdfFuture = _generatePdf(cubit, targetPdfLanguage);
   }
 
   Future<Uint8List> _generatePdf(InvoiceListCubit cubit, String languageCode) async {

@@ -24,6 +24,17 @@
   "systemDefault": "لغة الجهاز",
   "languageSettings": "إعدادات اللغة",
   "chooseAppLanguage": "اختر لغة التطبيق",
+  "@chooseAppLanguage": {
+    "description": "Label or text for choose app language"
+  },
+  "pdfLanguage": "لغة ملف PDF",
+  "@pdfLanguage": {
+    "description": "Label or text for pdf language"
+  },
+  "sameAsAppLanguage": "نفس لغة التطبيق",
+  "@sameAsAppLanguage": {
+    "description": "Label or text for same as app language"
+  },
   "customersTitle": "العملاء",
   "productsTitle": "العناصر والخدمات",
   "invoicesTitle": "الفواتير",

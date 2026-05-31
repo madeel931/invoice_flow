@@ -2,15 +2,15 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:pdf/widgets.dart' as pw;
-
 import '../../../../core/utils/app_directories.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../settings/domain/entities/business_profile.dart';
 import '../domain/entities/invoice.dart';
 import '../domain/entities/invoice_status.dart';
 import '../domain/services/invoice_calculator.dart';
-
+import 'pdf_text_formatter.dart';
 /// Generates a professional PDF document for an invoice.
 /// Handles multi-page table layouts, caching, and PDF-safe text rendering.
 class InvoicePdfGenerator {
@@ -92,6 +92,15 @@ class InvoicePdfGenerator {
     final calc = InvoiceCalculator.calculate(invoice);
     final pdf = pw.Document();
 
+    // 2. Load Fallback Font for RTL Text (Arabic/Urdu)
+    pw.Font? fallbackFont;
+    try {
+      final fontData = await rootBundle.load('assets/fonts/NotoSansArabic-Regular.ttf');
+      fallbackFont = pw.Font.ttf(fontData);
+    } catch (e) {
+      // Proceed without fallback font if it fails to load
+    }
+
     // 3. Currency Formatter
     final dateFormat = DateFormat('MMM dd, yyyy');
 
@@ -113,6 +122,11 @@ class InvoicePdfGenerator {
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(32),
+        theme: pw.ThemeData.withFont(
+          base: pw.Font.helvetica(),
+          bold: pw.Font.helveticaBold(),
+          fontFallback: fallbackFont != null ? [fallbackFont] : [],
+        ),
         build: (context) {
           return [
             // --- HEADER ---
@@ -130,7 +144,7 @@ class InvoicePdfGenerator {
                         child: pw.Image(logoImage),
                       ),
                     pw.SizedBox(height: 8),
-                    pw.Text(profile.businessName,
+                    pw.Text(PdfTextFormatter.formatUserTextForPdf(profile.businessName),
                         style: pw.TextStyle(
                             fontSize: 24, fontWeight: pw.FontWeight.bold)),
                     if (profile.taxId != null && profile.taxId!.isNotEmpty)
@@ -146,7 +160,7 @@ class InvoicePdfGenerator {
                       pw.Text(profile.website!,
                           style: const pw.TextStyle(color: PdfColors.grey700)),
                     if (profile.address != null && profile.address!.isNotEmpty)
-                      pw.Text(profile.address!,
+                      pw.Text(PdfTextFormatter.formatUserTextForPdf(profile.address!),
                           style: const pw.TextStyle(color: PdfColors.grey700)),
                   ],
                 ),
@@ -184,7 +198,7 @@ class InvoicePdfGenerator {
                 style: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold, color: PdfColors.grey700)),
             pw.SizedBox(height: 4),
-            pw.Text(invoice.customerName,
+            pw.Text(PdfTextFormatter.formatUserTextForPdf(invoice.customerName),
                 style:
                     pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 24),
@@ -234,7 +248,7 @@ class InvoicePdfGenerator {
 
                     return pw.TableRow(
                       children: [
-                        _tableBodyCell(item.description, pw.Alignment.centerLeft),
+                        _tableBodyCell(PdfTextFormatter.formatUserTextForPdf(item.description), pw.Alignment.centerLeft),
                         _tableBodyCell(qtyString, pw.Alignment.center),
                         _tableBodyCell(AppFormatters.formatCurrencyPdf(item.unitPrice, displayCurrency), pw.Alignment.centerRight, useFittedBox: true),
                         _tableBodyCell(taxString, pw.Alignment.center),
@@ -368,7 +382,7 @@ class InvoicePdfGenerator {
                       fontWeight: pw.FontWeight.bold,
                       color: PdfColors.grey700)),
               pw.SizedBox(height: 4),
-              pw.Text(invoice.notes!),
+              pw.Text(PdfTextFormatter.formatUserTextForPdf(invoice.notes!)),
             ],
           ];
         },

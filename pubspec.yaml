@@ -48,6 +48,8 @@ dependencies:
   file_picker: ^10.3.2
   currency_picker: ^2.0.21
   cupertino_icons: ^1.0.9
+  arabic_reshaper: ^0.0.1
+  bidi: ^2.0.13
 
 dev_dependencies:
   flutter_test:
@@ -61,6 +63,10 @@ dev_dependencies:
 flutter:
   generate: true
   uses-material-design: true
+  fonts:
+    - family: NotoSansArabic
+      fonts:
+        - asset: assets/fonts/NotoSansArabic-Regular.ttf
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
